@@ -1,0 +1,228 @@
+.gu-wrapper {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.gu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.gu-titulo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 0.25rem;
+}
+
+.gu-subtitulo {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.gu-voltar {
+  background: none;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.gu-voltar:hover {
+  background-color: #e5e7eb;
+}
+
+.gu-tabela-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+
+.gu-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.gu-tabela thead tr {
+  background-color: #239292;
+  color: white;
+}
+
+.gu-tabela thead th {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.gu-tabela tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.15s;
+}
+
+.gu-tabela tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.gu-row-ativa {
+  background-color: #f0fdfa !important;
+}
+
+.gu-tabela td {
+  padding: 0.85rem 1rem;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.gu-id { color: #9ca3af; font-size: 0.8rem; }
+.gu-nome { font-weight: 600; color: #1a1a2e; }
+.gu-email { color: #6b7280; }
+.gu-center { text-align: center; }
+
+.gu-estado {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.gu-estado--ativa { background-color: #dcfce7; color: #16a34a; }
+.gu-estado--inativa { background-color: #f3f4f6; color: #6b7280; }
+.gu-estado--suspensa { background-color: #fef2f2; color: #dc2626; }
+
+.gu-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.gu-role-tag {
+  background-color: #e0f2f1;
+  color: #239292;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+}
+
+.gu-sem-role {
+  color: #d1d5db;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.gu-btn-editar {
+  padding: 0.4rem 0.9rem;
+  background-color: #239292;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.gu-btn-editar:hover { background-color: #1a7070; }
+
+/* Linha de edição expandida */
+.gu-row-editor td {
+  padding: 0;
+  background-color: #f8fafc;
+}
+
+.gu-editor {
+  padding: 1.25rem 1.5rem;
+  border-top: 2px solid #e0f2f1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.gu-editor-secao h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.6rem;
+}
+
+.gu-roles-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.gu-role-toggle {
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.gu-role-toggle:hover {
+  border-color: #239292;
+  color: #239292;
+}
+
+.gu-role-toggle--ativa {
+  background-color: #239292;
+  border-color: #239292;
+  color: white;
+}
+
+.gu-role-toggle--ativa:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}
+
+.gu-btn-estado {
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.gu-btn-estado--desativar { background-color: #fef2f2; color: #dc2626; }
+.gu-btn-estado--desativar:hover { background-color: #fee2e2; }
+.gu-btn-estado--ativar { background-color: #dcfce7; color: #16a34a; }
+.gu-btn-estado--ativar:hover { background-color: #bbf7d0; }
+
+.gu-feedback {
+  font-size: 0.82rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  align-self: center;
+}
+
+.gu-feedback--sucesso { background-color: #f0fdf4; color: #16a34a; }
+.gu-feedback--erro { background-color: #fef2f2; color: #dc2626; }
+
+.gu-loading, .gu-erro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1rem;
+  color: #6b7280;
+}

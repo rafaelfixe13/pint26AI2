@@ -1,0 +1,638 @@
+/* ── Layout ─────────────────────────────────────────────────── */
+.gb-wrapper {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #ffffff;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.gb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.gb-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #239292;
+  margin: 0;
+}
+
+/* ── Toast ──────────────────────────────────────────────────── */
+.gb-toast {
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.gb-toast--sucesso { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.gb-toast--erro    { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+/* ── Service Line card ──────────────────────────────────────── */
+.gb-sl-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.gb-sl-card--add {
+  padding: 0.75rem 1.25rem;
+  box-shadow: none;
+  border: 1.5px dashed #d1d5db;
+}
+
+.gb-sl-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.gb-sl-nome {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #239292;
+  flex: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gb-sl-body {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Área card ──────────────────────────────────────────────── */
+.gb-area-card {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.gb-area-add {
+  padding: 0.5rem 0.25rem;
+}
+
+.gb-area-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background-color: #f8fafc;
+}
+
+.gb-area-nome {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  flex: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gb-area-body {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ── Nível card ─────────────────────────────────────────────── */
+.gb-nivel-card {
+  background: white;
+  border: 1.5px solid #e0f2f1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.gb-nivel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+}
+
+.gb-nivel-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.gb-nivel-nome {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.gb-nivel-acoes {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Chevron e acções ───────────────────────────────────────── */
+.gb-chevron-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  text-align: center;
+  line-height: 1;
+}
+
+.gb-sl-acoes {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.gb-icon-btn {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 5px;
+  transition: background-color 0.15s;
+  color: #6b7280;
+}
+.gb-icon-btn:hover { background-color: #f3f4f6; color: #374151; }
+.gb-icon-btn--danger:hover { background-color: #fef2f2; color: #dc2626; }
+
+/* ── Inline Add ─────────────────────────────────────────────── */
+.gb-inline-add {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.gb-inline-add input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  background: #f9fafb;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.gb-inline-add input:focus {
+  border-color: #239292;
+  background: white;
+}
+
+.gb-btn-add-inline {
+  padding: 0.5rem 1rem;
+  background-color: #239292;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+.gb-btn-add-inline:hover:not(:disabled) { background-color: #1a7070; }
+.gb-btn-add-inline:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Badge info ─────────────────────────────────────────────── */
+.gb-badge-icon { font-size: 1.3rem; line-height: 1; }
+.gb-badge-icon--vazio { filter: grayscale(1) opacity(0.35); }
+
+.gb-badge-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.4rem 1rem 0.6rem;
+  border-top: 1px solid #f3f4f6;
+  background-color: #f9fafb;
+}
+
+.gb-badge-nome { font-size: 0.85rem; font-weight: 600; color: #374151; }
+.gb-badge-desc { font-size: 0.8rem; color: #6b7280; }
+.gb-badge-pontos {
+  font-size: 0.78rem; font-weight: 700;
+  background-color: #e0f2f1; color: #239292;
+  padding: 0.15rem 0.5rem; border-radius: 12px;
+}
+.gb-badge-publico { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 12px; }
+.gb-badge-publico--sim { background-color: #dcfce7; color: #16a34a; }
+.gb-badge-publico--nao { background-color: #f3f4f6; color: #6b7280; }
+
+/* ── Requisitos ─────────────────────────────────────────────── */
+.gb-requisitos {
+  padding: 0.5rem 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 1px solid #f3f4f6;
+}
+.gb-req-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+}
+.gb-req-codigo { font-size: 0.73rem; font-weight: 700; color: #6b7280; min-width: 28px; }
+.gb-req-titulo { font-size: 0.83rem; color: #374151; }
+
+/* ── Botões de badge ─────────────────────────────────────────── */
+.gb-btn-novo {
+  padding: 0.55rem 1.25rem;
+  background-color: #239292;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.gb-btn-novo:hover { background-color: #1a7070; }
+
+.gb-btn-badge {
+  padding: 0.3rem 0.7rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.gb-btn-badge--criar { background-color: #239292; color: white; }
+.gb-btn-badge--criar:hover { background-color: #1a7070; }
+.gb-btn-badge--editar { background-color: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
+.gb-btn-badge--editar:hover { background-color: #dbeafe; }
+
+.gb-btn-eliminar {
+  padding: 0.28rem 0.55rem;
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1.5px solid #fecaca;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.gb-btn-eliminar:hover { background-color: #fee2e2; }
+
+.gb-btn-toggle {
+  padding: 0.28rem 0.55rem;
+  background: none;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.gb-btn-toggle:hover { border-color: #239292; color: #239292; }
+
+/* ── Modal ──────────────────────────────────────────────────── */
+.gb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+.gb-modal {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+}
+.gb-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+.gb-modal-titulo { font-size: 1.05rem; font-weight: 700; color: #1a1a2e; margin: 0; }
+.gb-modal-fechar {
+  background: none; border: none; font-size: 1rem; color: #9ca3af;
+  cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 4px;
+}
+.gb-modal-fechar:hover { color: #374151; }
+.gb-modal-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.9rem; }
+.gb-modal-footer {
+  display: flex; gap: 0.75rem; padding: 1rem 1.5rem;
+  border-top: 1px solid #f3f4f6; background-color: #f9fafb;
+  border-radius: 0 0 14px 14px;
+}
+
+/* ── Form inputs ────────────────────────────────────────────── */
+.gb-form-linha {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.gb-form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 130px;
+}
+.gb-form-grupo--largo { flex: 2; }
+.gb-form-grupo--check {
+  flex: 0;
+  min-width: auto;
+  justify-content: flex-end;
+}
+.gb-form-grupo label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.gb-form-grupo--check label {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.82rem; text-transform: none; letter-spacing: 0;
+  color: #374151; cursor: pointer; padding-top: 1.5rem;
+}
+.gb-form-grupo input[type="text"],
+.gb-form-grupo input[type="number"],
+.gb-form-grupo select {
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.gb-form-grupo input:focus,
+.gb-form-grupo select:focus { border-color: #239292; }
+.gb-form-grupo select:disabled { background-color: #f3f4f6; color: #6b7280; }
+
+.gb-btn-confirmar {
+  padding: 0.5rem 1.2rem;
+  background-color: #239292;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.gb-btn-confirmar:hover:not(:disabled) { background-color: #1a7070; }
+.gb-btn-confirmar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.gb-btn-cancelar {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.gb-btn-cancelar:hover { background-color: #f3f4f6; }
+
+/* ── Formulário inline de badge ─────────────────────────────── */
+.gb-badge-form {
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 2px solid #e0f2f1;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.gb-badge-form-titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+}
+
+.gb-form-acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ── Feedback inline ────────────────────────────────────────── */
+.gb-feedback { font-size: 0.82rem; padding: 0.4rem 0.75rem; border-radius: 6px; margin: 0; }
+.gb-feedback--sucesso { background-color: #f0fdf4; color: #16a34a; }
+.gb-feedback--erro    { background-color: #fef2f2; color: #dc2626; }
+
+/* ── Botão adicionar nível ───────────────────────────────────── */
+.gb-btn-add-nivel {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  background: none;
+  border: 1.5px dashed #239292;
+  border-radius: 7px;
+  color: #239292;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 0.5rem;
+}
+.gb-btn-add-nivel:hover { background-color: #f0fdfa; }
+
+
+/* ── Secções (LP / SL) ──────────────────────────────────────── */
+.gb-secao {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.gb-secao-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.gb-secao-chevron { font-size: 1rem; color: #9ca3af; width: 16px; }
+
+.gb-secao-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #239292;
+  margin: 0;
+  flex: 1;
+}
+
+.gb-secao-count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  background-color: #e0f2f1;
+  color: #239292;
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+}
+
+.gb-secao-body {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ── Learning Path item ─────────────────────────────────────── */
+.gb-lp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.gb-lp-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.gb-lp-nome {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.gb-lp-desc {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.gb-lp-status {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+.gb-lp-status--ativo   { background-color: #dcfce7; color: #16a34a; }
+.gb-lp-status--inativo { background-color: #f3f4f6; color: #9ca3af; }
+
+/* ── Nível — LP tag e detail ────────────────────────────────── */
+.gb-nivel-lp {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: #ede9fe;
+  color: #7c3aed;
+  padding: 0.1rem 0.45rem;
+  border-radius: 8px;
+}
+
+.gb-nivel-detail {
+  border-top: 1px solid #f3f4f6;
+}
+
+/* ── Requisitos (com acções) ────────────────────────────────── */
+.gb-requisitos-titulo {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin: 0 0 0.3rem;
+}
+
+.gb-req-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+}
+
+.gb-req-acoes {
+  display: flex;
+  gap: 0.2rem;
+  margin-left: auto;
+}
+
+/* ── Botão adicionar requisito ──────────────────────────────── */
+.gb-btn-add-req {
+  padding: 0.28rem 0.65rem;
+  background: none;
+  border: 1.5px dashed #7c3aed;
+  border-radius: 6px;
+  color: #7c3aed;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.gb-btn-add-req:hover { background-color: #ede9fe; }
+
+/* ── Soft delete — inativo ──────────────────────────────────── */
+.gb-inativo {
+  opacity: 0.55;
+  background-color: #fafafa !important;
+}
+
+.gb-tag-inativo {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.1rem 0.45rem;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.gb-btn-toggle-ativo {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 5px;
+  transition: background-color 0.15s;
+}
+.gb-btn-toggle-ativo--off:hover { background-color: #fef2f2; }
+.gb-btn-toggle-ativo--on:hover  { background-color: #f0fdf4; }
+
+/* ── Utilitários ────────────────────────────────────────────── */
+.gb-vazio { text-align: center; padding: 2.5rem; color: #9ca3af; font-size: 0.9rem; }
+.gb-vazio-inner { color: #9ca3af; font-size: 0.82rem; font-style: italic; padding: 0.5rem 0; margin: 0; }
+.gb-loading, .gb-erro {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; font-size: 1rem; color: #6b7280;
+}

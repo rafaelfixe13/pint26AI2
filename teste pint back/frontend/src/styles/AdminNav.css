@@ -1,0 +1,100 @@
+.anav-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1a1a2e;
+  padding: 0 2rem;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.anav-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.anav-logo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #239292;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  user-select: none;
+}
+
+.anav-links {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.anav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.anav-link:hover {
+  background-color: rgba(255,255,255,0.07);
+  color: #e5e7eb;
+}
+
+.anav-link--ativo {
+  background-color: rgba(35,146,146,0.18);
+  color: #239292;
+  font-weight: 700;
+}
+
+.anav-direita {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.anav-user {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.anav-perfil {
+  padding: 0.35rem 0.8rem;
+  background: none;
+  border: 1.5px solid #374151;
+  border-radius: 6px;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.anav-perfil:hover {
+  border-color: #239292;
+  color: #239292;
+}
+
+.anav-logout {
+  padding: 0.35rem 0.8rem;
+  background-color: rgba(220,38,38,0.1);
+  border: 1.5px solid rgba(220,38,38,0.3);
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.anav-logout:hover {
+  background-color: rgba(220,38,38,0.2);
+}

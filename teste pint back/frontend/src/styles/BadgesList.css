@@ -1,0 +1,86 @@
+.badges-container {
+  padding: 20px;
+}
+
+.badges-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: rgb(35, 146, 146);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.badges-logout {
+  position: absolute;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.badges-logout:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.badges-header h1 {
+  margin: 0;
+  color: white;
+}
+
+.badges-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.badge-item {
+  flex: 0 1 200px;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: rgb(255, 255, 253);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid rgb(77, 11, 11);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.badge-item:hover {
+  transform: translateY(-5px);
+}
+
+.badge-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+}
+
+.badge-description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.badge-points {
+  font-weight: bold;
+  color: rgb(77, 11, 11);
+  margin: 0;
+}
