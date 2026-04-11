@@ -7,7 +7,6 @@ const ROLE_CONSULTOR = 1;
 
 const gerarCodigo = () => String(Math.floor(100000 + Math.random() * 900000));
 
-// Busca todas as roles de um utilizador da tabela de ligação
 const getRolesDoUtilizador = async (idutilizador) => {
   const registos = await UtilizadorRole.findAll({ where: { idutilizador } });
   return registos.map((r) => r.idrole);
@@ -44,7 +43,14 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
     }
 
-    await utilizador.update({ ultimadatalogin: new Date() });
+    // Guarda os valores ANTES de atualizar — para enviar ao frontend
+    const eraPrimeiroLogin = utilizador.primeirologin;
+    const ultimoLoginAnterior = utilizador.ultimadatalogin;
+
+    await utilizador.update({
+      ultimadatalogin: new Date(),
+      primeirologin: false,
+    });
 
     const roles = await getRolesDoUtilizador(utilizador.idutilizador);
 
@@ -52,13 +58,18 @@ const login = async (req, res) => {
       message: 'Login efetuado com sucesso.',
       utilizador: {
         id: utilizador.idutilizador,
+        idutilizador: utilizador.idutilizador,
         nome: utilizador.nome,
         email: utilizador.email,
+        fotourl: utilizador.fotourl,
+        datacriacao: utilizador.datacriacao,
+        estadoconta: utilizador.estadoconta,
         idrole: utilizador.idrole,
-        roles,                          // array com todas as roles
+        roles,
         idserviceline: utilizador.idserviceline,
         idarea: utilizador.idarea,
-        primeirologin: utilizador.primeirologin,
+        ultimadatalogin: ultimoLoginAnterior,
+        primeirologin: eraPrimeiroLogin,
       },
     });
   } catch (error) {
@@ -95,7 +106,6 @@ const register = async (req, res) => {
       tokenconfirmacao: codigo,
     });
 
-    // Insere a role de CONSULTOR na tabela de ligação
     await UtilizadorRole.create({
       idutilizador: novoUtilizador.idutilizador,
       idrole: ROLE_CONSULTOR,
@@ -176,7 +186,6 @@ const alterarPassword = async (req, res) => {
   }
 };
 
-// Adiciona uma role extra a um utilizador (uso administrativo)
 const adicionarRole = async (req, res) => {
   const { idutilizador, idrole } = req.body;
 
@@ -199,7 +208,6 @@ const adicionarRole = async (req, res) => {
   }
 };
 
-// Remove uma role de um utilizador (uso administrativo)
 const removerRole = async (req, res) => {
   const { idutilizador, idrole } = req.body;
 
