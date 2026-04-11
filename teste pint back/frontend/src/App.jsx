@@ -6,13 +6,17 @@ import ConfirmarEmail from "./pages/ConfirmarEmail";
 import AlterarPassword from "./pages/AlterarPassword";
 import SelecionarPerfil from "./pages/SelecionarPerfil";
 import BadgesList from "./pages/BadgesList";
+import Perfil from "./pages/Perfil";
+import PagBadge from "./pages/PagBadge";
 import GestaoUtilizadores from "./pages/admin/GestaoUtilizadores";
 import GestaoBadges from "./pages/admin/GestaoBadges";
+
 
 function RotaProtegida({ children }) {
   const utilizador = localStorage.getItem("utilizador");
   return utilizador ? children : <Navigate to="/login" replace />;
 }
+
 
 function RotaAdmin({ children }) {
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
@@ -23,6 +27,7 @@ function RotaAdmin({ children }) {
   return isAdmin ? children : <Navigate to="/perfil" replace />;
 }
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -30,6 +35,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/confirmar-email" element={<ConfirmarEmail />} />
+
         <Route
           path="/alterar-password"
           element={
@@ -38,6 +44,7 @@ function App() {
             </RotaProtegida>
           }
         />
+
         <Route
           path="/perfil"
           element={
@@ -46,6 +53,25 @@ function App() {
             </RotaProtegida>
           }
         />
+
+        <Route
+          path="/meu-perfil"
+          element={
+            <RotaProtegida>
+              <Perfil />
+            </RotaProtegida>
+          }
+        />
+
+        <Route
+          path="/badges/:id"
+          element={
+            <RotaProtegida>
+              <PagBadge />
+            </RotaProtegida>
+          }
+        />
+
         <Route
           path="/admin/utilizadores"
           element={
@@ -54,6 +80,7 @@ function App() {
             </RotaAdmin>
           }
         />
+
         <Route
           path="/admin/badges"
           element={
@@ -62,6 +89,7 @@ function App() {
             </RotaAdmin>
           }
         />
+
         <Route
           path="/"
           element={
@@ -70,9 +98,12 @@ function App() {
             </RotaProtegida>
           }
         />
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
 
 export default App;
