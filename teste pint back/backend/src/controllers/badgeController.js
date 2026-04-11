@@ -1,6 +1,7 @@
 const Badge = require('../models/Badge');
 const { sequelize } = require('../config/database');
 
+
 const getAllBadges = async (_req, res) => {
   try {
     const badges = await sequelize.query(`
@@ -14,6 +15,20 @@ const getAllBadges = async (_req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+const getBadgeById = async (req, res) => {
+  try {
+    const badge = await Badge.findByPk(req.params.id);
+    if (!badge) {
+      return res.status(404).json({ error: 'Badge não encontrado.' });
+    }
+    res.json(badge);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 const createBadge = async (req, res) => {
   const { idnivel, nome, descricao, imagemurl, pontos, expiremeses, linkpublicobase, ispublico } = req.body;
@@ -33,6 +48,7 @@ const createBadge = async (req, res) => {
   }
 };
 
+
 const updateBadge = async (req, res) => {
   try {
     const [updated] = await Badge.update(req.body, { where: { idbadge: req.params.id } });
@@ -42,6 +58,22 @@ const updateBadge = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+const deleteBadge = async (req, res) => {
+  try {
+    const deleted = await Badge.destroy({
+      where: { idbadge: req.params.id }
+    });
+    if (!deleted) {
+      return res.status(404).json({ error: 'Badge não encontrado.' });
+    }
+    res.json({ message: 'Badge eliminado.' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 const toggleBadge = async (req, res) => {
   try {
@@ -53,6 +85,7 @@ const toggleBadge = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const listarNiveis = async (_req, res) => {
   try {
@@ -68,6 +101,7 @@ const listarNiveis = async (_req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const listarHierarquia = async (_req, res) => {
   try {
@@ -90,6 +124,7 @@ const listarHierarquia = async (_req, res) => {
       ORDER BY sl.idserviceline, a.idarea, n.idnivel, r.codigo
     `, { type: sequelize.QueryTypes.SELECT });
 
+
     const slMap = {};
     for (const row of rows) {
       if (!slMap[row.idserviceline]) {
@@ -100,6 +135,7 @@ const listarHierarquia = async (_req, res) => {
       const sl = slMap[row.idserviceline];
       if (!row.idarea) continue;
 
+
       if (!sl.areas[row.idarea]) {
         sl.areas[row.idarea] = {
           idarea: row.idarea, nome: row.area_nome, ativo: row.area_ativo, niveis: {}
@@ -107,6 +143,7 @@ const listarHierarquia = async (_req, res) => {
       }
       const area = sl.areas[row.idarea];
       if (!row.idnivel) continue;
+
 
       if (!area.niveis[row.idnivel]) {
         area.niveis[row.idnivel] = {
@@ -131,6 +168,7 @@ const listarHierarquia = async (_req, res) => {
         };
       }
 
+
       if (row.idrequisito) {
         const nivel = area.niveis[row.idnivel];
         const jaExiste = nivel.requisitos.some((r) => r.idrequisito === row.idrequisito);
@@ -147,6 +185,7 @@ const listarHierarquia = async (_req, res) => {
       }
     }
 
+
     const resultado = Object.values(slMap).map((sl) => ({
       ...sl,
       areas: Object.values(sl.areas).map((area) => ({
@@ -155,12 +194,15 @@ const listarHierarquia = async (_req, res) => {
       })),
     }));
 
+
     res.json(resultado);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+
 module.exports = {
-  getAllBadges, createBadge, updateBadge, toggleBadge, listarNiveis, listarHierarquia,
+  getAllBadges, getBadgeById, createBadge, updateBadge, deleteBadge,
+  toggleBadge, listarNiveis, listarHierarquia,
 };
