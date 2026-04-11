@@ -20,6 +20,9 @@ const Utilizador = sequelize.define('Utilizador', {
     type: DataTypes.STRING(500),
     allowNull: false,
   },
+  fotourl: {
+    type: DataTypes.STRING(500),
+  },
   idrole: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -61,7 +64,6 @@ const Utilizador = sequelize.define('Utilizador', {
   timestamps: false,
 });
 
-// Associação many-to-many com ROLES via tabela de ligação
 const UtilizadorRole = require('./UtilizadorRole');
 Utilizador.hasMany(UtilizadorRole, { foreignKey: 'idutilizador' });
 UtilizadorRole.belongsTo(Utilizador, { foreignKey: 'idutilizador' });
