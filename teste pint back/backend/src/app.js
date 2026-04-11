@@ -29,4 +29,14 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/badges', require('./routes/badgeRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 
+const path = require('path');
+
+// Serve a pasta uploads estaticamente
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Rota utilizadores
+app.use('/api/utilizadores', require('./routes/utilizadoresRoutes'));
+
+app.use('/api/notificacoes', require('./routes/notificacoesRoutes'));
+
 module.exports = app;
