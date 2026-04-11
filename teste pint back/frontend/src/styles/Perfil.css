@@ -1,0 +1,361 @@
+.perfil-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+.perfil-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .perfil-layout { grid-template-columns: 1fr; }
+}
+
+/* ===== Logo navbar ===== */
+.logo-soft  { color: #1d4ed8; font-weight: 800; font-size: 20px; }
+.logo-badges { color: #0ea5e9; font-weight: 700; font-size: 20px; }
+
+/* ===== Sidebar ===== */
+.perfil-sidebar {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  border: 1px solid #f0f0f0;
+}
+
+/* Foto */
+.perfil-foto-wrap {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin-bottom: 4px;
+}
+
+.perfil-foto {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #e8eef8;
+}
+
+.perfil-foto-iniciais {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: #fff;
+  font-size: 36px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.perfil-foto-edit {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 30px;
+  height: 30px;
+  background: #1d4ed8;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.perfil-foto-edit:hover {
+  background: #1e40af;
+}
+
+.perfil-foto-edit svg {
+  width: 13px;
+  height: 13px;
+  color: #fff;
+}
+
+.perfil-nome {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a2e5a;
+  text-align: center;
+}
+
+.perfil-cargo {
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.perfil-area {
+  font-size: 13px;
+  color: #0ea5e9;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Contactos */
+.perfil-contactos {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 14px;
+  margin-top: 4px;
+}
+
+.perfil-contacto-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.perfil-contacto-item svg {
+  width: 16px;
+  height: 16px;
+  color: #0ea5e9;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.contacto-label {
+  font-size: 11px;
+  color: #9ca3af;
+  display: block;
+}
+
+.contacto-valor {
+  font-size: 13px;
+  color: #374151;
+  display: block;
+}
+
+/* Stats */
+.perfil-stats {
+  display: flex;
+  gap: 32px;
+  width: 100%;
+  justify-content: center;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 14px;
+  margin-top: 4px;
+}
+
+.perfil-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a2e5a;
+}
+
+.stat-num.green { color: #16a34a; }
+
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Sobre */
+.perfil-sobre {
+  width: 100%;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 14px;
+}
+
+.perfil-sobre h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a2e5a;
+  margin-bottom: 6px;
+}
+
+.perfil-sobre p {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* ===== Main ===== */
+.perfil-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.perfil-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  border: 1px solid #f0f0f0;
+}
+
+.perfil-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a2e5a;
+  margin-bottom: 16px;
+}
+
+.perfil-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.perfil-card-header h3 { margin-bottom: 0; }
+
+.ver-todos-btn {
+  font-size: 13px;
+  color: #0ea5e9;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.ver-todos-btn:hover { text-decoration: underline; }
+
+/* Badges destaque */
+.badges-destaque-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.badge-destaque-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-destaque-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #e0e9ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border: 3px solid #c7d7f8;
+}
+
+.badge-destaque-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a2e5a;
+  text-align: center;
+}
+
+.badge-destaque-nivel {
+  font-size: 11px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Dois cols */
+.perfil-dois-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .perfil-dois-cols { grid-template-columns: 1fr; }
+}
+
+/* Competências */
+.competencias-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.competencia-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.competencia-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.competencia-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a2e5a;
+}
+
+.competencia-badges {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Atividades */
+.atividades-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.atividade-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.atividade-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.atividade-dot.green { background: #16a34a; }
+
+.atividade-desc {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.atividade-data {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.estado-ativa  { color: #16a34a; font-weight: 600; }
+.estado-inativa { color: #dc2626; font-weight: 600; }
+.estado-suspensa { color: #d97706; font-weight: 600; }
