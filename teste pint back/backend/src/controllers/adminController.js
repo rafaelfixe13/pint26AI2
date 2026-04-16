@@ -1,6 +1,10 @@
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const { sequelize } = require('../config/database');
 const Utilizador = require('../models/Utilizador');
 const UtilizadorRole = require('../models/UtilizadorRole');
+
+const ROLE_CONSULTOR = 1;
 
 const listarUtilizadores = async (req, res) => {
   try {
@@ -108,4 +112,42 @@ const atualizarEstadoConta = async (req, res) => {
   }
 };
 
-module.exports = { listarUtilizadores, listarTodasRoles, adicionarRole, removerRole, atualizarEstadoConta };
+const criarUtilizador = async (req, res) => {
+  const { nome, email, idrole } = req.body;
+
+  if (!nome || !email) {
+    return res.status(400).json({ message: 'Nome e email são obrigatórios.' });
+  }
+
+  try {
+    const existente = await Utilizador.findOne({ where: { email } });
+    if (existente) {
+      return res.status(409).json({ message: 'Já existe uma conta com este email.' });
+    }
+
+    // Password temporária aleatória — o utilizador nunca a usa, define a sua no primeiro login
+    const tempPassword = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+    const roleId = idrole || ROLE_CONSULTOR;
+
+    const novoUtilizador = await Utilizador.create({
+      nome,
+      email,
+      passwordhash: tempPassword,
+      idrole: roleId,
+      emailconfirmado: false,
+      primeirologin: true,
+    });
+
+    await UtilizadorRole.create({
+      idutilizador: novoUtilizador.idutilizador,
+      idrole: roleId,
+    });
+
+    return res.status(201).json({ message: 'Conta criada com sucesso. O utilizador receberá o código de ativação no primeiro login.' });
+  } catch (error) {
+    console.error('Erro ao criar utilizador:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+module.exports = { listarUtilizadores, listarTodasRoles, adicionarRole, removerRole, atualizarEstadoConta, criarUtilizador };

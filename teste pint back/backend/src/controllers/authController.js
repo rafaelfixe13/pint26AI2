@@ -1,9 +1,7 @@
 const bcrypt = require('bcryptjs');
 const Utilizador = require('../models/Utilizador');
 const UtilizadorRole = require('../models/UtilizadorRole');
-const { enviarEmailConfirmacao } = require('../config/email');
-
-const ROLE_CONSULTOR = 1;
+const { enviarEmailPrimeiroLogin } = require('../config/email');
 
 const gerarCodigo = () => String(Math.floor(100000 + Math.random() * 900000));
 
@@ -13,10 +11,10 @@ const getRolesDoUtilizador = async (idutilizador) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email e password são obrigatórios.' });
+  if (!email) {
+    return res.status(400).json({ message: 'Email é obrigatório.' });
   }
 
   try {
@@ -26,6 +24,23 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
     }
 
+    if (utilizador.estadoconta !== 'ATIVA') {
+      return res.status(403).json({ message: 'Conta inativa ou suspensa.' });
+    }
+
+    // Primeiro login: enviar código de ativação e aguardar confirmação
+    if (utilizador.primeirologin && !utilizador.emailconfirmado) {
+      const codigo = gerarCodigo();
+      await utilizador.update({ tokenconfirmacao: codigo });
+      await enviarEmailPrimeiroLogin(utilizador.email, utilizador.nome, codigo);
+      return res.status(200).json({
+        primeiroLogin: true,
+        message: 'Código de ativação enviado para o seu email.',
+        email: utilizador.email,
+      });
+    }
+
+    // Login normal: verificar email confirmado e password
     if (!utilizador.emailconfirmado) {
       return res.status(403).json({
         message: 'Confirme o seu email antes de entrar.',
@@ -34,8 +49,9 @@ const login = async (req, res) => {
       });
     }
 
-    if (utilizador.estadoconta !== 'ATIVA') {
-      return res.status(403).json({ message: 'Conta inativa ou suspensa.' });
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ message: 'Password é obrigatória.' });
     }
 
     const passwordCorreta = await bcrypt.compare(password, utilizador.passwordhash);
@@ -43,14 +59,8 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
     }
 
-    // Guarda os valores ANTES de atualizar — para enviar ao frontend
-    const eraPrimeiroLogin = utilizador.primeirologin;
     const ultimoLoginAnterior = utilizador.ultimadatalogin;
-
-    await utilizador.update({
-      ultimadatalogin: new Date(),
-      primeirologin: false,
-    });
+    await utilizador.update({ ultimadatalogin: new Date() });
 
     const roles = await getRolesDoUtilizador(utilizador.idutilizador);
 
@@ -69,55 +79,11 @@ const login = async (req, res) => {
         idserviceline: utilizador.idserviceline,
         idarea: utilizador.idarea,
         ultimadatalogin: ultimoLoginAnterior,
-        primeirologin: eraPrimeiroLogin,
+        primeirologin: false,
       },
     });
   } catch (error) {
     console.error('Erro no login:', error);
-    return res.status(500).json({ message: 'Erro interno do servidor.' });
-  }
-};
-
-const register = async (req, res) => {
-  const { nome, email, password } = req.body;
-
-  if (!nome || !email || !password) {
-    return res.status(400).json({ message: 'Nome, email e password são obrigatórios.' });
-  }
-
-  if (password.length < 6) {
-    return res.status(400).json({ message: 'A password deve ter pelo menos 6 caracteres.' });
-  }
-
-  try {
-    const existente = await Utilizador.findOne({ where: { email } });
-    if (existente) {
-      return res.status(409).json({ message: 'Já existe uma conta com este email.' });
-    }
-
-    const passwordhash = await bcrypt.hash(password, 10);
-    const codigo = gerarCodigo();
-
-    const novoUtilizador = await Utilizador.create({
-      nome,
-      email,
-      passwordhash,
-      idrole: ROLE_CONSULTOR,
-      tokenconfirmacao: codigo,
-    });
-
-    await UtilizadorRole.create({
-      idutilizador: novoUtilizador.idutilizador,
-      idrole: ROLE_CONSULTOR,
-    });
-
-    await enviarEmailConfirmacao(email, nome, codigo);
-
-    return res.status(201).json({
-      message: 'Conta criada. Verifique o seu email para obter o código de confirmação.',
-    });
-  } catch (error) {
-    console.error('Erro no registo:', error);
     return res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 };
@@ -146,13 +112,51 @@ const confirmarEmail = async (req, res) => {
 
     await utilizador.update({ emailconfirmado: true, tokenconfirmacao: null });
 
-    return res.json({ message: 'Email confirmado com sucesso. Pode fazer login.' });
+    return res.json({ message: 'Código confirmado. Pode agora definir a sua palavra-passe.' });
   } catch (error) {
     console.error('Erro ao confirmar email:', error);
     return res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 };
 
+// Usado apenas no primeiro login, após confirmação do código
+const definirPassword = async (req, res) => {
+  const { email, novaPassword } = req.body;
+
+  if (!email || !novaPassword) {
+    return res.status(400).json({ message: 'Email e nova password são obrigatórios.' });
+  }
+
+  if (novaPassword.length < 6) {
+    return res.status(400).json({ message: 'A password deve ter pelo menos 6 caracteres.' });
+  }
+
+  try {
+    const utilizador = await Utilizador.findOne({ where: { email } });
+
+    if (!utilizador) {
+      return res.status(404).json({ message: 'Utilizador não encontrado.' });
+    }
+
+    if (!utilizador.emailconfirmado) {
+      return res.status(403).json({ message: 'Email ainda não confirmado.' });
+    }
+
+    if (!utilizador.primeirologin) {
+      return res.status(400).json({ message: 'Esta conta já tem palavra-passe definida.' });
+    }
+
+    const novaHash = await bcrypt.hash(novaPassword, 10);
+    await utilizador.update({ passwordhash: novaHash, primeirologin: false });
+
+    return res.json({ message: 'Palavra-passe definida com sucesso. Pode agora fazer login.' });
+  } catch (error) {
+    console.error('Erro ao definir password:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+// Alteração de password para utilizadores já com conta ativa
 const alterarPassword = async (req, res) => {
   const { id, passwordAtual, novaPassword } = req.body;
 
@@ -177,7 +181,7 @@ const alterarPassword = async (req, res) => {
     }
 
     const novaHash = await bcrypt.hash(novaPassword, 10);
-    await utilizador.update({ passwordhash: novaHash, primeirologin: false });
+    await utilizador.update({ passwordhash: novaHash });
 
     return res.json({ message: 'Password alterada com sucesso.' });
   } catch (error) {
@@ -186,46 +190,4 @@ const alterarPassword = async (req, res) => {
   }
 };
 
-const adicionarRole = async (req, res) => {
-  const { idutilizador, idrole } = req.body;
-
-  if (!idutilizador || !idrole) {
-    return res.status(400).json({ message: 'idutilizador e idrole são obrigatórios.' });
-  }
-
-  try {
-    const existente = await UtilizadorRole.findOne({ where: { idutilizador, idrole } });
-    if (existente) {
-      return res.status(409).json({ message: 'O utilizador já tem essa role.' });
-    }
-
-    await UtilizadorRole.create({ idutilizador, idrole });
-
-    return res.status(201).json({ message: 'Role adicionada com sucesso.' });
-  } catch (error) {
-    console.error('Erro ao adicionar role:', error);
-    return res.status(500).json({ message: 'Erro interno do servidor.' });
-  }
-};
-
-const removerRole = async (req, res) => {
-  const { idutilizador, idrole } = req.body;
-
-  if (!idutilizador || !idrole) {
-    return res.status(400).json({ message: 'idutilizador e idrole são obrigatórios.' });
-  }
-
-  try {
-    const deleted = await UtilizadorRole.destroy({ where: { idutilizador, idrole } });
-    if (!deleted) {
-      return res.status(404).json({ message: 'Relação não encontrada.' });
-    }
-
-    return res.json({ message: 'Role removida com sucesso.' });
-  } catch (error) {
-    console.error('Erro ao remover role:', error);
-    return res.status(500).json({ message: 'Erro interno do servidor.' });
-  }
-};
-
-module.exports = { login, register, confirmarEmail, alterarPassword, adicionarRole, removerRole };
+module.exports = { login, confirmarEmail, definirPassword, alterarPassword };
