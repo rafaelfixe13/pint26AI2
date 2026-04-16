@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import ConfirmarEmail from "./pages/ConfirmarEmail";
+import DefinirPassword from "./pages/DefinirPassword";
 import AlterarPassword from "./pages/AlterarPassword";
 import SelecionarPerfil from "./pages/SelecionarPerfil";
 import BadgesList from "./pages/BadgesList";
@@ -33,8 +33,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/confirmar-email" element={<ConfirmarEmail />} />
+        <Route path="/definir-password" element={<DefinirPassword />} />
 
         <Route
           path="/alterar-password"
@@ -44,6 +44,7 @@ function App() {
             </RotaProtegida>
           }
         />
+
 
         <Route
           path="/perfil"
