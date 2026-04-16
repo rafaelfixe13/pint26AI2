@@ -7,6 +7,7 @@ function ConfirmarEmail() {
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email || "";
+  const primeiroLogin = location.state?.primeiroLogin || false;
 
   const [digitos, setDigitos] = useState(["", "", "", "", "", ""]);
   const [erro, setErro] = useState("");
@@ -65,7 +66,11 @@ function ConfirmarEmail() {
         return;
       }
 
-      navigate("/login", { state: { sucesso: "Email confirmado! Pode fazer login." } });
+      if (primeiroLogin) {
+        navigate("/definir-password", { state: { email } });
+      } else {
+        navigate("/login", { state: { sucesso: "Email confirmado! Pode fazer login." } });
+      }
     } catch {
       setErro("Não foi possível ligar ao servidor.");
     } finally {

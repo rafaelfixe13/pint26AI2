@@ -40,12 +40,14 @@ function Login() {
         return;
       }
 
-      localStorage.setItem("utilizador", JSON.stringify(data.utilizador));
-      if (data.utilizador.primeirologin) {
-        navigate("/alterar-password");
-      } else {
-        navigate("/perfil");
+      // Primeiro login: redirecionar para confirmar o código enviado por email
+      if (data.primeiroLogin) {
+        navigate("/confirmar-email", { state: { email: data.email, primeiroLogin: true } });
+        return;
       }
+
+      localStorage.setItem("utilizador", JSON.stringify(data.utilizador));
+      navigate("/perfil");
     } catch {
       setErro("Não foi possível ligar ao servidor.");
     } finally {
@@ -83,9 +85,9 @@ function Login() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               autoComplete="current-password"
             />
+            <span className="auth-hint">Se é o seu primeiro acesso, deixe este campo em branco.</span>
           </div>
 
           {erro && <p className="auth-erro">{erro}</p>}
@@ -107,13 +109,6 @@ function Login() {
             {loading ? "A entrar..." : "Entrar"}
           </button>
         </form>
-
-        <p className="auth-link-texto">
-          Não tem conta?{" "}
-          <Link to="/register" className="auth-link">
-            Criar conta
-          </Link>
-        </p>
       </div>
     </div>
   );
