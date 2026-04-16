@@ -17,7 +17,7 @@
 .gb-titulo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #239292;
+  color: #1d4ed8;
   margin: 0;
 }
 
@@ -58,7 +58,7 @@
 .gb-sl-nome {
   font-size: 1rem;
   font-weight: 700;
-  color: #239292;
+  color: #1d4ed8;
   flex: 1;
   cursor: pointer;
   user-select: none;
@@ -109,7 +109,7 @@
 /* ── Nível card ─────────────────────────────────────────────── */
 .gb-nivel-card {
   background: white;
-  border: 1.5px solid #e0f2f1;
+  border: 1.5px solid #dbeafe;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -191,13 +191,13 @@
 }
 
 .gb-inline-add input:focus {
-  border-color: #239292;
+  border-color: #1d4ed8;
   background: white;
 }
 
 .gb-btn-add-inline {
   padding: 0.5rem 1rem;
-  background-color: #239292;
+  background-color: #1d4ed8;
   color: white;
   border: none;
   border-radius: 8px;
@@ -207,7 +207,7 @@
   white-space: nowrap;
   transition: background-color 0.2s;
 }
-.gb-btn-add-inline:hover:not(:disabled) { background-color: #1a7070; }
+.gb-btn-add-inline:hover:not(:disabled) { background-color: #1e40af; }
 .gb-btn-add-inline:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* ── Badge info ─────────────────────────────────────────────── */
@@ -228,7 +228,7 @@
 .gb-badge-desc { font-size: 0.8rem; color: #6b7280; }
 .gb-badge-pontos {
   font-size: 0.78rem; font-weight: 700;
-  background-color: #e0f2f1; color: #239292;
+  background-color: #dbeafe; color: #1d4ed8;
   padding: 0.15rem 0.5rem; border-radius: 12px;
 }
 .gb-badge-publico { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 12px; }
@@ -257,7 +257,7 @@
 /* ── Botões de badge ─────────────────────────────────────────── */
 .gb-btn-novo {
   padding: 0.55rem 1.25rem;
-  background-color: #239292;
+  background-color: #1d4ed8;
   color: white;
   border: none;
   border-radius: 8px;
@@ -266,7 +266,7 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
-.gb-btn-novo:hover { background-color: #1a7070; }
+.gb-btn-novo:hover { background-color: #1e40af; }
 
 .gb-btn-badge {
   padding: 0.3rem 0.7rem;
@@ -277,8 +277,8 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
-.gb-btn-badge--criar { background-color: #239292; color: white; }
-.gb-btn-badge--criar:hover { background-color: #1a7070; }
+.gb-btn-badge--criar { background-color: #1d4ed8; color: white; }
+.gb-btn-badge--criar:hover { background-color: #1e40af; }
 .gb-btn-badge--editar { background-color: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
 .gb-btn-badge--editar:hover { background-color: #dbeafe; }
 
@@ -304,7 +304,7 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.gb-btn-toggle:hover { border-color: #239292; color: #239292; }
+.gb-btn-toggle:hover { border-color: #1d4ed8; color: #1d4ed8; }
 
 /* ── Modal ──────────────────────────────────────────────────── */
 .gb-modal-overlay {
@@ -392,12 +392,12 @@
   box-sizing: border-box;
 }
 .gb-form-grupo input:focus,
-.gb-form-grupo select:focus { border-color: #239292; }
+.gb-form-grupo select:focus { border-color: #1d4ed8; }
 .gb-form-grupo select:disabled { background-color: #f3f4f6; color: #6b7280; }
 
 .gb-btn-confirmar {
   padding: 0.5rem 1.2rem;
-  background-color: #239292;
+  background-color: #1d4ed8;
   color: white;
   border: none;
   border-radius: 8px;
@@ -406,7 +406,7 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
-.gb-btn-confirmar:hover:not(:disabled) { background-color: #1a7070; }
+.gb-btn-confirmar:hover:not(:disabled) { background-color: #1e40af; }
 .gb-btn-confirmar:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .gb-btn-cancelar {
@@ -424,7 +424,7 @@
 /* ── Formulário inline de badge ─────────────────────────────── */
 .gb-badge-form {
   padding: 1rem 1.25rem 1.25rem;
-  border-top: 2px solid #e0f2f1;
+  border-top: 2px solid #dbeafe;
   background-color: #f8fafc;
   display: flex;
   flex-direction: column;
@@ -453,16 +453,16 @@
   display: inline-block;
   padding: 0.35rem 0.85rem;
   background: none;
-  border: 1.5px dashed #239292;
+  border: 1.5px dashed #1d4ed8;
   border-radius: 7px;
-  color: #239292;
+  color: #1d4ed8;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
   margin-bottom: 0.5rem;
 }
-.gb-btn-add-nivel:hover { background-color: #f0fdfa; }
+.gb-btn-add-nivel:hover { background-color: #eff6ff; }
 
 
 /* ── Secções (LP / SL) ──────────────────────────────────────── */
@@ -489,7 +489,7 @@
 .gb-secao-titulo {
   font-size: 1rem;
   font-weight: 700;
-  color: #239292;
+  color: #1d4ed8;
   margin: 0;
   flex: 1;
 }
@@ -497,8 +497,8 @@
 .gb-secao-count {
   font-size: 0.78rem;
   font-weight: 700;
-  background-color: #e0f2f1;
-  color: #239292;
+  background-color: #dbeafe;
+  color: #1d4ed8;
   padding: 0.1rem 0.5rem;
   border-radius: 10px;
 }

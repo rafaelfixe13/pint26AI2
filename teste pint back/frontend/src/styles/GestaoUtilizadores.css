@@ -53,7 +53,7 @@
 }
 
 .gu-tabela thead tr {
-  background-color: #239292;
+  background-color: #1d4ed8;
   color: white;
 }
 
@@ -106,8 +106,8 @@
 }
 
 .gu-role-tag {
-  background-color: #e0f2f1;
-  color: #239292;
+  background-color: #dbeafe;
+  color: #1d4ed8;
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.2rem 0.5rem;
@@ -122,7 +122,7 @@
 
 .gu-btn-editar {
   padding: 0.4rem 0.9rem;
-  background-color: #239292;
+  background-color: #1d4ed8;
   color: white;
   border: none;
   border-radius: 6px;
@@ -132,7 +132,7 @@
   transition: background-color 0.2s;
 }
 
-.gu-btn-editar:hover { background-color: #1a7070; }
+.gu-btn-editar:hover { background-color: #1e40af; }
 
 /* Linha de edição expandida */
 .gu-row-editor td {
@@ -142,7 +142,7 @@
 
 .gu-editor {
   padding: 1.25rem 1.5rem;
-  border-top: 2px solid #e0f2f1;
+  border-top: 2px solid #dbeafe;
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
@@ -177,13 +177,13 @@
 }
 
 .gu-role-toggle:hover {
-  border-color: #239292;
-  color: #239292;
+  border-color: #1d4ed8;
+  color: #1d4ed8;
 }
 
 .gu-role-toggle--ativa {
-  background-color: #239292;
-  border-color: #239292;
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
   color: white;
 }
 
@@ -225,4 +225,173 @@
   min-height: 100vh;
   font-size: 1rem;
   color: #6b7280;
+}
+
+/* Botão criar utilizador */
+.gu-btn-criar {
+  padding: 0.55rem 1.2rem;
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.gu-btn-criar:hover {
+  background-color: #1e40af;
+}
+
+/* Modal overlay */
+.gu-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.gu-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.gu-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.gu-modal-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.gu-modal-fechar {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #6b7280;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: background-color 0.15s;
+}
+
+.gu-modal-fechar:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.gu-modal-desc {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.gu-modal-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.gu-modal-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.35rem;
+}
+
+.gu-modal-field input,
+.gu-modal-field select {
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: #fff;
+}
+
+.gu-modal-field input:focus,
+.gu-modal-field select:focus {
+  border-color: #1d4ed8;
+}
+
+.gu-modal-erro {
+  font-size: 0.82rem;
+  color: #dc2626;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.45rem 0.7rem;
+  margin-bottom: 0.75rem;
+}
+
+.gu-modal-sucesso {
+  font-size: 0.82rem;
+  color: #16a34a;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 0.45rem 0.7rem;
+  margin-bottom: 0.75rem;
+}
+
+.gu-modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.gu-modal-btn-cancelar {
+  padding: 0.55rem 1.1rem;
+  background: none;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.gu-modal-btn-cancelar:hover {
+  background-color: #f3f4f6;
+}
+
+.gu-modal-btn-criar {
+  padding: 0.55rem 1.3rem;
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.gu-modal-btn-criar:hover:not(:disabled) {
+  background-color: #1e40af;
+}
+
+.gu-modal-btn-criar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
