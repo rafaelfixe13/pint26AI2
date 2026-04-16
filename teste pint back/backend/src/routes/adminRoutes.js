@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  listarUtilizadores, listarTodasRoles, adicionarRole, removerRole, atualizarEstadoConta,
+  listarUtilizadores, listarTodasRoles, adicionarRole, removerRole, atualizarEstadoConta, criarUtilizador,
 } = require('../controllers/adminController');
 
 const {
@@ -18,6 +18,7 @@ const {
 } = require('../controllers/estruturaController');
 
 // Utilizadores
+router.post('/utilizadores', criarUtilizador);
 router.get('/utilizadores', listarUtilizadores);
 router.get('/roles', listarTodasRoles);
 router.post('/utilizadores/roles/adicionar', adicionarRole);
