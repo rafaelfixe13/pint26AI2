@@ -38,10 +38,20 @@ function Perfil() {
     });
   };
 
+  // ✅ Navegação corrigida
+  const navegarParaHome = () => {
+    const perfilAtivo = localStorage.getItem("perfilAtivo");
+    if (perfilAtivo === "1") navigate("/consultor");
+    else if (perfilAtivo === "2") navigate("/talent");
+    else if (perfilAtivo === "4") navigate("/admin/utilizadores");
+    else navigate("/perfil");
+  };
+
   const handleTabChange = (label) => {
     setActiveTab(label);
-    if (label === "Início") navigate("/");
-    if (label === "Catálogo de Badges") navigate("/");
+    if (label === "Início" || label === "Catálogo de Badges") {
+      navegarParaHome();
+    }
   };
 
   const fotoAtual = fotoPreview || utilizador?.fotourl;
@@ -113,38 +123,27 @@ function Perfil() {
             <h2 className="perfil-nome">{utilizador?.nome ?? "—"}</h2>
 
             <div className="perfil-contactos">
-              {/* Email */}
               <div className="perfil-contacto-item">
                 <MdOutlineEmail size={20} className="contacto-icon" />
                 <div>
                   <span className="contacto-label">Email</span>
-                  <span className="contacto-valor">
-                    {utilizador?.email ?? "—"}
-                  </span>
+                  <span className="contacto-valor">{utilizador?.email ?? "—"}</span>
                 </div>
               </div>
 
-              {/* Membro desde */}
               <div className="perfil-contacto-item">
                 <BsCalendarCheck size={18} className="contacto-icon" />
                 <div>
                   <span className="contacto-label">Membro desde</span>
-                  <span className="contacto-valor">
-                    {formatarData(utilizador?.datacriacao)}
-                  </span>
+                  <span className="contacto-valor">{formatarData(utilizador?.datacriacao)}</span>
                 </div>
               </div>
 
-              {/* Estado da conta */}
               <div className="perfil-contacto-item">
                 <MdOutlineVerified size={20} className="contacto-icon" />
                 <div>
                   <span className="contacto-label">Estado da conta</span>
-                  <span
-                    className={`contacto-valor estado-${(
-                      utilizador?.estadoconta ?? ""
-                    ).toLowerCase()}`}
-                  >
+                  <span className={`contacto-valor estado-${(utilizador?.estadoconta ?? "").toLowerCase()}`}>
                     {utilizador?.estadoconta ?? "—"}
                   </span>
                 </div>

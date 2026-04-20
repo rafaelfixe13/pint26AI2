@@ -19,41 +19,41 @@ function BadgeDetalhe() {
   const [activeTab, setActiveTab] = useState("Catálogo de Badges");
 
   const navItems = [
-    { label: "Início", icon: <GoHome size={16} /> },
+    { label: "Início",             icon: <GoHome size={16} /> },
     { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Os meus badges", icon: <BsAward size={16} /> },
-    { label: "Candidaturas", icon: <MdOutlineAssignment size={16} /> },
+    { label: "Os meus badges",     icon: <BsAward size={16} /> },
+    { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
   ];
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/badges/${id}`)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Badge não encontrado.");
-        }
+        if (!res.ok) throw new Error("Badge não encontrado.");
         return res.json();
       })
-      .then((data) => {
-        setBadge(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Erro ao carregar os detalhes do badge.");
-        setLoading(false);
-      });
+      .then((data) => { setBadge(data); setLoading(false); })
+      .catch((err) => { console.error(err); setError("Erro ao carregar os detalhes do badge."); setLoading(false); });
   }, [id]);
+
+  const voltarParaCatalogo = () => {
+    const perfilAtivo = localStorage.getItem("perfilAtivo");
+    if (perfilAtivo === "1") navigate("/consultor");
+    else if (perfilAtivo === "2") navigate("/talent");
+    else if (perfilAtivo === "4") navigate("/admin/utilizadores");
+    else navigate("/perfil");
+  };
 
   const handleTabChange = (label) => {
     setActiveTab(label);
-    if (label === "Início") navigate("/");
-    if (label === "Catálogo de Badges") navigate("/");
+    if (label === "Início" || label === "Catálogo de Badges") {
+      voltarParaCatalogo();
+    }
   };
 
   const getPointsColor = (pontos) => {
     if (pontos >= 100) return "#7c3aed";
-    if (pontos >= 75) return "#0369a1";
-    if (pontos >= 50) return "#059669";
+    if (pontos >= 75)  return "#0369a1";
+    if (pontos >= 50)  return "#059669";
     return "#d97706";
   };
 
@@ -66,7 +66,7 @@ function BadgeDetalhe() {
       />
 
       <div className="badge-detail-page">
-        <button className="back-link" onClick={() => navigate("/")}>
+        <button className="back-link" onClick={voltarParaCatalogo}>
           <IoArrowBackOutline size={16} />
           Voltar ao Catálogo
         </button>
@@ -98,7 +98,6 @@ function BadgeDetalhe() {
                     }}
                   />
                 ) : null}
-
                 <div
                   className="badge-detail-fallback"
                   style={{ display: badge.imagemurl ? "none" : "flex" }}
@@ -114,24 +113,13 @@ function BadgeDetalhe() {
 
               <div className="badge-detail-info-grid">
                 <div className="badge-detail-info-column">
-                  {badge.learningpath && (
-                    <p><span>Learning Path:</span> {badge.learningpath}</p>
-                  )}
-                  {badge.area && (
-                    <p><span>Área:</span> {badge.area}</p>
-                  )}
-                  {badge.estado && (
-                    <p><span>Estado:</span> {badge.estado}</p>
-                  )}
+                  {badge.learningpath && <p><span>Learning Path:</span> {badge.learningpath}</p>}
+                  {badge.area         && <p><span>Área:</span> {badge.area}</p>}
+                  {badge.estado       && <p><span>Estado:</span> {badge.estado}</p>}
                 </div>
-
                 <div className="badge-detail-info-column">
-                  {badge.serviceline && (
-                    <p><span>Service Line:</span> {badge.serviceline}</p>
-                  )}
-                  {badge.nivel && (
-                    <p><span>Nível:</span> {badge.nivel}</p>
-                  )}
+                  {badge.serviceline && <p><span>Service Line:</span> {badge.serviceline}</p>}
+                  {badge.nivel       && <p><span>Nível:</span> {badge.nivel}</p>}
                 </div>
               </div>
             </div>

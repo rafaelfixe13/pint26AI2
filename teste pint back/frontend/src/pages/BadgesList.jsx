@@ -3,19 +3,22 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./NavBar";
 import "../styles/BadgesList.css";
 import { API_BASE } from "../api";
-import { BsSearch, BsStarFill } from "react-icons/bs";
+import { BsSearch, BsStarFill, BsAward } from "react-icons/bs";
 import { FaMedal } from "react-icons/fa";
-import { MdFilterList } from "react-icons/md";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { MdFilterList, MdOutlineAssignment } from "react-icons/md";
+import { AiOutlineLoading3Quarters, AiOutlineAppstore } from "react-icons/ai";
 import { HiOutlineEmojiSad } from "react-icons/hi";
 import { IoEyeOutline } from "react-icons/io5";
-import { AiOutlineAppstore } from "react-icons/ai";
-import { BsAward, BsBell } from "react-icons/bs";
 import { GoHome } from "react-icons/go";
-import { MdOutlineAssignment } from "react-icons/md";
 
+const NAV_ITEMS_CONSULTOR = [
+  { label: "Início",             icon: <GoHome size={16} /> },
+  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
+  { label: "Os meus badges",     icon: <BsAward size={16} /> },
+  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+];
 
-function BadgesList() {
+function BadgesList({ navItems = NAV_ITEMS_CONSULTOR }) {
   const navigate = useNavigate();
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,13 +32,6 @@ function BadgesList() {
     estado: "",
   });
 
-  const navItems = [
-    { label: "Início", icon: <GoHome size={16} /> },
-    { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Os meus badges", icon: <BsAward size={16} /> },
-    { label: "Candidaturas", icon: <MdOutlineAssignment size={16} /> },
-  ];
-
   useEffect(() => {
     fetch(`${API_BASE}/badges`)
       .then((res) => res.json())
@@ -45,7 +41,13 @@ function BadgesList() {
 
   const handleTabChange = (label) => {
     setActiveTab(label);
-    if (label === "Início") navigate("/");
+    if (label === "Início") {
+      const perfilAtivo = localStorage.getItem("perfilAtivo");
+      if (perfilAtivo === "1") navigate("/consultor");
+      else if (perfilAtivo === "2") navigate("/talent");
+      else if (perfilAtivo === "4") navigate("/admin/utilizadores");
+      else navigate("/perfil");
+    }
   };
 
   const uniqueValues = (key) => [...new Set(badges.map((b) => b[key]).filter(Boolean))];
@@ -54,17 +56,17 @@ function BadgesList() {
     const matchSearch =
       b.nome?.toLowerCase().includes(search.toLowerCase()) ||
       b.descricao?.toLowerCase().includes(search.toLowerCase());
-    const matchSL = !filters.serviceline || b.serviceline === filters.serviceline;
-    const matchArea = !filters.area || b.area === filters.area;
-    const matchNivel = !filters.nivel || b.nivel === filters.nivel;
-    const matchEstado = !filters.estado || b.estado === filters.estado;
+    const matchSL     = !filters.serviceline || b.serviceline === filters.serviceline;
+    const matchArea   = !filters.area        || b.area        === filters.area;
+    const matchNivel  = !filters.nivel       || b.nivel       === filters.nivel;
+    const matchEstado = !filters.estado      || b.estado      === filters.estado;
     return matchSearch && matchSL && matchArea && matchNivel && matchEstado;
   });
 
   const getPointsColor = (pontos) => {
     if (pontos >= 100) return "#7c3aed";
-    if (pontos >= 75) return "#0369a1";
-    if (pontos >= 50) return "#059669";
+    if (pontos >= 75)  return "#0369a1";
+    if (pontos >= 50)  return "#059669";
     return "#d97706";
   };
 
@@ -160,8 +162,8 @@ function BadgesList() {
                 <p className="badge-desc">{badge.descricao}</p>
                 <div className="badge-info">
                   {badge.serviceline && <p><span className="info-label">Service Line:</span> {badge.serviceline}</p>}
-                  {badge.area && <p><span className="info-label">Área:</span> {badge.area}</p>}
-                  {badge.nivel && <p><span className="info-label">Nível:</span> {badge.nivel}</p>}
+                  {badge.area        && <p><span className="info-label">Área:</span> {badge.area}</p>}
+                  {badge.nivel       && <p><span className="info-label">Nível:</span> {badge.nivel}</p>}
                   {badge.estado
                     ? <p><span className="info-label">Estado:</span> {badge.estado}</p>
                     : badge.expiremeses

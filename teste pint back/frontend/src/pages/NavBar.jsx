@@ -41,13 +41,11 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
   const getSaudacao = () => {
     if (utilizador?.primeirologin) return "Bem-vindo!";
-
     if (utilizador?.ultimadatalogin) {
       const ultima = new Date(utilizador.ultimadatalogin);
       const diffDias = (new Date() - ultima) / (1000 * 60 * 60 * 24);
       if (diffDias >= 15) return "Seja bem-vindo novamente";
     }
-
     const h = new Date().getHours();
     if (h < 12) return "Bom dia,";
     if (h < 19) return "Boa tarde,";
@@ -55,6 +53,15 @@ function Navbar({ activeTab, onTabChange, navItems }) {
   };
 
   const fotoAtual = utilizador?.fotourl;
+
+  // ✅ Função central de navegação para home
+  const navegarParaHome = () => {
+    const perfilAtivo = localStorage.getItem("perfilAtivo");
+    if (perfilAtivo === "1") navigate("/consultor");
+    else if (perfilAtivo === "2") navigate("/talent");
+    else if (perfilAtivo === "4") navigate("/admin/utilizadores");
+    else navigate("/perfil");
+  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -145,7 +152,6 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
   return (
     <>
-      {/* Modal de confirmação de logout */}
       {confirmarLogout && (
         <div className="logout-overlay">
           <div className="logout-modal">
@@ -154,15 +160,8 @@ function Navbar({ activeTab, onTabChange, navItems }) {
             </div>
             <p className="logout-modal-texto">Pretende terminar sessão?</p>
             <div className="logout-modal-botoes">
-              <button className="logout-btn-sim" onClick={handleLogout}>
-                Sim
-              </button>
-              <button
-                className="logout-btn-voltar"
-                onClick={() => setConfirmarLogout(false)}
-              >
-                Voltar
-              </button>
+              <button className="logout-btn-sim" onClick={handleLogout}>Sim</button>
+              <button className="logout-btn-voltar" onClick={() => setConfirmarLogout(false)}>Voltar</button>
             </div>
             <p className="logout-modal-nota">Pode voltar a qualquer momento.</p>
           </div>
@@ -171,12 +170,9 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
       <header className="navbar-wrapper">
         <div className="navbar-top">
-          {/* Logo */}
-          <div
-            className="navbar-logo"
-            onClick={() => navigate("/")}
-            style={{ cursor: "pointer" }}
-          >
+
+          {/* ✅ Logo corrigido */}
+          <div className="navbar-logo" onClick={navegarParaHome} style={{ cursor: "pointer" }}>
             <span className="logo-soft">Softinsa</span>
             <span className="logo-badges"> Badges</span>
           </div>
@@ -189,6 +185,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
           {/* Actions */}
           <div className="navbar-actions">
+
             {/* Notificações */}
             <div className="notifications-wrapper" ref={notifRef}>
               <button className="notif-btn" onClick={toggleNotif}>
@@ -205,34 +202,22 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                   <div className="notifications-header">
                     <h3>Notificações</h3>
                   </div>
-
                   {loadingNotif ? (
-                    <div className="notifications-empty">
-                      A carregar notificações...
-                    </div>
+                    <div className="notifications-empty">A carregar notificações...</div>
                   ) : notificacoes.length === 0 ? (
-                    <div className="notifications-empty">
-                      Não tens notificações.
-                    </div>
+                    <div className="notifications-empty">Não tens notificações.</div>
                   ) : (
                     <div className="notifications-list">
                       {notificacoes.map((n) => (
                         <div
                           key={n.idnotificacao}
                           className="notification-item"
-                          onClick={() => {
-                            if (!n.lido) marcarComoLida(n.idnotificacao);
-                          }}
+                          onClick={() => { if (!n.lido) marcarComoLida(n.idnotificacao); }}
                         >
-                          <div className="notification-avatar">
-                            <span>🟦</span>
-                          </div>
-
+                          <div className="notification-avatar"><span>🟦</span></div>
                           <div className="notification-content">
                             <div className="notification-title">{n.titulo}</div>
-                            <div className="notification-message">
-                              {n.mensagem}
-                            </div>
+                            <div className="notification-message">{n.mensagem}</div>
                             <div className="notification-meta">
                               {!n.lido && <span className="badge-unread-dot" />}
                               <span>{n.lido ? "Lida" : "Não lida"}</span>
@@ -240,11 +225,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                               <span>{formatarDataCurta(n.dataenvio)}</span>
                             </div>
                           </div>
-
-                          <div
-                            className="notification-actions"
-                            onClick={(e) => e.stopPropagation()}
-                          >
+                          <div className="notification-actions" onClick={(e) => e.stopPropagation()}>
                             <button
                               className="notification-delete-btn"
                               onClick={() => eliminarNotificacao(n.idnotificacao)}
@@ -269,21 +250,13 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                 style={{ cursor: "pointer" }}
               >
                 {fotoAtual ? (
-                  <img
-                    src={fotoAtual}
-                    alt={utilizador.nome}
-                    className="profile-avatar profile-avatar-img"
-                  />
+                  <img src={fotoAtual} alt={utilizador.nome} className="profile-avatar profile-avatar-img" />
                 ) : (
-                  <div className="profile-avatar">
-                    {getInitials(utilizador?.nome)}
-                  </div>
+                  <div className="profile-avatar">{getInitials(utilizador?.nome)}</div>
                 )}
                 <div className="profile-info">
                   <span className="profile-label">{getSaudacao()}</span>
-                  <span className="profile-name">
-                    {utilizador?.nome ?? "Utilizador"} ▾
-                  </span>
+                  <span className="profile-name">{utilizador?.nome ?? "Utilizador"} ▾</span>
                 </div>
               </div>
 
@@ -292,11 +265,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                   <div className="dropdown-header">
                     <div className="dropdown-foto-wrap">
                       {fotoAtual ? (
-                        <img
-                          src={fotoAtual}
-                          alt={utilizador.nome}
-                          className="dropdown-foto"
-                        />
+                        <img src={fotoAtual} alt={utilizador.nome} className="dropdown-foto" />
                       ) : (
                         <div className="dropdown-foto dropdown-foto-iniciais">
                           {getInitials(utilizador?.nome)}
@@ -311,37 +280,22 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
                   <div className="dropdown-divider" />
 
-                  <button
-                    className="dropdown-item"
-                    onClick={() => {
-                      setMenuAberto(false);
-                      navigate("/meu-perfil");
-                    }}
-                  >
+                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/meu-perfil"); }}>
                     <FaUser size={15} />
                     O meu perfil
                   </button>
 
-                  <button
-                    className="dropdown-item"
-                    onClick={() => setMenuAberto(false)}
-                  >
+                  <button className="dropdown-item" onClick={() => setMenuAberto(false)}>
                     <IoSettingsOutline size={17} />
                     Configurações
                   </button>
 
-                  <button
-                    className="dropdown-item"
-                    onClick={() => setMenuAberto(false)}
-                  >
+                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/sobre"); }}>
                     <BsInfoCircle size={15} />
                     Sobre
                   </button>
 
-                  <button
-                    className="dropdown-item"
-                    onClick={() => setMenuAberto(false)}
-                  >
+                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/ajuda"); }}>
                     <BsQuestionCircle size={15} />
                     Ajuda
                   </button>
@@ -350,10 +304,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
                   <button
                     className="dropdown-item dropdown-item-sair"
-                    onClick={() => {
-                      setMenuAberto(false);
-                      setConfirmarLogout(true);
-                    }}
+                    onClick={() => { setMenuAberto(false); setConfirmarLogout(true); }}
                   >
                     <IoLogOutOutline size={17} />
                     Sair
