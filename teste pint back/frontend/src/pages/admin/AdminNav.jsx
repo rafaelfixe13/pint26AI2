@@ -320,21 +320,15 @@ function AdminNav() {
                     }}
                   >
                     <IoSettingsOutline size={17} />
-                    Trocar para Consultor
+                    Trocar de perfil
                   </button>
 
-                  <button
-                    className="dropdown-item"
-                    onClick={() => setMenuAberto(false)}
-                  >
+                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/sobre"); }}>
                     <BsInfoCircle size={15} />
                     Sobre
                   </button>
 
-                  <button
-                    className="dropdown-item"
-                    onClick={() => setMenuAberto(false)}
-                  >
+                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/ajuda"); }}>
                     <BsQuestionCircle size={15} />
                     Ajuda
                   </button>
