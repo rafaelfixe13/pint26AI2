@@ -125,7 +125,6 @@ const criarUtilizador = async (req, res) => {
       return res.status(409).json({ message: 'Já existe uma conta com este email.' });
     }
 
-    // Password temporária aleatória — o utilizador nunca a usa, define a sua no primeiro login
     const tempPassword = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
     const roleId = idrole || ROLE_CONSULTOR;
 
@@ -150,4 +149,35 @@ const criarUtilizador = async (req, res) => {
   }
 };
 
-module.exports = { listarUtilizadores, listarTodasRoles, adicionarRole, removerRole, atualizarEstadoConta, criarUtilizador };
+const listarConsultores = async (req, res) => {
+  try {
+    const consultores = await sequelize.query(`
+      SELECT
+        u.idutilizador,
+        u.nome,
+        u.fotourl,
+        sl.nome AS serviceline,
+        a.nome  AS area
+      FROM utilizadores u
+      LEFT JOIN servicelines sl ON u.idserviceline = sl.idserviceline
+      LEFT JOIN areas a         ON u.idarea = a.idarea
+      WHERE u.idrole = 1
+      ORDER BY u.nome
+    `, { type: sequelize.QueryTypes.SELECT });
+
+    return res.json(consultores);
+  } catch (error) {
+    console.error('Erro detalhado:', error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  listarUtilizadores,
+  listarTodasRoles,
+  adicionarRole,
+  removerRole,
+  atualizarEstadoConta,
+  criarUtilizador,
+  listarConsultores,
+};
