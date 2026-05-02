@@ -1,0 +1,273 @@
+.conquistas-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.conquistas-header {
+  margin-bottom: 2rem;
+}
+
+.conquistas-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.conquistas-header p {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.conquistas-section {
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.25rem;
+}
+
+/* Status */
+.conquistas-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 0.9s linear infinite; }
+
+/* ── Card vertical ── */
+.conquista-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  height: 100%;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.conquista-card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.09);
+  transform: translateY(-2px);
+}
+
+/* Área amarela do topo */
+.conquista-card-topo {
+  background: #fef9c3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.conquista-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.conquista-icon { color: #f59e0b; }
+
+/* Corpo do card */
+.conquista-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.conquista-titulo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.conquista-titulo-row h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.conquista-badge-ativa {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: #fde68a;
+  color: #92400e;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.conquista-descricao {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.55;
+  flex: 1;
+}
+
+.conquista-recompensa {
+  font-size: 0.82rem;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: auto;
+}
+
+.conquista-recompensa span {
+  color: #6b7280;
+  font-size: 0.78rem;
+}
+
+.conquista-recompensa strong {
+  color: #111827;
+  font-size: 0.9rem;
+}
+
+/* ── Ranking ── */
+.ranking-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.ranking-filters {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ranking-filters select {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #374151;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+}
+
+.ranking-filters select:focus { border-color: #6366f1; }
+
+.ranking-table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ranking-table thead tr {
+  background: #1e293b;
+  color: #fff;
+}
+
+.ranking-table thead th {
+  padding: 0.85rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+
+.ranking-table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s;
+}
+
+.ranking-table tbody tr:last-child { border-bottom: none; }
+.ranking-table tbody tr:hover { background: #f9fafb; }
+.ranking-table tbody tr.top-row { background: #fffbeb; }
+.ranking-table tbody tr.top-row:hover { background: #fef3c7; }
+
+.ranking-table td {
+  padding: 0.85rem 1.25rem;
+  color: #374151;
+}
+
+.posicao-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.consultor-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.consultor-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.consultor-avatar-iniciais {
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pontos-chip {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.pontos-chip.pontos-top {
+  background: #d1fae5;
+  color: #065f46;
+}
