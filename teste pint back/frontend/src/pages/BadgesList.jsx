@@ -18,7 +18,8 @@ const NAV_ITEMS_CONSULTOR = [
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
 ];
 
-function BadgesList({ navItems = NAV_ITEMS_CONSULTOR }) {
+// ✅ Adicionado onTabExtra nos parâmetros
+function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra }) {
   const navigate = useNavigate();
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,12 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR }) {
   }, []);
 
   const handleTabChange = (label) => {
+    // ✅ Se vier callback externo (TM), usa-o e sai
+    if (onTabExtra) {
+      onTabExtra(label);
+      return;
+    }
+
     setActiveTab(label);
     if (label === "Início") {
       const perfilAtivo = localStorage.getItem("perfilAtivo");

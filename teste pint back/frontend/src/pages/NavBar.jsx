@@ -54,7 +54,6 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
   const fotoAtual = utilizador?.fotourl;
 
-  // ✅ Função central de navegação para home
   const navegarParaHome = () => {
     const perfilAtivo = localStorage.getItem("perfilAtivo");
     if (perfilAtivo === "1") navigate("/consultor");
@@ -81,8 +80,6 @@ function Navbar({ activeTab, onTabChange, navItems }) {
     localStorage.removeItem("perfilAtivo");
     navigate("/login");
   };
-
-  // ---------- Notificações ----------
 
   const fetchNotificacoes = async () => {
     if (!utilizador?.idutilizador) return;
@@ -148,8 +145,6 @@ function Navbar({ activeTab, onTabChange, navItems }) {
 
   const unreadCount = notificacoes.filter((n) => !n.lido).length;
 
-  // ----------------------------------
-
   return (
     <>
       {confirmarLogout && (
@@ -168,23 +163,22 @@ function Navbar({ activeTab, onTabChange, navItems }) {
         </div>
       )}
 
-      <header className="navbar-wrapper">
-        <div className="navbar-top">
+      <header className="nb-wrapper">
+        <div className="nb-top">
 
-          {/* ✅ Logo corrigido */}
+          {/* Logo */}
           <div className="navbar-logo" onClick={navegarParaHome} style={{ cursor: "pointer" }}>
             <span className="logo-soft">Softinsa</span>
-            <span className="logo-badges"> Badges</span>
           </div>
 
           {/* Search */}
-          <div className="navbar-search">
+          <div className="nb-search">
             <BsSearch size={15} />
             <input type="text" placeholder="Pesquisar..." />
           </div>
 
           {/* Actions */}
-          <div className="navbar-actions">
+          <div className="nb-actions">
 
             {/* Notificações */}
             <div className="notifications-wrapper" ref={notifRef}>
@@ -243,67 +237,66 @@ function Navbar({ activeTab, onTabChange, navItems }) {
             </div>
 
             {/* Perfil + Dropdown */}
-            <div className="navbar-profile-wrap" ref={dropdownRef}>
+            <div className="nb-profile-wrap" ref={dropdownRef}>
               <div
-                className="navbar-profile"
+                className="nb-profile"
                 onClick={() => setMenuAberto((prev) => !prev)}
-                style={{ cursor: "pointer" }}
               >
                 {fotoAtual ? (
                   <img src={fotoAtual} alt={utilizador.nome} className="profile-avatar profile-avatar-img" />
                 ) : (
                   <div className="profile-avatar">{getInitials(utilizador?.nome)}</div>
                 )}
-                <div className="profile-info">
-                  <span className="profile-label">{getSaudacao()}</span>
-                  <span className="profile-name">{utilizador?.nome ?? "Utilizador"} ▾</span>
+                <div className="nb-profile-info">
+                  <span className="nb-profile-label">{getSaudacao()}</span>
+                  <span className="nb-profile-name">{utilizador?.nome ?? "Utilizador"} ▾</span>
                 </div>
               </div>
 
               {menuAberto && (
-                <div className="profile-dropdown">
-                  <div className="dropdown-header">
-                    <div className="dropdown-foto-wrap">
+                <div className="nb-dropdown">
+                  <div className="nb-dropdown-header">
+                    <div className="nb-dropdown-foto-wrap">
                       {fotoAtual ? (
-                        <img src={fotoAtual} alt={utilizador.nome} className="dropdown-foto" />
+                        <img src={fotoAtual} alt={utilizador.nome} className="nb-dropdown-foto" />
                       ) : (
-                        <div className="dropdown-foto dropdown-foto-iniciais">
+                        <div className="nb-dropdown-foto nb-dropdown-foto-iniciais">
                           {getInitials(utilizador?.nome)}
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="dropdown-nome">{utilizador?.nome}</p>
-                      <p className="dropdown-email">{utilizador?.email}</p>
+                      <p className="nb-dropdown-nome">{utilizador?.nome}</p>
+                      <p className="nb-dropdown-email">{utilizador?.email}</p>
                     </div>
                   </div>
 
-                  <div className="dropdown-divider" />
+                  <div className="nb-divider" />
 
-                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/meu-perfil"); }}>
+                  <button className="nb-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/meu-perfil"); }}>
                     <FaUser size={15} />
                     O meu perfil
                   </button>
 
-                  <button className="dropdown-item" onClick={() => setMenuAberto(false)}>
+                  <button className="nb-dropdown-item" onClick={() => setMenuAberto(false)}>
                     <IoSettingsOutline size={17} />
                     Configurações
                   </button>
 
-                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/sobre"); }}>
+                  <button className="nb-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/sobre"); }}>
                     <BsInfoCircle size={15} />
                     Sobre
                   </button>
 
-                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/ajuda"); }}>
+                  <button className="nb-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/ajuda"); }}>
                     <BsQuestionCircle size={15} />
                     Ajuda
                   </button>
 
-                  <div className="dropdown-divider" />
+                  <div className="nb-divider" />
 
                   <button
-                    className="dropdown-item dropdown-item-sair"
+                    className="nb-dropdown-item nb-dropdown-item-sair"
                     onClick={() => { setMenuAberto(false); setConfirmarLogout(true); }}
                   >
                     <IoLogOutOutline size={17} />
@@ -316,14 +309,14 @@ function Navbar({ activeTab, onTabChange, navItems }) {
         </div>
 
         {/* Nav tabs */}
-        <nav className="navbar-nav">
+        <nav className="nb-nav">
           {navItems.map((item) => (
             <button
               key={item.label}
-              className={`nav-item ${activeTab === item.label ? "active" : ""}`}
+              className={`nb-nav-item ${activeTab === item.label ? "active" : ""}`}
               onClick={() => onTabChange(item.label)}
             >
-              {item.icon && <span className="nav-item-icon">{item.icon}</span>}
+              {item.icon && <span>{item.icon}</span>}
               {item.label}
             </button>
           ))}

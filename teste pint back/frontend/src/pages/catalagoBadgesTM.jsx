@@ -4,7 +4,7 @@ import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsClockHistory, BsTrophy, BsBarChart } from "react-icons/bs";
 import { MdOutlineVerified } from "react-icons/md";
-import { FaUsers } from "react-icons/fa";
+import { FiUsers } from "react-icons/fi";
 
 const NAV_ITEMS_TALENT = [
   { label: "Início",      icon: <GoHome size={16} /> },
@@ -13,7 +13,7 @@ const NAV_ITEMS_TALENT = [
   { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
   { label: "Conquistas",  icon: <BsTrophy size={16} /> },
   { label: "Relatórios",  icon: <BsBarChart size={16} /> },
-  { label: "Consultores", icon: <FaUsers size={16} /> },
+  { label: "Consultores", icon: <FiUsers size={16} /> },
 ];
 
 function CatalogoBadgesTalent() {
@@ -21,7 +21,8 @@ function CatalogoBadgesTalent() {
 
   const handleTabExtra = (label) => {
     if (label === "Início")      navigate("/talent");
-    if (label === "Consultores") navigate("/talent/diretorio"); // ✅ path correto
+    if (label === "Consultores") navigate("/talent/diretorio");
+    if (label === "Conquistas")  navigate("/talent/conquistas");
   };
 
   return (
