@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  listarUtilizadores, listarTodasRoles, adicionarRole, removerRole, atualizarEstadoConta, criarUtilizador,
+  listarUtilizadores, listarTodasRoles, adicionarRole, removerRole,
+  atualizarEstadoConta, criarUtilizador, listarConsultores,
 } = require('../controllers/adminController');
 
 const {
@@ -24,6 +25,9 @@ router.get('/roles', listarTodasRoles);
 router.post('/utilizadores/roles/adicionar', adicionarRole);
 router.post('/utilizadores/roles/remover', removerRole);
 router.put('/utilizadores/estado', atualizarEstadoConta);
+
+// ✅ Consultores (Talent Manager)
+router.get('/consultores', listarConsultores);
 
 // Badges
 router.get('/badges', getAllBadges);
