@@ -1,6 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 const { sequelize } = require('./config/database');
+const tmRoutes = require('./routes/tmRoutes');
 
 const app = express();
 
@@ -38,5 +39,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/utilizadores', require('./routes/utilizadoresRoutes'));
 
 app.use('/api/notificacoes', require('./routes/notificacoesRoutes'));
+
+app.use('/api/talent', tmRoutes);
 
 module.exports = app;
