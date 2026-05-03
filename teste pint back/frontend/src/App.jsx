@@ -19,11 +19,12 @@ import ConquistasTalent from "./pages/ConquistasTM";
 // Admin
 import GestaoUtilizadores from "./pages/admin/GestaoUtilizadores";
 import GestaoBadges from "./pages/admin/GestaoBadges";
+import DetalhesUtilizador from "./pages/admin/DetalhesUtilizador";
+import BadgesUtilizador from "./pages/admin/BadgesUtilizador";
 
 // Outras
 import Sobre from "./pages/Sobre";
 import Ajuda from "./pages/Ajuda";
-
 
 function RotaProtegida({ children }) {
   const utilizador = localStorage.getItem("utilizador");
@@ -48,34 +49,35 @@ function RotaTalent({ children }) {
   return isTalent ? children : <Navigate to="/perfil" replace />;
 }
 
-
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Públicas */}
-        <Route path="/login"           element={<Login />} />
-        <Route path="/register"        element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/confirmar-email" element={<ConfirmarEmail />} />
 
-        {/* Autenticadas */}
         <Route path="/alterar-password" element={<RotaProtegida><AlterarPassword /></RotaProtegida>} />
-        <Route path="/perfil"           element={<RotaProtegida><SelecionarPerfil /></RotaProtegida>} />
-        <Route path="/meu-perfil"       element={<RotaProtegida><Perfil /></RotaProtegida>} />
-        <Route path="/badges/:id"       element={<RotaProtegida><PagBadge /></RotaProtegida>} />
-        <Route path="/sobre"            element={<RotaProtegida><Sobre /></RotaProtegida>} />
-        <Route path="/ajuda"            element={<RotaProtegida><Ajuda /></RotaProtegida>} />
+        <Route path="/perfil" element={<RotaProtegida><SelecionarPerfil /></RotaProtegida>} />
+        <Route path="/meu-perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
+        <Route path="/badges/:id" element={<RotaProtegida><PagBadge /></RotaProtegida>} />
 
         {/* Consultor */}
         <Route path="/consultor" element={<RotaProtegida><BadgesList /></RotaProtegida>} />
 
         {/* Talent Manager */}
-        <Route path="/talent/catalogo"              element={<RotaTalent><CatalogoBadgesTalent /></RotaTalent>} />
-        <Route path="/talent/diretorio"    element={<RotaTalent><DiretorioConsultores /></RotaTalent>} />
+        <Route path="/talent/catalogo"   element={<RotaTalent><CatalogoBadgesTalent /></RotaTalent>} />
+        <Route path="/talent/diretorio"  element={<RotaTalent><DiretorioConsultores /></RotaTalent>} />
         <Route path="/talent/conquistas" element={<RotaTalent><ConquistasTalent /></RotaTalent>} />
+
         {/* Admin */}
         <Route path="/admin/utilizadores" element={<RotaAdmin><GestaoUtilizadores /></RotaAdmin>} />
-        <Route path="/admin/badges"       element={<RotaAdmin><GestaoBadges /></RotaAdmin>} />
+        <Route path="/admin/utilizadores/:id" element={<RotaAdmin><DetalhesUtilizador /></RotaAdmin>} />
+        <Route path="/admin/utilizadores/:id/badges" element={<RotaAdmin><BadgesUtilizador /></RotaAdmin>} />
+        <Route path="/admin/badges" element={<RotaAdmin><GestaoBadges /></RotaAdmin>} />
+
+        <Route path="/sobre" element={<RotaProtegida><Sobre /></RotaProtegida>} />
+        <Route path="/ajuda" element={<RotaProtegida><Ajuda /></RotaProtegida>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
