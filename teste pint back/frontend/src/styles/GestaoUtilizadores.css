@@ -84,6 +84,15 @@
 
 .gu-id { color: #9ca3af; font-size: 0.8rem; }
 .gu-nome { font-weight: 600; color: #1a1a2e; }
+
+.gu-nome-link {
+  cursor: pointer;
+  color: #1d4ed8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gu-nome-link:hover { color: #1e40af; }
 .gu-email { color: #6b7280; }
 .gu-center { text-align: center; }
 
@@ -120,6 +129,12 @@
   font-style: italic;
 }
 
+.gu-acoes {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .gu-btn-editar {
   padding: 0.4rem 0.9rem;
   background-color: #1d4ed8;
@@ -130,6 +145,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .gu-btn-editar:hover { background-color: #1e40af; }
