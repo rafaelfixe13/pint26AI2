@@ -187,7 +187,7 @@ function GestaoUtilizadores() {
                 <>
                   <tr key={u.idutilizador} className={expandido === u.idutilizador ? "gu-row-ativa" : ""}>
                     <td className="gu-id">#{u.idutilizador}</td>
-                    <td className="gu-nome">{u.nome}</td>
+                    <td className="gu-nome gu-nome-link" onClick={() => navigate(`/admin/utilizadores/${u.idutilizador}`)}>{u.nome}</td>
                     <td className="gu-email">{u.email}</td>
                     <td>
                       <span className={`gu-estado gu-estado--${u.estadoconta.toLowerCase()}`}>
@@ -197,21 +197,25 @@ function GestaoUtilizadores() {
                     <td className="gu-center">
                       {u.emailconfirmado ? "✅" : "⏳"}
                     </td>
-                    <td className="gu-roles">
-                      {u.roles?.length > 0
-                        ? u.roles.map((r) => (
-                            <span key={r.idrole} className="gu-role-tag">{r.nome}</span>
-                          ))
-                        : <span className="gu-sem-role">Sem roles</span>
-                      }
+                    <td>
+                      <div className="gu-roles">
+                        {u.roles?.length > 0
+                          ? u.roles.map((r) => (
+                              <span key={r.idrole} className="gu-role-tag">{r.nome}</span>
+                            ))
+                          : <span className="gu-sem-role">Sem roles</span>
+                        }
+                      </div>
                     </td>
-                    <td className="gu-acoes">
-                      <button
-                        className="gu-btn-editar"
-                        onClick={() => setExpandido(expandido === u.idutilizador ? null : u.idutilizador)}
-                      >
-                        {expandido === u.idutilizador ? "Fechar" : "Editar"}
-                      </button>
+                    <td>
+                      <div className="gu-acoes">
+                        <button
+                          className="gu-btn-editar"
+                          onClick={() => setExpandido(expandido === u.idutilizador ? null : u.idutilizador)}
+                        >
+                          {expandido === u.idutilizador ? "Fechar" : "Editar"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
 
