@@ -202,7 +202,111 @@ const listarHierarquia = async (_req, res) => {
 };
 
 
+const getBadgesUtilizador = async (req, res) => {
+  const { idutilizador } = req.params;
+  try {
+    const rows = await sequelize.query(`
+      SELECT
+        sl.idserviceline, sl.nome AS sl_nome, sl.ativo AS sl_ativo,
+        a.idarea, a.nome AS area_nome, a.ativo AS area_ativo,
+        n.idnivel, n.codigo AS nivel_codigo, n.nome AS nivel_nome, n.ativo AS nivel_ativo,
+        n.idlearningpath, lp.nome AS lp_nome,
+        b.idbadge, b.nome AS badge_nome, b.descricao AS badge_descricao,
+        b.pontos, b.imagemurl AS badge_imagem, b.ispublico, b.expiremeses, b.ativo AS badge_ativo,
+        r.idrequisito, r.codigo AS req_codigo, r.titulo AS req_titulo,
+        r.descricao AS req_descricao, r.ativo AS req_ativo,
+        CASE WHEN ur.idrequisito IS NOT NULL THEN true ELSE false END AS req_concluido,
+        ur.dataconclusao AS req_dataconclusao,
+        CASE WHEN ub.idbadge IS NOT NULL THEN true ELSE false END AS badge_conquistado,
+        ub.dataconquista AS badge_dataconquista
+      FROM servicelines sl
+      LEFT JOIN areas a ON a.idserviceline = sl.idserviceline
+      LEFT JOIN niveis n ON n.idarea = a.idarea
+      LEFT JOIN learningpaths lp ON lp.idlearningpath = n.idlearningpath
+      LEFT JOIN badges b ON b.idnivel = n.idnivel
+      LEFT JOIN requisitos r ON r.idnivel = n.idnivel
+      LEFT JOIN utilizador_requisitos ur ON ur.idrequisito = r.idrequisito AND ur.idutilizador = :idutilizador
+      LEFT JOIN utilizador_badges ub ON ub.idbadge = b.idbadge AND ub.idutilizador = :idutilizador
+      ORDER BY sl.idserviceline, a.idarea, n.idnivel, r.codigo
+    `, {
+      type: sequelize.QueryTypes.SELECT,
+      replacements: { idutilizador },
+    });
+
+    const slMap = {};
+    for (const row of rows) {
+      if (!slMap[row.idserviceline]) {
+        slMap[row.idserviceline] = {
+          idserviceline: row.idserviceline, nome: row.sl_nome, ativo: row.sl_ativo, areas: {},
+        };
+      }
+      const sl = slMap[row.idserviceline];
+      if (!row.idarea) continue;
+
+      if (!sl.areas[row.idarea]) {
+        sl.areas[row.idarea] = {
+          idarea: row.idarea, nome: row.area_nome, ativo: row.area_ativo, niveis: {},
+        };
+      }
+      const area = sl.areas[row.idarea];
+      if (!row.idnivel) continue;
+
+      if (!area.niveis[row.idnivel]) {
+        area.niveis[row.idnivel] = {
+          idnivel: row.idnivel,
+          codigo: row.nivel_codigo,
+          nome: row.nivel_nome,
+          ativo: row.nivel_ativo,
+          idlearningpath: row.idlearningpath,
+          lp_nome: row.lp_nome,
+          badge: row.idbadge ? {
+            idbadge: row.idbadge,
+            nome: row.badge_nome,
+            descricao: row.badge_descricao,
+            pontos: row.pontos,
+            imagemurl: row.badge_imagem,
+            ispublico: row.ispublico,
+            conquistado: row.badge_conquistado,
+            dataconquista: row.badge_dataconquista,
+            ativo: row.badge_ativo,
+          } : null,
+          requisitos: [],
+        };
+      }
+
+      if (row.idrequisito) {
+        const nivel = area.niveis[row.idnivel];
+        const jaExiste = nivel.requisitos.some((r) => r.idrequisito === row.idrequisito);
+        if (!jaExiste) {
+          nivel.requisitos.push({
+            idrequisito: row.idrequisito,
+            codigo: row.req_codigo,
+            titulo: row.req_titulo,
+            descricao: row.req_descricao,
+            ativo: row.req_ativo,
+            concluido: row.req_concluido,
+            dataconclusao: row.req_dataconclusao,
+          });
+        }
+      }
+    }
+
+    const resultado = Object.values(slMap).map((sl) => ({
+      ...sl,
+      areas: Object.values(sl.areas).map((area) => ({
+        ...area,
+        niveis: Object.values(area.niveis),
+      })),
+    }));
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 module.exports = {
   getAllBadges, getBadgeById, createBadge, updateBadge, deleteBadge,
-  toggleBadge, listarNiveis, listarHierarquia,
+  toggleBadge, listarNiveis, listarHierarquia, getBadgesUtilizador,
 };
