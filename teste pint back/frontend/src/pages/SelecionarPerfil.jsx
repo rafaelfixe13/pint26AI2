@@ -43,7 +43,7 @@ function SelecionarPerfil() {
 
   const DESTINOS = {
     1: "/consultor",
-    2: "/talent",
+    2: "/talent/catalogo",
     3: "/consultor",
     4: "/admin/utilizadores",
   };
