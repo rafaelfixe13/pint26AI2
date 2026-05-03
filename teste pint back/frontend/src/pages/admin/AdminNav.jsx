@@ -139,7 +139,6 @@ function AdminNav() {
 
   return (
     <>
-      {/* Modal de confirmação de logout */}
       {confirmarLogout && (
         <div className="logout-overlay">
           <div className="logout-modal">
@@ -163,11 +162,11 @@ function AdminNav() {
         </div>
       )}
 
-      <header className="navbar-wrapper">
-        <div className="navbar-top">
+      <header className="an-header">
+        <div className="an-top">
           {/* Logo */}
           <div
-            className="navbar-logo"
+            className="an-logo"
             onClick={() => navigate("/admin/utilizadores")}
             style={{ cursor: "pointer" }}
           >
@@ -176,67 +175,67 @@ function AdminNav() {
           </div>
 
           {/* Search */}
-          <div className="navbar-search">
+          <div className="an-search">
             <BsSearch size={15} />
             <input type="text" placeholder="Pesquisar..." />
           </div>
 
           {/* Actions */}
-          <div className="navbar-actions">
+          <div className="an-actions">
             {/* Notificações */}
-            <div className="notifications-wrapper" ref={notifRef}>
-              <button className="notif-btn" onClick={toggleNotif}>
+            <div className="an-notif-wrap" ref={notifRef}>
+              <button className="an-notif-btn" onClick={toggleNotif}>
                 <BsBell size={20} />
                 {unreadCount > 0 && (
-                  <span className="notif-badge">
+                  <span className="an-notif-badge">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
               </button>
 
               {notifAberto && (
-                <div className="notifications-popup">
-                  <div className="notifications-header">
+                <div className="an-notif-popup">
+                  <div className="an-notif-header">
                     <h3>Notificações</h3>
                   </div>
 
                   {loadingNotif ? (
-                    <div className="notifications-empty">
+                    <div className="an-notif-empty">
                       A carregar notificações...
                     </div>
                   ) : notificacoes.length === 0 ? (
-                    <div className="notifications-empty">
+                    <div className="an-notif-empty">
                       Não tens notificações.
                     </div>
                   ) : (
-                    <div className="notifications-list">
+                    <div className="an-notif-list">
                       {notificacoes.map((n) => (
                         <div
                           key={n.idnotificacao}
-                          className="notification-item"
+                          className="an-notif-item"
                           onClick={() => {
                             if (!n.lido) marcarComoLida(n.idnotificacao);
                           }}
                         >
-                          <div className="notification-avatar">
+                          <div className="an-notif-avatar">
                             <span>🟦</span>
                           </div>
-                          <div className="notification-content">
-                            <div className="notification-title">{n.titulo}</div>
-                            <div className="notification-message">{n.mensagem}</div>
-                            <div className="notification-meta">
-                              {!n.lido && <span className="badge-unread-dot" />}
+                          <div className="an-notif-content">
+                            <div className="an-notif-title">{n.titulo}</div>
+                            <div className="an-notif-message">{n.mensagem}</div>
+                            <div className="an-notif-meta">
+                              {!n.lido && <span className="an-unread-dot" />}
                               <span>{n.lido ? "Lida" : "Não lida"}</span>
                               <span>•</span>
                               <span>{formatarDataCurta(n.dataenvio)}</span>
                             </div>
                           </div>
                           <div
-                            className="notification-actions"
+                            className="an-notif-actions"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <button
-                              className="notification-delete-btn"
+                              className="an-notif-delete"
                               onClick={() => eliminarNotificacao(n.idnotificacao)}
                               title="Eliminar"
                             >
@@ -252,9 +251,9 @@ function AdminNav() {
             </div>
 
             {/* Perfil + Dropdown */}
-            <div className="navbar-profile-wrap" ref={dropdownRef}>
+            <div className="an-profile-wrap" ref={dropdownRef}>
               <div
-                className="navbar-profile"
+                className="an-profile"
                 onClick={() => setMenuAberto((prev) => !prev)}
                 style={{ cursor: "pointer" }}
               >
@@ -262,47 +261,47 @@ function AdminNav() {
                   <img
                     src={fotoAtual}
                     alt={utilizador.nome}
-                    className="profile-avatar profile-avatar-img"
+                    className="an-avatar an-avatar-img"
                   />
                 ) : (
-                  <div className="profile-avatar">
+                  <div className="an-avatar">
                     {getInitials(utilizador?.nome)}
                   </div>
                 )}
-                <div className="profile-info">
-                  <span className="profile-label">{getSaudacao()}</span>
-                  <span className="profile-name">
+                <div className="an-profile-info">
+                  <span className="an-profile-label">{getSaudacao()}</span>
+                  <span className="an-profile-name">
                     {utilizador?.nome ?? "Utilizador"} ▾
                   </span>
                 </div>
               </div>
 
               {menuAberto && (
-                <div className="profile-dropdown">
-                  <div className="dropdown-header">
-                    <div className="dropdown-foto-wrap">
+                <div className="an-dropdown">
+                  <div className="an-dropdown-head">
+                    <div className="an-foto-wrap">
                       {fotoAtual ? (
                         <img
                           src={fotoAtual}
                           alt={utilizador.nome}
-                          className="dropdown-foto"
+                          className="an-foto"
                         />
                       ) : (
-                        <div className="dropdown-foto dropdown-foto-iniciais">
+                        <div className="an-foto an-foto-iniciais">
                           {getInitials(utilizador?.nome)}
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="dropdown-nome">{utilizador?.nome}</p>
-                      <p className="dropdown-email">{utilizador?.email}</p>
+                      <p className="an-dropdown-nome">{utilizador?.nome}</p>
+                      <p className="an-dropdown-email">{utilizador?.email}</p>
                     </div>
                   </div>
 
-                  <div className="dropdown-divider" />
+                  <div className="an-divider" />
 
                   <button
-                    className="dropdown-item"
+                    className="an-dropdown-item"
                     onClick={() => {
                       setMenuAberto(false);
                       navigate("/meu-perfil");
@@ -313,7 +312,7 @@ function AdminNav() {
                   </button>
 
                   <button
-                    className="dropdown-item"
+                    className="an-dropdown-item"
                     onClick={() => {
                       setMenuAberto(false);
                       navigate("/perfil");
@@ -323,20 +322,20 @@ function AdminNav() {
                     Trocar de perfil
                   </button>
 
-                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/sobre"); }}>
+                  <button className="an-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/sobre"); }}>
                     <BsInfoCircle size={15} />
                     Sobre
                   </button>
 
-                  <button className="dropdown-item" onClick={() => { setMenuAberto(false); navigate("/ajuda"); }}>
+                  <button className="an-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/ajuda"); }}>
                     <BsQuestionCircle size={15} />
                     Ajuda
                   </button>
 
-                  <div className="dropdown-divider" />
+                  <div className="an-divider" />
 
                   <button
-                    className="dropdown-item dropdown-item-sair"
+                    className="an-dropdown-item an-dropdown-sair"
                     onClick={() => {
                       setMenuAberto(false);
                       setConfirmarLogout(true);
@@ -352,11 +351,11 @@ function AdminNav() {
         </div>
 
         {/* Nav tabs */}
-        <nav className="navbar-nav">
+        <nav className="an-nav">
           {NAV_ITEMS.map((item) => (
             <button
               key={item.path}
-              className={`nav-item ${location.pathname === item.path ? "active" : ""}`}
+              className={`an-nav-item ${location.pathname === item.path ? "active" : ""}`}
               onClick={() => navigate(item.path)}
             >
               {item.label}
