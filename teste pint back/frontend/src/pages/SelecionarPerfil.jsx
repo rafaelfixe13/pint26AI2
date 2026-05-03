@@ -41,13 +41,16 @@ function SelecionarPerfil() {
 
   const isAdmin = perfisDoUtilizador.includes(ROLE_ADMIN);
 
+  const DESTINOS = {
+    1: "/consultor",
+    2: "/talent",
+    3: "/consultor",
+    4: "/admin/utilizadores",
+  };
+
   const handleSelecionarPerfil = (idrole) => {
     localStorage.setItem("perfilAtivo", String(idrole));
-    if (idrole === ROLE_ADMIN) {
-      navigate("/admin/utilizadores");
-    } else {
-      navigate("/");
-    }
+    navigate(DESTINOS[idrole] ?? "/consultor");
   };
 
   const handleLogout = () => {
