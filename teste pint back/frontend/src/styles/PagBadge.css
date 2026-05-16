@@ -1,0 +1,281 @@
+.badge-detail-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  padding: 6px 2px;
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.back-link:hover {
+  color: #1d4ed8;
+  transform: translateX(-2px);
+}
+
+.back-link svg {
+  width: 16px;
+  height: 16px;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.badge-detail-status {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px;
+  color: #4b5563;
+}
+
+.badge-detail-status.error {
+  color: #dc2626;
+}
+
+.badge-detail-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 28px;
+  align-items: start;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+}
+
+.badge-detail-icon-wrap {
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: #dbe8f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px solid #aac2d6;
+}
+
+.badge-detail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-detail-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-detail-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.badge-detail-description {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 18px;
+  max-width: 720px;
+}
+
+.badge-detail-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.badge-detail-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.badge-detail-info-column p {
+  font-size: 13px;
+  color: #374151;
+}
+
+.badge-detail-info-column span {
+  font-weight: 700;
+  color: #111827;
+}
+
+.badge-detail-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.badge-tag-special {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-detail-points {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+/* ── Requisitos ─────────────────────────────────────────────────────────── */
+.badge-requisitos-section {
+  margin-top: 22px;
+}
+
+.badge-requisitos-titulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-requisitos-count {
+  background: #1d4ed8;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.badge-requisitos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.badge-req-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.badge-req-codigo {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.badge-req-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.badge-req-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 3px;
+}
+
+.badge-req-descricao {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.badge-req-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Candidatura section ────────────────────────────────────────────────── */
+.badge-cand-section {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.badge-cand-estado-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.badge-cand-comentario {
+  font-size: 13px;
+  color: #374151;
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.btn-candidatar {
+  align-self: flex-start;
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: #1d4ed8;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.btn-candidatar:hover {
+  background: #1e40af;
+}
+
+@media (max-width: 900px) {
+  .badge-detail-card {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  .badge-detail-right {
+    justify-content: flex-start;
+  }
+
+  .badge-detail-info-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,47 @@
+.sei_la {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sei_la2 {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: red;
+  gap: 16px;
+}
+
+.badge-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: rgb(255, 255, 255);
+  margin: 50px;
+}
+
+.badgeunico{
+    flex: 0 1 200px;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: rgb(229, 231, 235);
+    margin: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid rgb(211, 189, 189);
+}
+
+.iconebadge {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}

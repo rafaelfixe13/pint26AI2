@@ -1,0 +1,99 @@
+.confirmar-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f2f5;
+}
+
+.confirmar-card {
+  background: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.confirmar-icone {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.confirmar-titulo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+.confirmar-subtitulo {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.confirmar-digitos {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.confirmar-digito {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.confirmar-digito:focus {
+  border-color: #239292;
+}
+
+.confirmar-erro {
+  font-size: 0.875rem;
+  color: #dc2626;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.confirmar-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #239292;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1.25rem;
+}
+
+.confirmar-btn:hover:not(:disabled) {
+  background-color: #1a7070;
+}
+
+.confirmar-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirmar-info {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin: 0;
+}

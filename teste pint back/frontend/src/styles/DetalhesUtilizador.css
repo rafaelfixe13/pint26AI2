@@ -1,0 +1,483 @@
+/* ── Wrapper ── */
+.du-wrapper {
+  padding: 2rem 2.5rem;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-sizing: border-box;
+}
+
+.du-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin: 0;
+}
+
+/* ── Grid principal 2 colunas ── */
+.du-grid-principal {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.25rem;
+}
+
+.du-col-esq,
+.du-col-dir {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Cards base ── */
+.du-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+}
+
+.du-card-titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+/* ── Card info (coluna esq, topo) ── */
+.du-card-info {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+}
+
+.du-foto-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.du-foto {
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.du-foto-iniciais {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1d4ed8;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+  border-radius: 12px;
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.du-foto-link {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.du-foto-link:hover { color: #374151; text-decoration: underline; }
+.du-foto-link--remover { color: #dc2626; }
+.du-foto-link--remover:hover { color: #b91c1c; }
+.du-foto-link:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Info campos */
+.du-info-campos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.du-campo label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.du-obrigatorio { color: #dc2626; margin-left: 2px; }
+
+.du-campo-input {
+  padding: 0.55rem 0.85rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #111827;
+  background: #f9fafb;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Card estado (coluna dir, topo) ── */
+.du-card-estado {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.du-secao-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* Toggle */
+.du-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  width: fit-content;
+  margin-top: 0.1rem;
+}
+
+.du-toggle-input { display: none; }
+
+.du-toggle-slider {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  background: #d1d5db;
+  border-radius: 999px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.du-toggle-slider::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.du-toggle-input:checked + .du-toggle-slider { background: #16a34a; }
+.du-toggle-input:checked + .du-toggle-slider::after { transform: translateX(20px); }
+
+.du-toggle-texto {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.du-divider {
+  height: 1px;
+  background: #f3f4f6;
+  margin: 0;
+}
+
+.du-campo-data-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+  font-size: 0.9rem;
+  color: #111827;
+  min-height: 40px;
+  margin-top: 0.1rem;
+}
+
+.du-cal-icone { font-size: 0.95rem; color: #9ca3af; }
+
+/* ── Card histórico (coluna esq, meio) ── */
+.du-hist-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.du-hist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.du-hist-icone {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.du-hist-texto {
+  flex: 1;
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.du-hist-data {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* ── Card Service Lines (coluna dir, meio) ── */
+.du-sl-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.du-sl-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.du-sl-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.du-sl-nome {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.du-sl-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+}
+
+.du-sl-badge--ativo   { background: #dcfce7; color: #16a34a; }
+.du-sl-badge--inativo { background: #fef2f2; color: #dc2626; }
+
+.du-areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.du-area-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1.5px solid transparent;
+}
+
+.du-area-tag--ativa {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+  font-weight: 700;
+}
+
+/* ── Linha de baixo: stats (4 cards) ── */
+.du-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.du-stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem 1rem;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.du-stat-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.du-stat-corpo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.du-stat-num {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1;
+}
+
+.du-btn-inspecionar {
+  padding: 0.35rem 0.85rem;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.du-btn-inspecionar:hover { background: #1e40af; }
+
+/* ── Card Roles (linha separada) ── */
+.du-card-roles .du-roles-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.du-role-toggle {
+  padding: 0.38rem 1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.du-role-toggle:hover {
+  border-color: #1d4ed8;
+  color: #1d4ed8;
+}
+
+.du-role-toggle--ativa {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+
+.du-role-toggle--ativa:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+/* ── Feedback ── */
+.du-feedback {
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.du-feedback--sucesso { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.du-feedback--erro    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+/* ── Botões de ação ── */
+.du-acoes-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.25rem;
+}
+
+.du-btn-guardar {
+  padding: 0.65rem 1.75rem;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.du-btn-guardar:hover:not(:disabled) { background: #15803d; }
+.du-btn-guardar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.du-btn-cancelar {
+  padding: 0.65rem 1.75rem;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.du-btn-cancelar:hover:not(:disabled) { background: #b91c1c; }
+.du-btn-cancelar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Utilitários ── */
+.du-vazio {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.du-loading,
+.du-erro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .du-grid-principal { grid-template-columns: 1fr; }
+  .du-stats-row      { grid-template-columns: repeat(2, 1fr); }
+  .du-card-info      { flex-direction: column; align-items: center; }
+}

@@ -1,0 +1,178 @@
+/* ── Página candidaturas (consultor) ─────────────────────────────── */
+.cand-page { padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto; }
+.cand-titulo { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1.5rem; }
+
+.cand-lista { display: flex; flex-direction: column; gap: 1rem; }
+
+.cand-card {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.cand-card-img { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; }
+.cand-card-fallback {
+  width: 56px; height: 56px; border-radius: 8px;
+  background: #e5e7eb; display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+}
+.cand-card-info { flex: 1; }
+.cand-card-nome { font-weight: 700; color: #1a1a2e; font-size: 1rem; margin-bottom: 0.2rem; }
+.cand-card-data { font-size: 0.8rem; color: #9ca3af; }
+.cand-card-comentario {
+  margin-top: 0.4rem; font-size: 0.82rem; color: #374151;
+  background: #f9fafb; border-left: 3px solid #d1d5db;
+  padding: 0.35rem 0.6rem; border-radius: 4px;
+}
+
+/* Estado badges */
+.estado-badge {
+  padding: 0.3rem 0.75rem; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;
+}
+.estado-open          { background: #fef3c7; color: #92400e; }
+.estado-submitted     { background: #dbeafe; color: #1d4ed8; }
+.estado-em_validacao  { background: #ede9fe; color: #6d28d9; }
+.estado-fechado-aprovado  { background: #d1fae5; color: #065f46; }
+.estado-fechado-rejeitado { background: #fee2e2; color: #991b1b; }
+
+/* ── Modal candidatura ───────────────────────────────────────────── */
+.modal-cand-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 600; padding: 1rem;
+}
+.modal-cand-card {
+  background: #fff; border-radius: 16px;
+  padding: 2rem 1.75rem; width: 100%; max-width: 500px;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.modal-cand-titulo { font-size: 1.2rem; font-weight: 700; color: #1a1a2e; margin: 0; }
+.modal-cand-sub    { font-size: 0.875rem; color: #6b7280; margin: 0; }
+
+.modal-cand-dropzone {
+  border: 2px dashed #d1d5db; border-radius: 10px;
+  padding: 1.5rem; text-align: center; cursor: pointer;
+  transition: border-color .15s;
+}
+.modal-cand-dropzone:hover { border-color: #239292; }
+.modal-cand-dropzone input { display: none; }
+.modal-cand-dropzone p { margin: 0; color: #6b7280; font-size: 0.875rem; }
+
+.modal-cand-files { display: flex; flex-direction: column; gap: 0.4rem; }
+.modal-cand-file {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #f9fafb; border-radius: 6px; padding: 0.4rem 0.75rem;
+  font-size: 0.82rem; color: #374151;
+}
+.modal-cand-file button {
+  background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0;
+  font-size: 1rem; line-height: 1;
+}
+.modal-cand-file button:hover { color: #dc2626; }
+
+.modal-cand-erro { font-size: 0.82rem; color: #dc2626; margin: 0; }
+
+.modal-cand-acoes { display: flex; gap: 0.75rem; justify-content: flex-end; }
+.btn-cancelar {
+  padding: .6rem 1.25rem; border: 1.5px solid #d1d5db; border-radius: 8px;
+  background: #fff; color: #374151; font-size: .875rem; cursor: pointer;
+}
+.btn-submeter {
+  padding: .6rem 1.25rem; border: none; border-radius: 8px;
+  background: #239292; color: #fff; font-size: .875rem; font-weight: 700; cursor: pointer;
+}
+.btn-submeter:disabled { opacity: .55; cursor: not-allowed; }
+.btn-submeter:hover:not(:disabled) { background: #1a7070; }
+
+/* badge na PagBadge */
+.badge-cand-section {
+  margin-top: 1.5rem; padding-top: 1.25rem;
+  border-top: 1.5px solid #e5e7eb;
+  display: flex; flex-direction: column; gap: .75rem;
+}
+.badge-cand-estado-wrap { display: flex; align-items: center; gap: .75rem; }
+.badge-cand-comentario {
+  font-size: .85rem; color: #374151;
+  background: #f9fafb; border-left: 3px solid #d1d5db;
+  padding: .4rem .75rem; border-radius: 4px;
+}
+.btn-candidatar {
+  padding: .7rem 1.5rem; border: none; border-radius: 10px;
+  background: #239292; color: #fff; font-size: .95rem; font-weight: 700; cursor: pointer;
+  align-self: flex-start;
+}
+.btn-candidatar:hover { background: #1a7070; }
+
+/* ── Validações TM / SL ─────────────────────────────────────────── */
+.val-page { padding: 2rem 1.5rem; max-width: 1000px; margin: 0 auto; }
+.val-titulo { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.5rem; }
+.val-sub    { font-size: .9rem; color: #6b7280; margin-bottom: 1.5rem; }
+
+.val-filtros { display: flex; gap: .75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.val-filtro-btn {
+  padding: .4rem .9rem; border-radius: 999px; border: 1.5px solid #e5e7eb;
+  background: #fff; color: #374151; font-size: .82rem; cursor: pointer;
+}
+.val-filtro-btn.active { background: #239292; color: #fff; border-color: #239292; }
+
+.val-lista { display: flex; flex-direction: column; gap: 1rem; }
+.val-card {
+  background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+.val-card-top { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; }
+.val-card-img { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; }
+.val-card-fallback {
+  width: 52px; height: 52px; border-radius: 8px;
+  background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+.val-card-info { flex: 1; }
+.val-card-nome { font-weight: 700; color: #1a1a2e; }
+.val-card-meta { font-size: .8rem; color: #9ca3af; margin-top: .2rem; }
+.val-card-evidencias { margin-bottom: .75rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+.val-ev-item {
+  display: inline-flex; align-items: center;
+  background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 6px;
+  overflow: hidden;
+}
+.val-ev-link {
+  font-size: .8rem; color: #239292; text-decoration: none;
+  padding: .25rem .5rem .25rem .6rem;
+}
+.val-ev-link:hover { text-decoration: underline; }
+.val-ev-download {
+  display: flex; align-items: center; justify-content: center;
+  padding: .25rem .5rem; color: #239292; text-decoration: none;
+  border-left: 1px solid #99f6e4;
+}
+.val-ev-download:hover { background: #ccfbf1; color: #0f766e; }
+
+.val-card-acoes { display: flex; gap: .6rem; flex-wrap: wrap; align-items: flex-end; }
+.val-card-acoes textarea {
+  flex: 1; min-width: 180px; padding: .5rem .75rem; border: 1.5px solid #d1d5db;
+  border-radius: 8px; font-size: .85rem; resize: vertical; min-height: 60px;
+}
+.val-card-acoes textarea:focus { outline: none; border-color: #239292; }
+
+.btn-validar  { padding: .5rem 1.1rem; border: none; border-radius: 8px; background: #239292; color: #fff; font-size: .85rem; font-weight: 700; cursor: pointer; }
+.btn-validar:hover { background: #1a7070; }
+.btn-devolver { padding: .5rem 1.1rem; border: none; border-radius: 8px; background: #f59e0b; color: #fff; font-size: .85rem; font-weight: 700; cursor: pointer; }
+.btn-devolver:hover { background: #d97706; }
+.btn-aprovar  { padding: .5rem 1.1rem; border: none; border-radius: 8px; background: #059669; color: #fff; font-size: .85rem; font-weight: 700; cursor: pointer; }
+.btn-aprovar:hover { background: #047857; }
+.btn-rejeitar { padding: .5rem 1.1rem; border: none; border-radius: 8px; background: #dc2626; color: #fff; font-size: .85rem; font-weight: 700; cursor: pointer; }
+.btn-rejeitar:hover { background: #b91c1c; }
+.btn-sendback { padding: .5rem 1.1rem; border: none; border-radius: 8px; background: #7c3aed; color: #fff; font-size: .85rem; font-weight: 700; cursor: pointer; }
+.btn-sendback:hover { background: #6d28d9; }
+
+.val-vazio { text-align: center; color: #9ca3af; padding: 3rem 0; font-size: .95rem; }
+
+.val-card-historico {
+  font-size: .8rem; color: #6b7280; background: #f9fafb;
+  padding: .4rem .75rem; border-radius: 6px; margin-top: .5rem;
+}

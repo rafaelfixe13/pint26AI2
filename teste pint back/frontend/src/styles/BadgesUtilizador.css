@@ -1,0 +1,376 @@
+.bu-wrapper {
+  padding: 2rem 2.5rem;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-sizing: border-box;
+}
+
+/* Topo */
+.bu-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bu-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin: 0;
+}
+
+.bu-voltar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bu-voltar:hover { background: #1e40af; }
+
+/* Card utilizador */
+.bu-card-user {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem 1.75rem;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.bu-foto {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.bu-foto-iniciais {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1d4ed8;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 10px;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.bu-user-info {
+  display: flex;
+  gap: 3rem;
+}
+
+.bu-user-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.bu-user-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bu-obrig { color: #dc2626; margin-left: 1px; }
+
+.bu-user-valor {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Service Line */
+.bu-sl-bloco {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+
+.bu-sl-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.bu-sl-header:hover { background: #1e40af; }
+
+.bu-sl-chevron {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.bu-sl-nome { flex: 1; }
+
+.bu-sl-body {
+  background: #fff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Área */
+.bu-area-bloco {
+  border: 1px solid #f3f4f6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bu-area-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+
+.bu-area-header:hover { background: #f3f4f6; }
+
+.bu-area-header-esq {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.bu-area-chevron {
+  font-size: 0.9rem;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.bu-area-nome {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  display: block;
+}
+
+.bu-area-sub {
+  font-size: 0.78rem;
+  color: #6b7280;
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.bu-area-contador {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+/* Grid de níveis */
+.bu-niveis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+/* Card nível */
+.bu-nivel-card {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: box-shadow 0.2s;
+}
+
+.bu-nivel-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.bu-nivel-card--conquistado {
+  border-color: #bfdbfe;
+  background: #f8fbff;
+}
+
+/* Ícone badge */
+.bu-badge-icone {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.bu-badge-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Nome nível */
+.bu-nivel-nome {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  line-height: 1.35;
+}
+
+.bu-nivel-codigo {
+  color: #1d4ed8;
+}
+
+/* Barra de progresso */
+.bu-progresso-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bu-progresso-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.bu-progresso-contagem {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.bu-barra-wrap {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bu-barra-fill {
+  height: 100%;
+  background: #1a1a2e;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.bu-barra-fill--completo {
+  background: #1d4ed8;
+}
+
+/* Requisitos */
+.bu-req-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.1rem;
+}
+
+.bu-req-titulo-secao {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.bu-req-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.bu-req-icone {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: transparent;
+}
+
+.bu-req-icone--ok {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #16a34a;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.bu-req-texto {
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.bu-req-texto--ok {
+  color: #16a34a;
+  text-decoration: line-through;
+  text-decoration-color: #86efac;
+}
+
+/* Utilitários */
+.bu-vazio {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  padding: 2rem;
+}
+
+.bu-loading,
+.bu-erro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .bu-niveis-grid { grid-template-columns: repeat(2, 1fr); }
+  .bu-user-info { flex-direction: column; gap: 0.75rem; }
+}
+
+@media (max-width: 580px) {
+  .bu-niveis-grid { grid-template-columns: 1fr; }
+}
