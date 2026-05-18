@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Container, Row, Col } from "react-bootstrap";
 import "../../styles/TalentMDashboard.css"
 import Navbar from "../NavBar"
 
@@ -46,17 +47,17 @@ export default function DashBoard() {
     const handleTabChange = (label) => {
         setActiveTab(label);
         // Exemplo de rotas - altere para os URLs que tem criados no seu App.jsx
-        if (label === "Início") navigate("/talent-manager");
-        if (label === "Validações") navigate("/talent-manager/validacoes");
+        if (label === "Início") navigate("/talent/dashboard");
+        if (label === "Validações") navigate("/talent/validacoes");
         if (label === "Histórico") navigate("/talent/historico");
-        if (label === "Catálogo") navigate("/talent-manager/catalogo");
+        if (label === "Catálogo") navigate("/talent/catalogo");
         if (label === "Conquistas") navigate("/talent/conquistas");
-        if (label === "Relatórios") navigate("/talent-manager/relatorios");
+        if (label === "Relatórios") navigate("/talent/relatorios");
         if (label === "Consultores") navigate("/talent/diretorio");
     };
 
     return (
-        <div className="tm-dashboard-container">
+        <div className="page-wrapper">
             <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
 
             <main className="tm-dashboard-content">
@@ -65,47 +66,57 @@ export default function DashBoard() {
                     <p>Resumo da sua equipa e atividade recente.</p>
                 </div>
 
-                <div className="tm-dashboard-cards">
-                    <div className="tm-card">
-                        <div className="tm-card-icon bg-blue">
-                            <BsPeopleFill size={24} />
-                        </div>
-                        <div className="tm-card-info">
-                            <h3>Consultores</h3>
-                            <p className="tm-card-value">{totalConsultores}</p>
-                        </div>
-                    </div>
+                <Container fluid className="px-0">
+                    <Row xs={1} sm={2} md={2} lg={4} className="g-3">
+                        <Col>
+                            <div className="tm-card h-100">
+                                <div className="tm-card-icon bg-blue">
+                                    <BsPeopleFill size={24} />
+                                </div>
+                                <div className="tm-card-info">
+                                    <h3>Consultores</h3>
+                                    <p className="tm-card-value">{totalConsultores}</p>
+                                </div>
+                            </div>
+                        </Col>
 
-                    <div className="tm-card">
-                        <div className="tm-card-icon bg-orange">
-                            <MdOutlineVerified size={24} />
-                        </div>
-                        <div className="tm-card-info">
-                            <h3>Validações Pendentes</h3>
-                            <p className="tm-card-value">7</p>
-                        </div>
-                    </div>
+                        <Col>
+                            <div className="tm-card h-100">
+                                <div className="tm-card-icon bg-orange">
+                                    <MdOutlineVerified size={24} />
+                                </div>
+                                <div className="tm-card-info">
+                                    <h3>Validações Pendentes</h3>
+                                    <p className="tm-card-value">7</p>
+                                </div>
+                            </div>
+                        </Col>
 
-                    <div className="tm-card">
-                        <div className="tm-card-icon bg-green">
-                            <BsAwardFill size={24} />
-                        </div>
-                        <div className="tm-card-info">
-                            <h3>Novas Conquistas</h3>
-                            <p className="tm-card-value">12</p>
-                        </div>
-                    </div>
+                        <Col>
+                            <div className="tm-card h-100">
+                                <div className="tm-card-icon bg-green">
+                                    <BsAwardFill size={24} />
+                                </div>
+                                <div className="tm-card-info">
+                                    <h3>Novas Conquistas</h3>
+                                    <p className="tm-card-value">12</p>
+                                </div>
+                            </div>
+                        </Col>
 
-                    <div className="tm-card">
-                        <div className="tm-card-icon bg-purple">
-                            <BsGraphUp size={24} />
-                        </div>
-                        <div className="tm-card-info">
-                            <h3>Evolução da Equipa</h3>
-                            <p className="tm-card-value">84%</p>
-                        </div>
-                    </div>
-                </div>
+                        <Col>
+                            <div className="tm-card h-100">
+                                <div className="tm-card-icon bg-purple">
+                                    <BsGraphUp size={24} />
+                                </div>
+                                <div className="tm-card-info">
+                                    <h3>Evolução da Equipa</h3>
+                                    <p className="tm-card-value">84%</p>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
             </main>
         </div>
     )

@@ -37,7 +37,7 @@ function DiretorioConsultores() {
   const [filtroArea, setFiltroArea] = useState("");
 
   useEffect(() => {
-    fetch(`${API_BASE}/admin/consultores`)
+    fetch(`${API_BASE}/talent/consultores`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -56,7 +56,10 @@ function DiretorioConsultores() {
 
   const handleTabChange = (label) => {
     setActiveTab(label);
-    if (label === "Início")      navigate("/talent");
+    if (label === "Início")      navigate("/talent/dashboard");
+    if (label === "Validações")  navigate("/talent/validacoes");
+    if (label === "Histórico")   navigate("/talent/historico");
+    if (label === "Catálogo")    navigate("/talent/catalogo");
     if (label === "Conquistas")  navigate("/talent/conquistas");
     if (label === "Catálogo")    navigate("/talent/catalogo");
   };

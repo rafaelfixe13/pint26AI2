@@ -58,7 +58,8 @@ function ConquistasTM() {
 
   const handleTabChange = (label) => {
     setActiveTab(label);
-    if (label === "Início")      navigate("/talent");
+    if (label === "Início")      navigate("/talent/dashboard");
+    if (label === "Validações")  navigate("/talent/validacoes");
     if (label === "Catálogo")    navigate("/talent/catalogo");
     if (label === "Consultores") navigate("/talent/diretorio");
   };

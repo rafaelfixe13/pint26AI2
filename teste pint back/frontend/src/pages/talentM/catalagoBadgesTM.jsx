@@ -20,15 +20,19 @@ function CatalogoBadgesTalent() {
   const navigate = useNavigate();
 
   const handleTabExtra = (label) => {
-    if (label === "Início")      navigate("/talent");
+    if (label === "Início")      navigate("/talent/dashboard");
+    if (label === "Validações")  navigate("/talent/validacoes");
     if (label === "Consultores") navigate("/talent/diretorio");
     if (label === "Conquistas")  navigate("/talent/conquistas");
+    if (label === "Histórico")   navigate("/talent/historico");
+    if (label === "Relatórios")  navigate("/talent/relatorios");
   };
 
   return (
     <BadgesList
       navItems={NAV_ITEMS_TALENT}
       onTabExtra={handleTabExtra}
+      activeTabInicial="Catálogo"
     />
   );
 }
