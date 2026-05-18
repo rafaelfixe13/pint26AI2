@@ -2,27 +2,55 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./NavBar";
 import "../styles/Perfil.css";
-import { MdOutlineEmail, MdOutlineVerified, MdOutlineModeEdit } from "react-icons/md";
-import { BsCalendarCheck, BsAward } from "react-icons/bs";
+import { MdOutlineEmail, MdOutlineVerified, MdOutlineModeEdit, MdOutlineAssignment } from "react-icons/md";
+import { BsCalendarCheck, BsAward, BsBarChart, BsClockHistory, BsTrophy } from "react-icons/bs";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
-import { MdOutlineAssignment } from "react-icons/md";
+import { FiUsers } from "react-icons/fi";
+
+// ─── Nav items por perfil ──────────────────────────────────
+const NAV_CONSULTOR = [
+  { label: "Início",             icon: <GoHome size={16} /> },
+  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
+  { label: "Os meus badges",     icon: <BsAward size={16} /> },
+  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+];
+
+const NAV_TALENT = [
+  { label: "Início",      icon: <GoHome size={16} /> },
+  { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
+  { label: "Histórico",   icon: <BsClockHistory size={16} /> },
+  { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
+  { label: "Conquistas",  icon: <BsTrophy size={16} /> },
+  { label: "Relatórios",  icon: <BsBarChart size={16} /> },
+  { label: "Consultores", icon: <FiUsers size={16} /> },
+];
+
+const NAV_ADMIN = [
+  { label: "Utilizadores", icon: <FiUsers size={16} /> },
+  { label: "Badges",       icon: <BsAward size={16} /> },
+];
+
+function getNavItems(perfilAtivo) {
+  if (perfilAtivo === "2") return NAV_TALENT;
+  if (perfilAtivo === "4") return NAV_ADMIN;
+  return NAV_CONSULTOR;
+}
 
 function Perfil() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("O meu perfil");
 
+  // ✅ Lê o perfil ativo logo no início
+  const perfilAtivo = localStorage.getItem("perfilAtivo") || "1";
+
+  const [activeTab, setActiveTab] = useState("O meu perfil");
   const [utilizador, setUtilizador] = useState(
     JSON.parse(localStorage.getItem("utilizador") || "{}")
   );
   const [fotoPreview, setFotoPreview] = useState(null);
 
-  const navItems = [
-    { label: "Início",             icon: <GoHome size={16} /> },
-    { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Os meus badges",     icon: <BsAward size={16} /> },
-    { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  ];
+  // ✅ navItems corretos para o perfil ativo
+  const navItems = getNavItems(perfilAtivo);
 
   const getInitials = (nome) => {
     if (!nome) return "?";
@@ -38,19 +66,33 @@ function Perfil() {
     });
   };
 
-  // ✅ Navegação corrigida
-  const navegarParaHome = () => {
-    const perfilAtivo = localStorage.getItem("perfilAtivo");
-    if (perfilAtivo === "1") navigate("/consultor");
-    else if (perfilAtivo === "2") navigate("/talent");
-    else if (perfilAtivo === "4") navigate("/admin/utilizadores");
-    else navigate("/perfil");
-  };
-
+  // ✅ handleTabChange com rotas corretas para cada perfil
   const handleTabChange = (label) => {
     setActiveTab(label);
-    if (label === "Início" || label === "Catálogo de Badges") {
-      navegarParaHome();
+
+    // Consultor (1)
+    if (perfilAtivo === "1") {
+      if (label === "Início")             navigate("/consultor");
+      if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
+      if (label === "Os meus badges")     navigate("/consultor");
+      if (label === "Candidaturas")       navigate("/consultor/candidaturas");
+    }
+
+    // Talent Manager (2)
+    if (perfilAtivo === "2") {
+      if (label === "Início")      navigate("/talent");
+      if (label === "Validações")  navigate("/talent/validacoes");
+      if (label === "Histórico")   navigate("/talent/historico");
+      if (label === "Catálogo")    navigate("/talent/catalogo");
+      if (label === "Conquistas")  navigate("/talent/conquistas");
+      if (label === "Relatórios")  navigate("/talent/relatorios");
+      if (label === "Consultores") navigate("/talent/diretorio");
+    }
+
+    // Admin (4)
+    if (perfilAtivo === "4") {
+      if (label === "Utilizadores") navigate("/admin/utilizadores");
+      if (label === "Badges")       navigate("/admin/badges");
     }
   };
 
@@ -150,8 +192,6 @@ function Perfil() {
               </div>
             </div>
           </div>
-
-          {/* (aqui podes mais tarde adicionar conteúdo principal do perfil) */}
         </div>
       </div>
     </div>

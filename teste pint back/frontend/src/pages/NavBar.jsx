@@ -4,6 +4,7 @@ import "../styles/Navbar.css";
 import { BsBell, BsSearch, BsInfoCircle, BsQuestionCircle, BsTrash } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
+import { MdSwitchAccount } from "react-icons/md";
 
 function Navbar({ activeTab, onTabChange, navItems }) {
   const navigate = useNavigate();
@@ -278,8 +279,19 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                     O meu perfil
                   </button>
 
+                  <button
+                    className="nb-dropdown-item"
+                    onClick={() => {
+                      setMenuAberto(false);
+                      navigate("/perfil");  // mesma rota do AdminNav
+                    }}
+                  >
+                    <MdSwitchAccount size={15} />
+                    Trocar de perfil
+                  </button>
+
                   <button className="nb-dropdown-item" onClick={() => setMenuAberto(false)}>
-                    <IoSettingsOutline size={17} />
+                    <IoSettingsOutline size={15} />
                     Configurações
                   </button>
 

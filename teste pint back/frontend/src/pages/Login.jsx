@@ -46,7 +46,15 @@ function Login() {
         return;
       }
 
-      localStorage.setItem("utilizador", JSON.stringify(data.utilizador));
+      const utilizadorParaGuardar = data.utilizador || data;
+
+      if (!utilizadorParaGuardar.roles || utilizadorParaGuardar.roles.length === 0) {
+        utilizadorParaGuardar.roles = utilizadorParaGuardar.idrole
+          ? [utilizadorParaGuardar.idrole]
+          : [];
+      }
+
+      localStorage.setItem("utilizador", JSON.stringify(utilizadorParaGuardar));
       navigate("/perfil");
     } catch {
       setErro("Não foi possível ligar ao servidor.");
@@ -87,7 +95,9 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
             />
-            <span className="auth-hint">Se é o seu primeiro acesso, deixe este campo em branco.</span>
+            <span className="auth-hint">
+              Se é o seu primeiro acesso, deixe este campo em branco.
+            </span>
           </div>
 
           {erro && <p className="auth-erro">{erro}</p>}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Row, Col } from "react-bootstrap";
 import Navbar from "./NavBar";
 import "../styles/BadgesList.css";
 import { API_BASE } from "../api";
@@ -18,8 +19,8 @@ const NAV_ITEMS_CONSULTOR = [
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
 ];
 
-// ✅ Adicionado onTabExtra nos parâmetros
-function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra }) {
+// ✅ Aceita activeTabInicial como prop
+function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInicial }) {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   const perfilAtivo = Number(localStorage.getItem("perfilAtivo") || "0");
@@ -30,13 +31,20 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("Catálogo de Badges");
+  // ✅ Usa activeTabInicial se fornecido, senão usa o label do navItems ou default
+  const [activeTab, setActiveTab] = useState(
+    activeTabInicial ||
+    navItems.find(i => i.label.includes("Catálogo"))?.label ||
+    "Catálogo de Badges"
+  );
   const [filters, setFilters] = useState({
     serviceline: "",
     area: "",
     nivel: "",
     estado: "",
   });
+
+  // ✅ useEffect de deteção automática REMOVIDO — activeTabInicial resolve isto
 
   useEffect(() => {
     const fetchBadges = fetch(`${API_BASE}/badges`).then((r) => r.json());
@@ -58,22 +66,23 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra }) {
         setBadgesAprovados(aprovados);
         setLoading(false);
       })
-      .catch((err) => { console.error(err); setError("Erro ao carregar badges."); setLoading(false); });
+      .catch((err) => {
+        console.error(err);
+        setError("Erro ao carregar badges.");
+        setLoading(false);
+      });
   }, []);
 
   const handleTabChange = (label) => {
-    // ✅ Se vier callback externo (TM), usa-o e sai
-    if (onTabExtra) {
-      onTabExtra(label);
-      return;
-    }
-
     setActiveTab(label);
-    if (label === "Início" || label === "Catálogo de Badges") {
-      const perfilAtivo = localStorage.getItem("perfilAtivo");
-      if (perfilAtivo === "1") navigate("/consultor");
-      else if (perfilAtivo === "2") navigate("/talent/catalogo");
-      else if (perfilAtivo === "4") navigate("/admin/utilizadores");
+
+    if (onTabExtra) { onTabExtra(label); return; }
+
+    const p = localStorage.getItem("perfilAtivo");
+    if (label === "Início") {
+      if (p === "1") navigate("/consultor");
+      else if (p === "2") navigate("/talent/catalogo");
+      else if (p === "4") navigate("/admin/utilizadores");
       else navigate("/perfil");
     }
     if (label === "Candidaturas")   navigate("/consultor/candidaturas");
@@ -125,7 +134,6 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra }) {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-
           <div className="filters">
             <MdFilterList size={20} className="filter-icon" />
             <select value={filters.serviceline} onChange={(e) => setFilters({ ...filters, serviceline: e.target.value })}>
@@ -164,56 +172,80 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra }) {
         )}
 
         {!loading && !error && filtered.length > 0 && (
-          <div className="badges-grid">
+          <Row xs={1} sm={2} md={3} lg={4} className="g-3">
             {filtered.map((badge) => (
-              <div key={badge.idbadge} className="badge-card">
-                {badge.ispublic === false && (
-                  <span className="tag-especial">
-                    <BsStarFill size={12} style={{ marginRight: 4 }} />
-                    Conquista Especial
-                  </span>
-                )}
-                <div className="badge-icon-wrap">
-                  {badge.imagemurl ? (
-                    <img
-                      src={badge.imagemurl}
-                      alt={badge.nome}
-                      className="badge-img"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.nextSibling.style.display = "flex";
-                      }}
-                    />
-                  ) : null}
-                  <div className="badge-icon-fallback" style={{ display: badge.imagemurl ? "none" : "flex" }}>
-                    <FaMedal size={36} color="#d97706" />
+              <Col key={badge.idbadge} className="d-flex">
+                <div className="badge-card">
+                  {badge.ispublic === false && (
+                    <span className="tag-especial">
+                      <BsStarFill size={12} style={{ marginRight: 4 }} />
+                      Conquista Especial
+                    </span>
+                  )}
+
+                  {/* Corpo */}
+                  <div className="badge-card-body">
+                    <div className="badge-icon-wrap">
+                      {badge.imagemurl ? (
+                        <img
+                          src={badge.imagemurl}
+                          alt={badge.nome}
+                          className="badge-img"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className="badge-icon-fallback"
+                        style={{ display: badge.imagemurl ? "none" : "flex" }}
+                      >
+                        <FaMedal size={44} color="#d97706" />
+                      </div>
+                    </div>
+
+                    <h3 className="badge-name">{badge.nome}</h3>
+                    {badge.descricao && <p className="badge-desc">{badge.descricao}</p>}
+
+                    <div className="badge-info">
+                      {badge.serviceline && (
+                        <p><span className="info-label">Service Line:</span> {badge.serviceline}</p>
+                      )}
+                      {badge.area && (
+                        <p><span className="info-label">Área:</span> {badge.area}</p>
+                      )}
+                      {badge.nivel && (
+                        <p><span className="info-label">Nível:</span> {badge.nivel}</p>
+                      )}
+                      {badge.estado
+                        ? <p><span className="info-label">Estado:</span> {badge.estado}</p>
+                        : badge.expiremeses
+                          ? <p><span className="info-label">Estado:</span> {`Expira em ${badge.expiremeses} meses`}</p>
+                          : null}
+                    </div>
+                  </div>
+
+                  {/* Rodapé */}
+                  <div className="badge-card-footer">
+                    <span
+                      className="badge-points"
+                      style={{ backgroundColor: getPointsColor(badge.pontos) }}
+                    >
+                      {badge.pontos} Pontos
+                    </span>
+                    <button
+                      className="btn-detalhes"
+                      onClick={() => navigate(`/badges/${badge.idbadge}`)}
+                    >
+                      <IoEyeOutline size={16} />
+                      Ver Detalhes
+                    </button>
                   </div>
                 </div>
-                <h3 className="badge-name">{badge.nome}</h3>
-                <p className="badge-desc">{badge.descricao}</p>
-                <div className="badge-info">
-                  {badge.serviceline && <p><span className="info-label">Service Line:</span> {badge.serviceline}</p>}
-                  {badge.area        && <p><span className="info-label">Área:</span> {badge.area}</p>}
-                  {badge.nivel       && <p><span className="info-label">Nível:</span> {badge.nivel}</p>}
-                  {badge.estado
-                    ? <p><span className="info-label">Estado:</span> {badge.estado}</p>
-                    : badge.expiremeses
-                      ? <p><span className="info-label">Estado:</span> {`Expira em ${badge.expiremeses} meses`}</p>
-                      : null}
-                </div>
-                <div className="badge-points" style={{ backgroundColor: getPointsColor(badge.pontos) }}>
-                  {badge.pontos} Pontos
-                </div>
-                <button
-                  className="btn-detalhes"
-                  onClick={() => navigate(`/badges/${badge.idbadge}`)}
-                >
-                  <IoEyeOutline size={16} style={{ marginRight: 6 }} />
-                  Ver Detalhes
-                </button>
-              </div>
+              </Col>
             ))}
-          </div>
+          </Row>
         )}
       </div>
     </div>
