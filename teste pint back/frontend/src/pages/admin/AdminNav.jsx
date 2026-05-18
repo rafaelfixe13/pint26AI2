@@ -4,6 +4,7 @@ import "../../styles/AdminNav.css";
 import { BsBell, BsSearch, BsInfoCircle, BsQuestionCircle, BsTrash } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
+import { MdSwitchAccount } from "react-icons/md";
 
 const NAV_ITEMS = [
   { label: "Utilizadores", path: "/admin/utilizadores" },
@@ -318,7 +319,7 @@ function AdminNav() {
                       navigate("/perfil");
                     }}
                   >
-                    <IoSettingsOutline size={17} />
+                    <MdSwitchAccount size={15} />
                     Trocar de perfil
                   </button>
 
