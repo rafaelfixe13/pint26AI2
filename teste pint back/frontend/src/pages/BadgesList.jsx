@@ -31,7 +31,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
-  // ✅ Usa activeTabInicial se fornecido, senão usa o label do navItems ou default
+ 
   const [activeTab, setActiveTab] = useState(
     activeTabInicial ||
     navItems.find(i => i.label.includes("Catálogo"))?.label ||
@@ -43,8 +43,6 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
     nivel: "",
     estado: "",
   });
-
-  // ✅ useEffect de deteção automática REMOVIDO — activeTabInicial resolve isto
 
   useEffect(() => {
     const fetchBadges = fetch(`${API_BASE}/badges`).then((r) => r.json());

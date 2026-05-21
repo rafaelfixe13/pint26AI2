@@ -29,7 +29,7 @@ function ValidacoesSL() {
 
   const [candidaturas, setCandidaturas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState("em_validacao");
+  const [filtro, setFiltro] = useState("EM_VALIDACAO");
   const [comentarios, setComentarios] = useState({});
   const [processando, setProcessando] = useState(null);
   const [msg, setMsg] = useState("");
@@ -92,7 +92,7 @@ function ValidacoesSL() {
   };
 
   const filtradas = candidaturas.filter((c) => {
-    if (filtro === "em_validacao") return c.estado === "em_validacao";
+    if (filtro === "EM_VALIDACAO") return c.estado === "em_validacao";
     if (filtro === "historico")    return c.estado === "fechado" || c.estado === "open";
     return true;
   });
@@ -113,8 +113,8 @@ function ValidacoesSL() {
         )}
 
         <div className="val-filtros">
-          <button className={`val-filtro-btn ${filtro === "em_validacao" ? "active" : ""}`}
-                  onClick={() => setFiltro("em_validacao")}>
+          <button className={`val-filtro-btn ${filtro === "EM_VALIDACAO" ? "active" : ""}`}
+                  onClick={() => setFiltro("EM_VALIDACAO")}>
             Aguardam validação
           </button>
           <button className={`val-filtro-btn ${filtro === "historico" ? "active" : ""}`}
@@ -127,14 +127,14 @@ function ValidacoesSL() {
 
         {!loading && filtradas.length === 0 && (
           <div className="val-vazio">
-            {filtro === "em_validacao" ? "Não há candidaturas para validar." : "Sem histórico."}
+            {filtro === "EM_VALIDACAO" ? "Não há candidaturas para validar." : "Sem histórico."}
           </div>
         )}
 
         <div className="val-lista">
           {filtradas.map((c) => {
             const info = estadoInfo(c.estado, c.resultado);
-            const em_historico = c.estado !== "em_validacao";
+            const em_historico = c.estado !== "EM_VALIDACAO";
             return (
               <div key={c.idcandidatura} className="val-card">
                 <div className="val-card-top">
