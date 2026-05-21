@@ -60,11 +60,11 @@ const startServer = async () => {
   `);
 
   await sequelize.query(`
-    CREATE TABLE IF NOT EXISTS candidaturas_badges (
+    CREATE TABLE IF NOT EXISTS candidaturasbadge (
       idcandidatura   SERIAL PRIMARY KEY,
       idutilizador    INT NOT NULL REFERENCES utilizadores(idutilizador) ON DELETE CASCADE,
       idbadge         INT NOT NULL REFERENCES badges(idbadge) ON DELETE CASCADE,
-      estado          VARCHAR(20) NOT NULL DEFAULT 'submitted',
+      estado          VARCHAR(20) NOT NULL DEFAULT 'SUBMITTED',
       resultado       VARCHAR(20),
       comentario      TEXT,
       idtm            INT REFERENCES utilizadores(idutilizador) ON DELETE SET NULL,
@@ -77,7 +77,7 @@ const startServer = async () => {
   await sequelize.query(`
     CREATE TABLE IF NOT EXISTS evidencias_candidatura (
       idevidencia   SERIAL PRIMARY KEY,
-      idcandidatura INT NOT NULL REFERENCES candidaturas_badges(idcandidatura) ON DELETE CASCADE,
+      idcandidatura INT NOT NULL REFERENCES candidaturasbadge(idcandidatura) ON DELETE CASCADE,
       fileurl       VARCHAR(500) NOT NULL,
       filename      VARCHAR(300),
       datacriacao   TIMESTAMPTZ NOT NULL DEFAULT NOW()
