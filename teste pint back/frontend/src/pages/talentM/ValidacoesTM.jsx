@@ -8,18 +8,21 @@ import { BsTrophy, BsClockHistory, BsBarChart } from "react-icons/bs";
 import { MdOutlineVerified } from "react-icons/md";
 import { FiUsers, FiDownload } from "react-icons/fi";
 import { FaMedal } from "react-icons/fa";
+import { API_BASE } from "../../api";
 
 const toDownloadUrl = (url) => url
   ? url.replace('/image/upload/', '/image/upload/fl_attachment/')
        .replace('/video/upload/', '/video/upload/fl_attachment/')
   : url;
-import { API_BASE } from "../../api";
 
 function estadoInfo(estado) {
-  if (estado === "submitted")    return { texto: "Aguarda validação TM", cls: "estado-submitted" };
-  if (estado === "em_validacao") return { texto: "Em validação SL",      cls: "estado-em_validacao" };
-  if (estado === "open")         return { texto: "Devolvida",            cls: "estado-open" };
-  if (estado === "fechado")      return { texto: "Fechada",              cls: "estado-fechado-aprovado" };
+  const e = (estado || "").toUpperCase();
+  if (e === "SUBMITTED")    return { texto: "Aguarda validação TM", cls: "estado-submitted" };
+  if (e === "EM_VALIDACAO") return { texto: "Em validação SL",      cls: "estado-em_validacao" };
+  if (e === "OPEN")         return { texto: "Devolvida",            cls: "estado-open" };
+  if (e === "APPROVED")     return { texto: "Aprovada",             cls: "estado-fechado-aprovado" };
+  if (e === "REJECTED")     return { texto: "Rejeitada",            cls: "estado-fechado-rejeitado" };
+  if (e === "FECHADO")      return { texto: "Fechada",              cls: "estado-fechado-aprovado" };
   return { texto: estado, cls: "" };
 }
 
@@ -48,7 +51,10 @@ function ValidacoesTM() {
     setLoading(true);
     fetch(`${API_BASE}/candidaturas/tm/lista`)
       .then((r) => r.json())
-      .then((data) => { setCandidaturas(Array.isArray(data) ? data : []); setLoading(false); })
+      .then((data) => {
+        setCandidaturas(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   };
 
@@ -89,8 +95,9 @@ function ValidacoesTM() {
   };
 
   const filtradas = candidaturas.filter((c) => {
-    if (filtro === "submitted")    return c.estado === "submitted";
-    if (filtro === "historico")    return ["em_validacao", "open", "fechado"].includes(c.estado);
+    const e = (c.estado || "").toUpperCase();
+    if (filtro === "submitted") return e === "SUBMITTED";
+    if (filtro === "historico") return ["EM_VALIDACAO", "OPEN", "FECHADO", "APPROVED", "REJECTED"].includes(e);
     return true;
   });
 
@@ -110,12 +117,16 @@ function ValidacoesTM() {
         )}
 
         <div className="val-filtros">
-          <button className={`val-filtro-btn ${filtro === "submitted" ? "active" : ""}`}
-                  onClick={() => setFiltro("submitted")}>
+          <button
+            className={`val-filtro-btn ${filtro === "submitted" ? "active" : ""}`}
+            onClick={() => setFiltro("submitted")}
+          >
             Aguardam validação
           </button>
-          <button className={`val-filtro-btn ${filtro === "historico" ? "active" : ""}`}
-                  onClick={() => setFiltro("historico")}>
+          <button
+            className={`val-filtro-btn ${filtro === "historico" ? "active" : ""}`}
+            onClick={() => setFiltro("historico")}
+          >
             Histórico
           </button>
         </div>
@@ -131,7 +142,7 @@ function ValidacoesTM() {
         <div className="val-lista">
           {filtradas.map((c) => {
             const info = estadoInfo(c.estado);
-            const em_historico = c.estado !== "submitted";
+            const em_historico = (c.estado || "").toUpperCase() !== "SUBMITTED";
             return (
               <div key={c.idcandidatura} className="val-card">
                 <div className="val-card-top">
@@ -162,8 +173,12 @@ function ValidacoesTM() {
                         <a href={e.fileurl} target="_blank" rel="noreferrer" className="val-ev-link">
                           {e.filename || "ficheiro"}
                         </a>
-                        <a href={toDownloadUrl(e.fileurl)} download={e.filename || "evidencia"}
-                           className="val-ev-download" title="Descarregar">
+                        <a
+                          href={toDownloadUrl(e.fileurl)}
+                          download={e.filename || "evidencia"}
+                          className="val-ev-download"
+                          title="Descarregar"
+                        >
                           <FiDownload size={13} />
                         </a>
                       </span>
@@ -172,7 +187,9 @@ function ValidacoesTM() {
                 )}
 
                 {c.comentario && (
-                  <p className="val-card-historico"><strong>Comentário anterior:</strong> {c.comentario}</p>
+                  <p className="val-card-historico">
+                    <strong>Comentário anterior:</strong> {c.comentario}
+                  </p>
                 )}
 
                 {!em_historico && (
@@ -180,16 +197,22 @@ function ValidacoesTM() {
                     <textarea
                       placeholder="Comentário (obrigatório ao devolver)"
                       value={comentarios[c.idcandidatura] || ""}
-                      onChange={(e) => setComentarios((p) => ({ ...p, [c.idcandidatura]: e.target.value }))}
+                      onChange={(e) =>
+                        setComentarios((p) => ({ ...p, [c.idcandidatura]: e.target.value }))
+                      }
                     />
-                    <button className="btn-validar"
-                            disabled={processando === c.idcandidatura}
-                            onClick={() => agir(c.idcandidatura, "validar")}>
+                    <button
+                      className="btn-validar"
+                      disabled={processando === c.idcandidatura}
+                      onClick={() => agir(c.idcandidatura, "validar")}
+                    >
                       Validar → SL
                     </button>
-                    <button className="btn-devolver"
-                            disabled={processando === c.idcandidatura}
-                            onClick={() => agir(c.idcandidatura, "devolver")}>
+                    <button
+                      className="btn-devolver"
+                      disabled={processando === c.idcandidatura}
+                      onClick={() => agir(c.idcandidatura, "devolver")}
+                    >
                       Devolver
                     </button>
                   </div>

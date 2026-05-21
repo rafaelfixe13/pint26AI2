@@ -104,7 +104,7 @@ export default function DashBoard() {
         setActiveTab(label);
         // Exemplo de rotas - altere para os URLs que tem criados no seu App.jsx
         if (label === "Início") navigate("/talent/dashboard");
-        if (label === "Validações") navigate("/talent-manager/validacoes");
+        if (label === "Validações") navigate("/talent/validacoes");
         if (label === "Histórico") navigate("/talent/historico");
         if (label === "Catálogo") navigate("/talent-manager/catalogo");
         if (label === "Conquistas") navigate("/talent/conquistas");
