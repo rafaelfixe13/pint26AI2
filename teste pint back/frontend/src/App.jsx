@@ -11,14 +11,15 @@ import PagBadge from "./pages/PagBadge";
 
 // Consultor
 import BadgesList from "./pages/BadgesList";
-import CandidaturasBadge from "./pages/CandidaturasBadge";
+import CandidaturasBadge from "./pages/consultor/CandidaturasBadge";
+import Rankings from "./pages/consultor/Rankings";
 
 // Talent
 import DashBoard from "./pages/talentM/DashBoard";
 import CatalogoBadgesTalent from "./pages/talentM/catalagoBadgesTM";
 import DiretorioConsultores from "./pages/talentM/DirConsultoresTM";
 import ConquistasTalent from "./pages/talentM/ConquistasTM";
-import ValidacoesTM from "./pages/ValidacoesTM";
+import ValidacoesTM from "./pages/talentM/ValidacoesTM";
 
 // Service Line
 import ValidacoesSL from "./pages/ValidacoesSL";
@@ -33,15 +34,17 @@ import BadgesUtilizador from "./pages/admin/BadgesUtilizador";
 import Sobre from "./pages/Sobre";
 import Ajuda from "./pages/Ajuda";
 
+// ── Guards ────────────────────────────────────────────────────────────────────
+
 function RotaProtegida({ children }) {
   const utilizador = localStorage.getItem("utilizador");
   return utilizador ? children : <Navigate to="/login" replace />;
 }
 
-function RotaAdmin({ children }) {
+function RotaConsultor({ children }) {
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   if (!utilizador) return <Navigate to="/login" replace />;
-  const ok = (Array.isArray(utilizador.roles) && utilizador.roles.includes(4)) || utilizador.idrole === 4;
+  const ok = (Array.isArray(utilizador.roles) && utilizador.roles.includes(1)) || utilizador.idrole === 1;
   return ok ? children : <Navigate to="/perfil" replace />;
 }
 
@@ -59,45 +62,57 @@ function RotaSL({ children }) {
   return ok ? children : <Navigate to="/perfil" replace />;
 }
 
+function RotaAdmin({ children }) {
+  const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
+  if (!utilizador) return <Navigate to="/login" replace />;
+  const ok = (Array.isArray(utilizador.roles) && utilizador.roles.includes(4)) || utilizador.idrole === 4;
+  return ok ? children : <Navigate to="/perfil" replace />;
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login"           element={<Login />} />
-        <Route path="/register"        element={<Register />} />
-        <Route path="/confirmar-email" element={<ConfirmarEmail />} />
+        {/* Públicas */}
+        <Route path="/login"            element={<Login />} />
+        <Route path="/register"         element={<Register />} />
+        <Route path="/confirmar-email"  element={<ConfirmarEmail />} />
         <Route path="/definir-password" element={<DefinirPassword />} />
 
+        {/* Autenticadas (qualquer role) */}
         <Route path="/alterar-password" element={<RotaProtegida><AlterarPassword /></RotaProtegida>} />
         <Route path="/perfil"           element={<RotaProtegida><SelecionarPerfil /></RotaProtegida>} />
         <Route path="/meu-perfil"       element={<RotaProtegida><Perfil /></RotaProtegida>} />
         <Route path="/badges/:id"       element={<RotaProtegida><PagBadge /></RotaProtegida>} />
+        <Route path="/sobre"            element={<RotaProtegida><Sobre /></RotaProtegida>} />
+        <Route path="/ajuda"            element={<RotaProtegida><Ajuda /></RotaProtegida>} />
 
-        {/* Consultor */}
-        <Route path="/consultor"               element={<RotaProtegida><BadgesList /></RotaProtegida>} />
-        <Route path="/consultor/candidaturas"  element={<RotaProtegida><CandidaturasBadge /></RotaProtegida>} />
+        {/* Consultor (role 1) */}
+        <Route path="/consultor/catalogo"              element={<RotaConsultor><BadgesList /></RotaConsultor>} />
+        <Route path="/consultor/dashboard"    element={<RotaConsultor><BadgesList /></RotaConsultor>} />
+        <Route path="/consultor/badges"       element={<RotaConsultor><BadgesList /></RotaConsultor>} />
+        <Route path="/consultor/candidaturas" element={<RotaConsultor><CandidaturasBadge /></RotaConsultor>} />
+        <Route path="/consultor/rankings"     element={<RotaConsultor><Rankings /></RotaConsultor>} />
 
-        {/* Talent Manager */}
-        <Route path="/talent-manager"             element={<RotaTalent><DashBoard /></RotaTalent>} />
-        <Route path="/talent-manager/validacoes"  element={<RotaTalent><ValidacoesTM /></RotaTalent>} />
-        <Route path="/talent-manager/catalogo"    element={<RotaTalent><CatalogoBadgesTalent /></RotaTalent>} />
-        <Route path="/talent/catalogo"            element={<RotaTalent><CatalogoBadgesTalent /></RotaTalent>} />
-        <Route path="/talent/diretorio"           element={<RotaTalent><DiretorioConsultores /></RotaTalent>} />
-        <Route path="/talent/conquistas"          element={<RotaTalent><ConquistasTalent /></RotaTalent>} />
-        <Route path="/talent/validacoes"          element={<RotaTalent><ValidacoesTM /></RotaTalent>} />
+        {/* Talent Manager (role 2) */}
+        <Route path="/talent/dashboard"  element={<RotaTalent><DashBoard /></RotaTalent>} />
+        <Route path="/talent/validacoes" element={<RotaTalent><ValidacoesTM /></RotaTalent>} />
+        <Route path="/talent/catalogo"   element={<RotaTalent><CatalogoBadgesTalent /></RotaTalent>} />
+        <Route path="/talent/diretorio"  element={<RotaTalent><DiretorioConsultores /></RotaTalent>} />
+        <Route path="/talent/conquistas" element={<RotaTalent><ConquistasTalent /></RotaTalent>} />
 
-        {/* Service Line */}
+        {/* Service Line (role 3) */}
         <Route path="/sl/validacoes" element={<RotaSL><ValidacoesSL /></RotaSL>} />
 
-        {/* Admin */}
-        <Route path="/admin/utilizadores"           element={<RotaAdmin><GestaoUtilizadores /></RotaAdmin>} />
-        <Route path="/admin/utilizadores/:id"       element={<RotaAdmin><DetalhesUtilizador /></RotaAdmin>} />
+        {/* Admin (role 4) */}
+        <Route path="/admin/utilizadores"            element={<RotaAdmin><GestaoUtilizadores /></RotaAdmin>} />
+        <Route path="/admin/utilizadores/:id"        element={<RotaAdmin><DetalhesUtilizador /></RotaAdmin>} />
         <Route path="/admin/utilizadores/:id/badges" element={<RotaAdmin><BadgesUtilizador /></RotaAdmin>} />
-        <Route path="/admin/badges"                 element={<RotaAdmin><GestaoBadges /></RotaAdmin>} />
+        <Route path="/admin/badges"                  element={<RotaAdmin><GestaoBadges /></RotaAdmin>} />
 
-        <Route path="/sobre" element={<RotaProtegida><Sobre /></RotaProtegida>} />
-        <Route path="/ajuda" element={<RotaProtegida><Ajuda /></RotaProtegida>} />
-
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
