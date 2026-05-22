@@ -7,6 +7,7 @@ import { BsCalendarCheck, BsAward, BsBarChart, BsClockHistory, BsTrophy } from "
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
+import { MdLeaderboard } from "react-icons/md";
 
 // ─── Nav items por perfil ──────────────────────────────────
 const NAV_CONSULTOR = [
@@ -14,6 +15,7 @@ const NAV_CONSULTOR = [
   { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
   { label: "Os meus badges",     icon: <BsAward size={16} /> },
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
 ];
 
 const NAV_TALENT = [
@@ -76,6 +78,7 @@ function Perfil() {
       if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
       if (label === "Os meus badges")     navigate("/consultor");
       if (label === "Candidaturas")       navigate("/consultor/candidaturas");
+      if (label === "Rankings")           navigate("/consultor/rankings");
     }
 
     // Talent Manager (2)

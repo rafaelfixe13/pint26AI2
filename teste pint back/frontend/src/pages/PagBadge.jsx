@@ -10,6 +10,7 @@ import { MdOutlineAssignment } from "react-icons/md";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
 import { API_BASE } from "../api";
+import { MdLeaderboard } from "react-icons/md";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 function estadoLabel(estado, resultado) {
@@ -122,6 +123,7 @@ function BadgeDetalhe() {
     { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
     { label: "Os meus badges",     icon: <BsAward size={16} /> },
     { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+    { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
   ];
 
   useEffect(() => {
@@ -140,7 +142,7 @@ function BadgeDetalhe() {
   }, [id, isConsultor]);
 
   const voltarParaCatalogo = () => {
-    if (perfilAtivo === 1) navigate("/consultor");
+    if (perfilAtivo === 1) navigate("/consultor/catalogo");
     else if (perfilAtivo === 2) navigate("/talent/catalogo");
     else if (perfilAtivo === 4) navigate("/admin/utilizadores");
     else navigate("/perfil");
@@ -149,8 +151,10 @@ function BadgeDetalhe() {
   const handleTabChange = (label) => {
     setActiveTab(label);
     if (label === "Início" || label === "Catálogo de Badges") voltarParaCatalogo();
+    if(label === "Catálogo de Badges") voltarParaCatalogo();
     if (label === "Candidaturas") navigate("/consultor/candidaturas");
-    if (label === "Os meus badges") navigate("/consultor");
+    if (label === "Os meus badges") navigate("/consultor/OsMeusBadges");
+    if (label === "Rankings")       navigate("/consultor/rankings");
   };
 
   const handleSubmetido = () => {

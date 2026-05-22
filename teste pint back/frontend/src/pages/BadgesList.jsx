@@ -11,12 +11,14 @@ import { AiOutlineLoading3Quarters, AiOutlineAppstore } from "react-icons/ai";
 import { HiOutlineEmojiSad } from "react-icons/hi";
 import { IoEyeOutline } from "react-icons/io5";
 import { GoHome } from "react-icons/go";
+import { MdLeaderboard } from "react-icons/md";
 
 const NAV_ITEMS_CONSULTOR = [
   { label: "Início",             icon: <GoHome size={16} /> },
   { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
   { label: "Os meus badges",     icon: <BsAward size={16} /> },
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
 ];
 
 // ✅ Aceita activeTabInicial como prop
@@ -84,7 +86,8 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
       else navigate("/perfil");
     }
     if (label === "Candidaturas")   navigate("/consultor/candidaturas");
-    if (label === "Os meus badges") navigate("/consultor");
+    if (label === "Os meus badges") navigate("/consultor/OsMeusBadges");
+    if (label === "Rankings")       navigate("/consultor/rankings");
   };
 
   const uniqueValues = (key) => [...new Set(badges.map((b) => b[key]).filter(Boolean))];
