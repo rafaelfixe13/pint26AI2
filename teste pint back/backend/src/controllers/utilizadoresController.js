@@ -1,3 +1,4 @@
+const { sequelize } = require('../config/database');
 const Utilizador = require('../models/Utilizador');
 
 const atualizarPerfil = async (req, res) => {
@@ -6,9 +7,11 @@ const atualizarPerfil = async (req, res) => {
   try {
     const utilizador = await Utilizador.findByPk(id);
     if (!utilizador) return res.status(404).json({ message: 'Utilizador não encontrado.' });
+
     const updates = {};
-    if (idserviceline !== undefined) updates.idserviceline = idserviceline || null;
-    if (idarea !== undefined) updates.idarea = idarea || null;
+    if (idserviceline !== undefined) updates.idserviceline = idserviceline ?? null;
+    if (idarea        !== undefined) updates.idarea        = idarea        ?? null;
+
     await utilizador.update(updates);
     return res.json({ idserviceline: utilizador.idserviceline, idarea: utilizador.idarea });
   } catch (error) {
@@ -18,20 +21,11 @@ const atualizarPerfil = async (req, res) => {
 
 const atualizarFoto = async (req, res) => {
   const { id } = req.params;
-
-  if (!req.file) {
-    return res.status(400).json({ message: 'Nenhum ficheiro enviado.' });
-  }
-
+  if (!req.file) return res.status(400).json({ message: 'Nenhum ficheiro enviado.' });
   try {
     const baseUrl = 'http://localhost:3000';
     const fotourl = `${baseUrl}/uploads/${req.file.filename}`;
-
-    await Utilizador.update(
-      { fotourl },
-      { where: { idutilizador: id } }
-    );
-
+    await Utilizador.update({ fotourl }, { where: { idutilizador: id } });
     return res.json({ fotourl });
   } catch (error) {
     console.error('Erro ao atualizar foto:', error);
@@ -39,4 +33,20 @@ const atualizarFoto = async (req, res) => {
   }
 };
 
-module.exports = { atualizarFoto, atualizarPerfil };
+const getRanking = async (req, res) => {
+  try {
+    const [rows] = await sequelize.query(
+      `SELECT idutilizador, nome, pontos, fotourl
+       FROM utilizadores
+       WHERE estadoconta = 'ATIVA'
+       ORDER BY pontos DESC
+       LIMIT 50`
+    );
+    return res.json(rows);
+  } catch (err) {
+    console.error('Erro ao obter ranking:', err);
+    return res.status(500).json({ message: 'Erro interno.' });
+  }
+};
+
+module.exports = { atualizarFoto, atualizarPerfil, getRanking };
