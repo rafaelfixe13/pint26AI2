@@ -21,7 +21,6 @@ const NAV_ITEMS_CONSULTOR = [
   { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
 ];
 
-// ✅ Aceita activeTabInicial como prop
 function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInicial }) {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
@@ -33,7 +32,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
- 
+
   const [activeTab, setActiveTab] = useState(
     activeTabInicial ||
     navItems.find(i => i.label.includes("Catálogo"))?.label ||
@@ -60,7 +59,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
         setBadges(Array.isArray(allBadges) ? allBadges : []);
         const aprovados = new Set(
           (Array.isArray(candidaturas) ? candidaturas : [])
-            .filter((c) => c.estado === "fechado" && c.resultado === "aprovado")
+            .filter((c) => c.estado?.toUpperCase() === "APPROVED")
             .map((c) => c.idbadge)
         );
         setBadgesAprovados(aprovados);
@@ -184,7 +183,6 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
                     </span>
                   )}
 
-                  {/* Corpo */}
                   <div className="badge-card-body">
                     <div className="badge-icon-wrap">
                       {badge.imagemurl ? (
@@ -227,7 +225,6 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
                     </div>
                   </div>
 
-                  {/* Rodapé */}
                   <div className="badge-card-footer">
                     <span
                       className="badge-points"

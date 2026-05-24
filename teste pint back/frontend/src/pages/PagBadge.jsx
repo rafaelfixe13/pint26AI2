@@ -12,17 +12,16 @@ import { FaMedal } from "react-icons/fa";
 import { API_BASE } from "../api";
 import { MdLeaderboard } from "react-icons/md";
 
-// ── helpers ──────────────────────────────────────────────────────────────────
 function estadoLabel(estado, resultado) {
-  if (estado === "open")          return { texto: "Por corrigir",    cls: "estado-open" };
-  if (estado === "submitted")     return { texto: "Em validação TM", cls: "estado-submitted" };
-  if (estado === "em_validacao")  return { texto: "Em validação SL", cls: "estado-em_validacao" };
-  if (estado === "fechado" && resultado === "aprovado")  return { texto: "Aprovado",  cls: "estado-fechado-aprovado" };
-  if (estado === "fechado" && resultado === "rejeitado") return { texto: "Rejeitado", cls: "estado-fechado-rejeitado" };
+  const e = estado?.toUpperCase();
+  if (e === "OPEN")         return { texto: "Por corrigir",    cls: "estado-open" };
+  if (e === "SUBMITTED")    return { texto: "Em validação TM", cls: "estado-submitted" };
+  if (e === "EM_VALIDACAO") return { texto: "Em validação SL", cls: "estado-em_validacao" };
+  if (e === "APPROVED")     return { texto: "Aprovado",        cls: "estado-fechado-aprovado" };
+  if (e === "REJECTED")     return { texto: "Rejeitado",       cls: "estado-fechado-rejeitado" };
   return { texto: estado, cls: "" };
 }
 
-// ── Modal submeter candidatura ────────────────────────────────────────────────
 function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
   const [files, setFiles] = useState([]);
   const [erro, setErro] = useState("");
@@ -43,16 +42,38 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
     setErro("");
     setEnviando(true);
     try {
-      const fd = new FormData();
-      fd.append("idbadge", badge.idbadge);
-      fd.append("idutilizador", utilizador.idutilizador);
-      files.forEach((f) => fd.append("evidencias", f));
+      const evidenciasBase64 = await Promise.all(
+        files.map(
+          (f) =>
+            new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () =>
+                resolve({
+                  filename: f.name,
+                  mimetype: f.type || "application/octet-stream",
+                  base64: reader.result.split(",")[1],
+                });
+              reader.onerror = reject;
+              reader.readAsDataURL(f);
+            })
+        )
+      );
 
-      const res = await fetch(`${API_BASE}/candidaturas`, { method: "POST", body: fd });
+      const res = await fetch(`${API_BASE}/candidaturas`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idbadge: badge.idbadge,
+          idutilizador: utilizador.idutilizador,
+          evidencias: evidenciasBase64,
+        }),
+      });
+
       const data = await res.json();
       if (!res.ok) { setErro(data.message || "Erro ao submeter."); return; }
       onSubmetido();
-    } catch {
+    } catch (err) {
+      console.error("Erro no submeter:", err);
       setErro("Não foi possível ligar ao servidor.");
     } finally {
       setEnviando(false);
@@ -102,7 +123,6 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
   );
 }
 
-// ── Página principal ──────────────────────────────────────────────────────────
 function BadgeDetalhe() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -114,7 +134,6 @@ function BadgeDetalhe() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("Catálogo de Badges");
-
   const [candidatura, setCandidatura] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
 
@@ -151,15 +170,13 @@ function BadgeDetalhe() {
   const handleTabChange = (label) => {
     setActiveTab(label);
     if (label === "Início" || label === "Catálogo de Badges") voltarParaCatalogo();
-    if(label === "Catálogo de Badges") voltarParaCatalogo();
-    if (label === "Candidaturas") navigate("/consultor/candidaturas");
+    if (label === "Candidaturas")   navigate("/consultor/candidaturas");
     if (label === "Os meus badges") navigate("/consultor/OsMeusBadges");
     if (label === "Rankings")       navigate("/consultor/rankings");
   };
 
   const handleSubmetido = () => {
     setModalAberto(false);
-    // Recarrega estado da candidatura
     fetch(`${API_BASE}/candidaturas/badge-estado?idutilizador=${utilizador.idutilizador}&idbadge=${id}`)
       .then((r) => r.json())
       .then((data) => setCandidatura(data || null))
@@ -173,7 +190,12 @@ function BadgeDetalhe() {
     return "#d97706";
   };
 
-  const podeCandidar = isConsultor && (!candidatura || candidatura.estado === "open" || candidatura.estado === "fechado");
+  const podeCandidar = isConsultor && (
+    !candidatura ||
+    candidatura.estado?.toUpperCase() === "OPEN" ||
+    candidatura.estado?.toUpperCase() === "APPROVED" ||
+    candidatura.estado?.toUpperCase() === "REJECTED"
+  );
   const estadoInfo = candidatura ? estadoLabel(candidatura.estado, candidatura.resultado) : null;
 
   return (
@@ -219,7 +241,7 @@ function BadgeDetalhe() {
               <div className="badge-detail-info-grid">
                 <div className="badge-detail-info-column">
                   {badge.learningpath && <p><span>Learning Path:</span> {badge.learningpath}</p>}
-                  {badge.area         && <p><span>Área:</span> {badge.area}</p>}
+                  {badge.area        && <p><span>Área:</span> {badge.area}</p>}
                 </div>
                 <div className="badge-detail-info-column">
                   {badge.serviceline && <p><span>Service Line:</span> {badge.serviceline}</p>}
@@ -227,7 +249,6 @@ function BadgeDetalhe() {
                 </div>
               </div>
 
-              {/* Requisitos */}
               {badge.requisitos?.length > 0 && (
                 <div className="badge-requisitos-section">
                   <h3 className="badge-requisitos-titulo">
@@ -250,7 +271,6 @@ function BadgeDetalhe() {
                 </div>
               )}
 
-              {/* Secção candidatura — só para Consultor */}
               {isConsultor && (
                 <div className="badge-cand-section">
                   {estadoInfo && (
@@ -266,10 +286,12 @@ function BadgeDetalhe() {
                   )}
                   {podeCandidar && (
                     <button className="btn-candidatar" onClick={() => setModalAberto(true)}>
-                      {candidatura?.estado === "open" ? "Resubmeter candidatura" : "Candidatar-me"}
+                      {candidatura?.estado?.toUpperCase() === "OPEN"
+                        ? "Resubmeter candidatura"
+                        : "Candidatar-me"}
                     </button>
                   )}
-                  {candidatura && !podeCandidar && candidatura.estado !== "fechado" && (
+                  {candidatura && !podeCandidar && (
                     <p style={{ fontSize: ".85rem", color: "#6b7280" }}>
                       Candidatura em curso — aguarda validação.
                     </p>

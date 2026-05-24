@@ -278,7 +278,6 @@ const lpCor = (idlearningpath) => LP_CORES[(idlearningpath - 1) % LP_CORES.lengt
 
 // ── Modal editar Badge ────────────────────────────────────────────
 function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
-  // ── Detalhes ─────────────────────────────────────────────────
   const [form, setForm] = useState({
     nome: badge.nome || "",
     descricao: badge.descricao || "",
@@ -288,9 +287,9 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
     ispublico: badge.ispublico ?? true,
     competencias: badge.competencias || "",
     idnivel: badge.idnivel || "",
+    idarea: badge.idarea || "",
   });
-  // imagemurl existente (URL do Cloudinary) vs ficheiro novo por carregar
-  const [imagemAtual, setImagemAtual] = useState(badge.imagemurl || "");
+  const [imagemAtual] = useState(badge.imagemurl || "");
   const [pendingFile, setPendingFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(badge.imagemurl || "");
   const [uploading, setUploading] = useState(false);
@@ -298,33 +297,33 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
   const f = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
   const handleFileSelect = (file) => {
-    if (!file) {
-      setPendingFile(null);
-      setPreviewUrl(imagemAtual);
-      return;
-    }
+    if (!file) { setPendingFile(null); setPreviewUrl(imagemAtual); return; }
     setPendingFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  // ── Cascata SL → Área → Nível (pré-seleciona o atual) ─────────
+  // Cascata SL → Área → Nível
   const [slSel, setSlSel] = useState(badge.idserviceline ? String(badge.idserviceline) : "");
   const [areaSel, setAreaSel] = useState(badge.idarea ? String(badge.idarea) : "");
-  const areasFiltradas = slSel ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || []) : [];
-  const niveisFiltrados = areaSel ? (areasFiltradas.find((a) => a.idarea == areaSel)?.niveis || []) : [];
+  const areasFiltradas = slSel
+    ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || [])
+    : [];
+  const niveisFiltrados = areaSel
+    ? (areasFiltradas.find((a) => a.idarea == areaSel)?.niveis || [])
+    : [];
 
-  const handleNivelSelect = (idnivelStr) => {
-    if (!idnivelStr) {
-      setForm((p) => ({ ...p, idnivel: "" }));
-      return;
-    }
-    const n = niveisFiltrados.find((n) => n.idnivel == idnivelStr);
-    if (n) setForm((p) => ({ ...p, idnivel: n.idnivel }));
+  const handleAreaSelect = (idareaStr) => {
+    setAreaSel(idareaStr);
+    setForm((p) => ({ ...p, idarea: idareaStr ? Number(idareaStr) : "", idnivel: "" }));
   };
 
-  // ── Requisitos locais ─────────────────────────────────────────
+  const handleNivelSelect = (idnivelStr) => {
+    setForm((p) => ({ ...p, idnivel: idnivelStr ? Number(idnivelStr) : "" }));
+  };
+
+  // Requisitos
   const [reqs, setReqs] = useState(badge.requisitos ? [...badge.requisitos] : []);
-  const [reqEdit, setReqEdit] = useState(null); // null | requisito (sem idrequisito = novo)
+  const [reqEdit, setReqEdit] = useState(null);
   const [subReq, setSubReq] = useState(false);
   const [feedReq, setFeedReq] = useState("");
   const toastReq = (msg) => { setFeedReq(msg); setTimeout(() => setFeedReq(""), 3000); };
@@ -367,15 +366,14 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
     toastReq(ativoAtual ? "Requisito desativado." : "Requisito reativado.");
   };
 
-  // ── Submit detalhes ───────────────────────────────────────────
   const submit = async () => {
     if (!form.nome.trim()) { setErro("O nome é obrigatório."); return; }
     if (form.pontos === "") { setErro("Os pontos são obrigatórios."); return; }
     setErro("");
     setUploading(true);
     try {
-      let imagemurl = previewUrl && !pendingFile ? imagemAtual : "";
-      if (pendingFile) imagemurl = await uploadParaCloudinary(pendingFile);
+      // FIX: usa imagemAtual se não há ficheiro novo
+      const imagemurl = pendingFile ? await uploadParaCloudinary(pendingFile) : (imagemAtual || "");
       onGuardar({ ...form, imagemurl });
     } catch (e) {
       setErro(e.message);
@@ -383,6 +381,8 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
       setUploading(false);
     }
   };
+
+  const nivelSelecionadoNome = niveisFiltrados.find((n) => n.idnivel == form.idnivel)?.nome || "";
 
   return (
     <>
@@ -394,7 +394,6 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
           <button className="gb-btn-cancelar" onClick={onFechar}>Fechar</button>
         </>
       }>
-        {/* ── Detalhes ── */}
         <div className="gb-modal-secao-titulo">Detalhes</div>
         <div className="gb-form-linha">
           <div className="gb-form-grupo gb-form-grupo--largo">
@@ -438,13 +437,17 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
         </div>
         {erro && <p className="gb-feedback gb-feedback--erro">{erro}</p>}
 
-        {/* ── Nível ── */}
+        {/* Associação Hierárquica */}
         <div className="gb-modal-secao">
           <div className="gb-modal-secao-titulo">Associação Hierárquica</div>
           <div className="gb-form-linha">
             <div className="gb-form-grupo gb-form-grupo--largo">
               <label>Service Line</label>
-              <select value={slSel} onChange={(e) => { setSlSel(e.target.value); setAreaSel(""); setForm((p) => ({ ...p, idnivel: "" })); }}>
+              <select value={slSel} onChange={(e) => {
+                setSlSel(e.target.value);
+                setAreaSel("");
+                setForm((p) => ({ ...p, idarea: "", idnivel: "" }));
+              }}>
                 <option value="">-- Selecionar --</option>
                 {hierarquia.map((sl) => (
                   <option key={sl.idserviceline} value={sl.idserviceline}>{sl.nome}</option>
@@ -453,7 +456,7 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
             </div>
             <div className="gb-form-grupo gb-form-grupo--largo">
               <label>Área</label>
-              <select value={areaSel} onChange={(e) => { setAreaSel(e.target.value); setForm((p) => ({ ...p, idnivel: "" })); }} disabled={!slSel}>
+              <select value={areaSel} onChange={(e) => handleAreaSelect(e.target.value)} disabled={!slSel}>
                 <option value="">-- Selecionar --</option>
                 {areasFiltradas.map((a) => (
                   <option key={a.idarea} value={a.idarea}>{a.nome}</option>
@@ -465,19 +468,19 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
               <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)} disabled={!areaSel}>
                 <option value="">-- Selecionar --</option>
                 {niveisFiltrados.map((n) => (
-                  <option key={n.idnivel} value={n.idnivel}>{n.codigo} — {CODIGO_NIVEL_LABEL[n.codigo] || n.nome}</option>
+                  <option key={n.idnivel} value={n.idnivel}>{n.nome}</option>
                 ))}
               </select>
             </div>
           </div>
-          {form.idnivel && (
+          {form.idnivel && nivelSelecionadoNome && (
             <p style={{ fontSize: 12, color: "#6b7280", marginTop: "0.25rem" }}>
-              Nível selecionado: <strong>{CODIGO_NIVEL_LABEL[niveisFiltrados.find((n) => n.idnivel == form.idnivel)?.codigo] || form.idnivel}</strong>
+              Nível selecionado: <strong>{nivelSelecionadoNome}</strong>
             </p>
           )}
         </div>
 
-        {/* ── Requisitos ── */}
+        {/* Requisitos */}
         <div className="gb-modal-secao">
           <div className="gb-modal-secao-titulo">
             Requisitos
@@ -493,7 +496,8 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
                 {!req.ativo && <span className="gb-tag-inativo">Inativo</span>}
                 <div className="gb-req-acoes">
                   <button className="gb-icon-btn" title="Editar requisito" onClick={() => setReqEdit(req)}>✏</button>
-                  <button className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${req.ativo ? "off" : "on"}`}
+                  <button
+                    className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${req.ativo ? "off" : "on"}`}
                     title={req.ativo ? "Desativar" : "Reativar"}
                     onClick={() => handleToggleReq(req.idrequisito, req.ativo)}>
                     {req.ativo ? "🗑" : "↩"}
@@ -509,7 +513,6 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
         </div>
       </Modal>
 
-      {/* Modal de requisito — aparece sobre o modal do badge */}
       {reqEdit && (
         <ModalRequisito
           stacked
@@ -528,7 +531,7 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
   const [form, setForm] = useState({
     nome: "", descricao: "", pontos: "",
     expiremeses: "", linkpublicobase: "", ispublico: true,
-    competencias: "", idnivel: "",
+    competencias: "", idnivel: "", idarea: "",
   });
   const [pendingFile, setPendingFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -538,13 +541,20 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
 
   const [slSel, setSlSel] = useState("");
   const [areaSel, setAreaSel] = useState("");
-  const areasFiltradas = slSel ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || []) : [];
-  const niveisFiltrados = areaSel ? (areasFiltradas.find((a) => a.idarea == areaSel)?.niveis || []) : [];
+  const areasFiltradas = slSel
+    ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || [])
+    : [];
+  const niveisFiltrados = areaSel
+    ? (areasFiltradas.find((a) => a.idarea == areaSel)?.niveis || [])
+    : [];
+
+  const handleAreaSelect = (idareaStr) => {
+    setAreaSel(idareaStr);
+    setForm((p) => ({ ...p, idarea: idareaStr ? Number(idareaStr) : "", idnivel: "" }));
+  };
 
   const handleNivelSelect = (idnivelStr) => {
-    if (!idnivelStr) { setForm((p) => ({ ...p, idnivel: "" })); return; }
-    const n = niveisFiltrados.find((n) => n.idnivel == idnivelStr);
-    if (n) setForm((p) => ({ ...p, idnivel: n.idnivel }));
+    setForm((p) => ({ ...p, idnivel: idnivelStr ? Number(idnivelStr) : "" }));
   };
 
   const handleFileSelect = (file) => {
@@ -559,8 +569,7 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
     setErro("");
     setUploading(true);
     try {
-      let imagemurl = "";
-      if (pendingFile) imagemurl = await uploadParaCloudinary(pendingFile);
+      const imagemurl = pendingFile ? await uploadParaCloudinary(pendingFile) : "";
       onGuardar({ ...form, imagemurl });
     } catch (e) {
       setErro(e.message);
@@ -622,7 +631,11 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
         <div className="gb-form-linha">
           <div className="gb-form-grupo gb-form-grupo--largo">
             <label>Service Line</label>
-            <select value={slSel} onChange={(e) => { setSlSel(e.target.value); setAreaSel(""); setForm((p) => ({ ...p, idnivel: "" })); }}>
+            <select value={slSel} onChange={(e) => {
+              setSlSel(e.target.value);
+              setAreaSel("");
+              setForm((p) => ({ ...p, idarea: "", idnivel: "" }));
+            }}>
               <option value="">-- Selecionar --</option>
               {hierarquia.map((sl) => (
                 <option key={sl.idserviceline} value={sl.idserviceline}>{sl.nome}</option>
@@ -631,7 +644,7 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
           </div>
           <div className="gb-form-grupo gb-form-grupo--largo">
             <label>Área</label>
-            <select value={areaSel} onChange={(e) => { setAreaSel(e.target.value); setForm((p) => ({ ...p, idnivel: "" })); }} disabled={!slSel}>
+            <select value={areaSel} onChange={(e) => handleAreaSelect(e.target.value)} disabled={!slSel}>
               <option value="">-- Selecionar --</option>
               {areasFiltradas.map((a) => (
                 <option key={a.idarea} value={a.idarea}>{a.nome}</option>
@@ -643,7 +656,7 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
             <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)} disabled={!areaSel}>
               <option value="">-- Selecionar --</option>
               {niveisFiltrados.map((n) => (
-                <option key={n.idnivel} value={n.idnivel}>{n.codigo} — {CODIGO_NIVEL_LABEL[n.codigo] || n.nome}</option>
+                <option key={n.idnivel} value={n.idnivel}>{n.nome}</option>
               ))}
             </select>
           </div>
@@ -652,6 +665,7 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
     </Modal>
   );
 }
+
 
 // ── Página principal ──────────────────────────────────────────────
 function GestaoBadges() {

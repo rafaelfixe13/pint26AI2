@@ -17,11 +17,12 @@ const toDownloadUrl = (url) => url
   : url;
 
 function estadoInfo(estado, resultado) {
-  if (estado === "open")         return { texto: "Por corrigir",    cls: "estado-open" };
-  if (estado === "submitted")    return { texto: "Em validação TM", cls: "estado-submitted" };
-  if (estado === "em_validacao") return { texto: "Em validação SL", cls: "estado-em_validacao" };
-  if (estado === "fechado" && resultado === "aprovado")  return { texto: "Aprovado",  cls: "estado-fechado-aprovado" };
-  if (estado === "fechado" && resultado === "rejeitado") return { texto: "Rejeitado", cls: "estado-fechado-rejeitado" };
+  const e = estado?.toUpperCase();
+  if (e === "OPEN")         return { texto: "Por corrigir",    cls: "estado-open" };
+  if (e === "SUBMITTED")    return { texto: "Em validação TM", cls: "estado-submitted" };
+  if (e === "EM_VALIDACAO") return { texto: "Em validação SL", cls: "estado-em_validacao" };
+  if (e === "APPROVED")     return { texto: "Aprovado",        cls: "estado-fechado-aprovado" };
+  if (e === "REJECTED")     return { texto: "Rejeitado",       cls: "estado-fechado-rejeitado" };
   return { texto: estado, cls: "" };
 }
 
@@ -56,9 +57,10 @@ function CandidaturasBadge() {
   };
 
   const filtradas = candidaturas.filter((c) => {
-    if (filtro === "todos") return true;
-    if (filtro === "ativas") return ["open", "submitted", "em_validacao"].includes(c.estado);
-    if (filtro === "concluidas") return c.estado === "fechado";
+    const e = c.estado?.toUpperCase();
+    if (filtro === "todos")      return true;
+    if (filtro === "ativas")     return ["OPEN", "SUBMITTED", "EM_VALIDACAO"].includes(e);
+    if (filtro === "concluidas") return ["APPROVED", "REJECTED"].includes(e);
     return true;
   });
 
@@ -71,9 +73,9 @@ function CandidaturasBadge() {
 
         <div className="val-filtros">
           {[
-            { key: "todos",     label: "Todas" },
-            { key: "ativas",    label: "Em curso" },
-            { key: "concluidas",label: "Concluídas" },
+            { key: "todos",      label: "Todas" },
+            { key: "ativas",     label: "Em curso" },
+            { key: "concluidas", label: "Concluídas" },
           ].map((f) => (
             <button
               key={f.key}

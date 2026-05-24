@@ -8,13 +8,22 @@ const ROLE_CONSULTOR = 1;
 const ROLE_SL = 3;
 
 const PERFIS = {
-  1: { nome: "Consultor",        descricao: "Aceda às suas badges, projetos e atividades.",                    icone: "👤" },
-  2: { nome: "Talent Manager",   descricao: "Gira colaboradores, avaliações e desenvolvimento de talento.",    icone: "🎯" },
-  3: { nome: "Service Line",     descricao: "Supervisione a sua linha de serviço e equipas associadas.",        icone: "🏢" },
-  4: { nome: "Administrador",    descricao: "Acesso total à gestão da plataforma.",                            icone: "⚙️" },
+  1: { nome: "Consultor",     descricao: "Aceda às suas badges, projetos e atividades.",                 icone: "👤" },
+  2: { nome: "Talent Manager",descricao: "Gira colaboradores, avaliações e desenvolvimento de talento.", icone: "🎯" },
+  3: { nome: "Service Line",  descricao: "Supervisione a sua linha de serviço e equipas associadas.",     icone: "🏢" },
+  4: { nome: "Administrador", descricao: "Acesso total à gestão da plataforma.",                         icone: "⚙️" },
 };
 
-const DESTINOS = { 1: "/consultor", 2: "/talent/dashboard", 3: "/sl/validacoes", 4: "/admin/utilizadores" };
+const DESTINOS = { 1: "/consultor/catalogo", 2: "/talent/dashboard", 3: "/sl/validacoes", 4: "/admin/utilizadores" };
+
+// Mapeamento de idrole → perfis disponíveis
+const PERFIS_POR_ROLE = {
+  1: [1],           // Consultor
+  2: [2],           // Talent Manager
+  3: [3],           // Service Line
+  4: [4],           // Administrador
+  5: [1, 2, 3, 4],  // Full Access — todos os perfis
+};
 
 // ── Popup configuração de perfil ──────────────────────────────────
 function PopupConfigurarPerfil({ utilizador, roleAtiva, onConcluido }) {
@@ -35,7 +44,6 @@ function PopupConfigurarPerfil({ utilizador, roleAtiva, onConcluido }) {
       .catch(() => setErro("Erro ao carregar Service Lines."));
   }, []);
 
-  // Quando SL é selecionada, carrega áreas (consultor)
   useEffect(() => {
     if (!isConsultor || !slSel) { setAreas([]); setAreaSel(""); return; }
     fetch(`${API_BASE}/admin/hierarquia`)
@@ -67,7 +75,6 @@ function PopupConfigurarPerfil({ utilizador, roleAtiva, onConcluido }) {
       const data = await res.json();
       if (!res.ok) { setErro(data.message || "Erro ao guardar."); return; }
 
-      // Atualiza localStorage
       const novo = { ...utilizador, idserviceline: data.idserviceline, idarea: data.idarea };
       localStorage.setItem("utilizador", JSON.stringify(novo));
       onConcluido();
@@ -135,7 +142,6 @@ function SelecionarPerfil() {
   const [utilizador, setUtilizador] = useState(
     JSON.parse(localStorage.getItem("utilizador") || "null")
   );
-  // role que o utilizador clicou — null = nenhum popup aberto
   const [rolePendente, setRolePendente] = useState(null);
 
   if (!utilizador) {
@@ -143,7 +149,8 @@ function SelecionarPerfil() {
     return null;
   }
 
-  const perfisDoUtilizador = Array.isArray(utilizador.roles) ? utilizador.roles : [utilizador.idrole];
+  // Usa o mapa PERFIS_POR_ROLE para determinar os perfis disponíveis
+  const perfisDoUtilizador = PERFIS_POR_ROLE[utilizador.idrole] ?? [utilizador.idrole];
 
   const precisaPopup = (idrole) => {
     if (idrole === ROLE_SL && !utilizador.idserviceline) return true;
@@ -161,7 +168,6 @@ function SelecionarPerfil() {
   };
 
   const handlePopupConcluido = () => {
-    // Relê o utilizador atualizado do localStorage e navega
     const atualizado = JSON.parse(localStorage.getItem("utilizador") || "null");
     setUtilizador(atualizado);
     setRolePendente(null);

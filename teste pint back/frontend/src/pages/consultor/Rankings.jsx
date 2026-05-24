@@ -11,14 +11,6 @@ import { MdLeaderboard } from "react-icons/md";
 import { BsAward } from "react-icons/bs";
 import { MdFilterList, MdOutlineAssignment } from "react-icons/md";
 
-  const navItems = [
-    { label: "Início",             icon: <GoHome size={16} /> },
-    { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Os meus badges",     icon: <BsAward size={16} /> },
-    { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-    { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  ];
-
 function Avatar({ foto, nome, className }) {
   if (foto) {
     const src = foto.startsWith("data:") ? foto : `data:image/jpeg;base64,${foto}`;
@@ -63,11 +55,19 @@ function Podio({ utilizadores }) {
 }
 
 function Rankings() {
-  const navigate  = useNavigate();
+  const navigate   = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
-  const [ranking,  setRanking]  = useState([]);
-  const [loading,  setLoading]  = useState(true);
+  const [ranking, setRanking] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const navItems = [
+    { label: "Início",             icon: <GoHome size={16} /> },
+    { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
+    { label: "Os meus badges",     icon: <BsAward size={16} /> },
+    { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+    { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+  ];
 
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }

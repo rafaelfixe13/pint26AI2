@@ -99,35 +99,50 @@ function Perfil() {
     }
   };
 
-  const fotoAtual = fotoPreview || utilizador?.fotourl;
+ const fotoAtual = fotoPreview
+  || (utilizador?.fotourl
+      ? utilizador.fotourl.startsWith("data:")
+        ? utilizador.fotourl
+        : `data:image/jpeg;base64,${utilizador.fotourl}`
+      : null);
 
-  const handleFotoChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const handleFotoChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (ev) => setFotoPreview(ev.target.result);
-    reader.readAsDataURL(file);
+  // 1. Converte para base64
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const base64completo = reader.result;            // "data:image/jpeg;base64,ABC..."
+    const base64puro     = base64completo.split(',')[1]; // só "ABC..."
 
-    const formData = new FormData();
-    formData.append("foto", file);
+    setFotoPreview(base64completo); // mostra preview imediato
 
+    // 2. Envia para o backend
     try {
       const res = await fetch(
-        `http://localhost:3000/api/utilizadores/${utilizador.idutilizador}/foto`,
-        { method: "PUT", body: formData }
+        `http://localhost:3000/api/utilizadores/${utilizador.idutilizador}/foto-base64`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fotourl: base64puro }),
+        }
       );
-      const data = await res.json();
+
       if (res.ok) {
-        const u = { ...utilizador, fotourl: data.fotourl };
+        // 3. Atualiza localStorage com o novo base64
+        const u = { ...utilizador, fotourl: base64puro };
         localStorage.setItem("utilizador", JSON.stringify(u));
         setUtilizador(u);
-        setFotoPreview(null);
+      } else {
+        console.error("Erro ao guardar foto.");
       }
     } catch (err) {
       console.error("Erro ao atualizar foto de perfil:", err);
     }
   };
+  reader.readAsDataURL(file); // ← dispara a conversão
+};
 
   return (
     <div className="page-wrapper">

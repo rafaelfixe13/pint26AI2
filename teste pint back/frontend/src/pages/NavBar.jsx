@@ -53,7 +53,11 @@ function Navbar({ activeTab, onTabChange, navItems }) {
     return "Boa noite,";
   };
 
-  const fotoAtual = utilizador?.fotourl;
+  const fotoAtual = utilizador?.fotourl
+  ? utilizador.fotourl.startsWith("data:")
+    ? utilizador.fotourl
+    : `data:image/jpeg;base64,${utilizador.fotourl}`
+  : null;
 
   const navegarParaHome = () => {
     const perfilAtivo = localStorage.getItem("perfilAtivo");

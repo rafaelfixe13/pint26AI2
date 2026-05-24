@@ -31,7 +31,6 @@ function BadgesUtilizador() {
         setUtilizador(u);
         setHierarquia(Array.isArray(h) ? h : []);
 
-        // Abre a primeira service line e área por defeito
         if (h.length > 0) {
           setSlExpandidas({ [h[0].idserviceline]: true });
           if (h[0].areas?.length > 0) {
@@ -58,12 +57,13 @@ function BadgesUtilizador() {
     return nome.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
   };
 
-  const badgesConquistados = (niveis) =>
-    niveis.filter((n) => n.badge?.conquistado).length;
+  // badges é area.badges[]
+  const badgesConquistados = (badges) =>
+    badges.filter((b) => b.conquistado).length;
 
-  const progressoNivel = (nivel) => {
-    const total = nivel.requisitos.length;
-    const feitos = nivel.requisitos.filter((r) => r.concluido).length;
+  const progressoBadge = (badge) => {
+    const total = badge.requisitos.length;
+    const feitos = badge.requisitos.filter((r) => r.concluido).length;
     return { feitos, total };
   };
 
@@ -112,26 +112,20 @@ function BadgesUtilizador() {
         {hierarquia.map((sl) => (
           <div key={sl.idserviceline} className="bu-sl-bloco">
 
-            {/* Header service line */}
-            <button
-              className="bu-sl-header"
-              onClick={() => toggleSl(sl.idserviceline)}
-            >
+            <button className="bu-sl-header" onClick={() => toggleSl(sl.idserviceline)}>
               <span className="bu-sl-chevron">{slExpandidas[sl.idserviceline] ? "▾" : "▸"}</span>
               <span className="bu-sl-nome">{sl.nome}</span>
             </button>
 
-            {/* Áreas */}
             {slExpandidas[sl.idserviceline] && (
               <div className="bu-sl-body">
                 {sl.areas.map((area) => {
-                  const conquistados = badgesConquistados(area.niveis);
-                  const totalNiveis = area.niveis.length;
+                  const conquistados = badgesConquistados(area.badges);
+                  const totalBadges = area.badges.length;
 
                   return (
                     <div key={area.idarea} className="bu-area-bloco">
 
-                      {/* Header área */}
                       <div className="bu-area-header" onClick={() => toggleArea(area.idarea)}>
                         <div className="bu-area-header-esq">
                           <span className="bu-area-chevron">
@@ -140,26 +134,25 @@ function BadgesUtilizador() {
                           <div>
                             <span className="bu-area-nome">{area.nome}</span>
                             <span className="bu-area-sub">
-                              {conquistados} de {totalNiveis} badges conquistados
+                              {conquistados} de {totalBadges} badges conquistados
                             </span>
                           </div>
                         </div>
                         <span className="bu-area-contador">
-                          {conquistados}/{totalNiveis}
+                          {conquistados}/{totalBadges}
                         </span>
                       </div>
 
-                      {/* Cards de níveis */}
                       {areasExpandidas[area.idarea] && (
                         <div className="bu-niveis-grid">
-                          {area.niveis.map((nivel) => {
-                            const { feitos, total } = progressoNivel(nivel);
+                          {area.badges.map((badge) => {
+                            const { feitos, total } = progressoBadge(badge);
                             const percentagem = total > 0 ? Math.round((feitos / total) * 100) : 0;
-                            const conquistado = nivel.badge?.conquistado;
+                            const conquistado = badge.conquistado;
 
                             return (
                               <div
-                                key={nivel.idnivel}
+                                key={badge.idbadge}
                                 className={`bu-nivel-card ${conquistado ? "bu-nivel-card--conquistado" : ""}`}
                               >
                                 {/* Ícone badge */}
@@ -174,10 +167,12 @@ function BadgesUtilizador() {
                                   </svg>
                                 </div>
 
-                                {/* Nome nível */}
+                                {/* Nome badge + nível */}
                                 <div className="bu-nivel-nome">
-                                  <span className="bu-nivel-codigo">{nivel.codigo} - </span>
-                                  {nivel.nome}
+                                  {badge.nome}
+                                  {badge.nivel && (
+                                    <span className="bu-nivel-tag"> — {badge.nivel}</span>
+                                  )}
                                 </div>
 
                                 {/* Progresso */}
@@ -193,10 +188,10 @@ function BadgesUtilizador() {
                                 </div>
 
                                 {/* Requisitos */}
-                                {nivel.requisitos.length > 0 && (
+                                {badge.requisitos.length > 0 && (
                                   <div className="bu-req-lista">
                                     <span className="bu-req-titulo-secao">Requisitos:</span>
-                                    {nivel.requisitos.map((req) => (
+                                    {badge.requisitos.map((req) => (
                                       <div key={req.idrequisito} className="bu-req-item">
                                         <span className={`bu-req-icone ${req.concluido ? "bu-req-icone--ok" : ""}`}>
                                           {req.concluido ? "✓" : "○"}

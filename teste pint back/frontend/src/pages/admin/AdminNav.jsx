@@ -53,7 +53,11 @@ function AdminNav() {
     return "Boa noite,";
   };
 
-  const fotoAtual = utilizador?.fotourl;
+  const fotoAtual = utilizador?.fotourl
+  ? utilizador.fotourl.startsWith("data:")
+    ? utilizador.fotourl
+    : `data:image/jpeg;base64,${utilizador.fotourl}`
+  : null;
 
   useEffect(() => {
     const handleClickOutside = (e) => {
