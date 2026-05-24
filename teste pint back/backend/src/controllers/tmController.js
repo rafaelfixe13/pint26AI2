@@ -3,9 +3,9 @@ const { sequelize } = require('../config/database');
 const listarBadgesEspeciais = async (req, res) => {
   try {
     const badges = await sequelize.query(
-      `SELECT idbadgeespecial, nome, descricao, pontos
-       FROM badgesespeciais
-       ORDER BY idbadgeespecial`,
+      `SELECT idespecial, nome, descricao, ativo
+       FROM especial
+       ORDER BY idespecial`,
       { type: sequelize.QueryTypes.SELECT }
     );
     return res.json(badges);
@@ -26,8 +26,8 @@ const listarRanking = async (req, res) => {
         a.nome  AS area,
         COALESCE(u.pontos, 0) AS pontos
       FROM utilizadores u
-      LEFT JOIN servicelines sl ON u.idserviceline = sl.idserviceline
-      LEFT JOIN areas a         ON u.idarea = a.idarea
+      LEFT JOIN serviceline sl ON u.idserviceline = sl.idserviceline
+      LEFT JOIN areas a        ON u.idarea = a.idarea
       WHERE u.idrole = 1
       ORDER BY u.pontos DESC NULLS LAST
     `, { type: sequelize.QueryTypes.SELECT });
@@ -49,8 +49,8 @@ const listarConsultores = async (req, res) => {
         sl.nome AS serviceline,
         a.nome  AS area
       FROM utilizadores u
-      LEFT JOIN servicelines sl ON u.idserviceline = sl.idserviceline
-      LEFT JOIN areas a         ON u.idarea = a.idarea
+      LEFT JOIN serviceline sl ON u.idserviceline = sl.idserviceline
+      LEFT JOIN areas a        ON u.idarea = a.idarea
       WHERE u.idrole = 1
       ORDER BY u.nome
     `, { type: sequelize.QueryTypes.SELECT });

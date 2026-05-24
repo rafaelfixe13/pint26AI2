@@ -2,7 +2,6 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { sequelize } = require('../config/database');
 const Utilizador = require('../models/Utilizador');
-const UtilizadorRole = require('../models/UtilizadorRole');
 
 const ROLE_CONSULTOR = 1;
 
@@ -16,17 +15,11 @@ const listarUtilizadores = async (req, res) => {
         u.estadoconta,
         u.emailconfirmado,
         u.datacriacao,
-        COALESCE(
-          json_agg(
-            json_build_object('idrole', r.idrole, 'nome', r.nome)
-            ORDER BY r.idrole
-          ) FILTER (WHERE r.idrole IS NOT NULL),
-          '[]'
+        u.idrole,
+        json_build_array(
+          json_build_object('idrole', u.idrole)
         ) AS roles
       FROM utilizadores u
-      LEFT JOIN utilizador_roles ur ON u.idutilizador = ur.idutilizador
-      LEFT JOIN roles r ON ur.idrole = r.idrole
-      GROUP BY u.idutilizador
       ORDER BY u.idutilizador
     `, { type: sequelize.QueryTypes.SELECT });
 
@@ -39,10 +32,12 @@ const listarUtilizadores = async (req, res) => {
 
 const listarTodasRoles = async (req, res) => {
   try {
-    const roles = await sequelize.query(
-      'SELECT idrole, nome FROM roles ORDER BY idrole',
-      { type: sequelize.QueryTypes.SELECT }
-    );
+    // Como não tens tabela roles, retorna os roles fixos
+    const roles = [
+      { idrole: 1, nome: 'CONSULTOR' },
+      { idrole: 2, nome: 'TALENT_MANAGER' },
+      { idrole: 3, nome: 'ADMIN' },
+    ];
     return res.json(roles);
   } catch (error) {
     console.error('Erro ao listar roles:', error);
@@ -58,13 +53,13 @@ const adicionarRole = async (req, res) => {
   }
 
   try {
-    const existente = await UtilizadorRole.findOne({ where: { idutilizador, idrole } });
-    if (existente) {
-      return res.status(409).json({ message: 'O utilizador já tem essa role.' });
+    const utilizador = await Utilizador.findByPk(idutilizador);
+    if (!utilizador) {
+      return res.status(404).json({ message: 'Utilizador não encontrado.' });
     }
 
-    await UtilizadorRole.create({ idutilizador, idrole });
-    return res.status(201).json({ message: 'Role adicionada com sucesso.' });
+    await utilizador.update({ idrole });
+    return res.status(200).json({ message: 'Role atualizada com sucesso.' });
   } catch (error) {
     console.error('Erro ao adicionar role:', error);
     return res.status(500).json({ message: 'Erro interno do servidor.' });
@@ -72,17 +67,20 @@ const adicionarRole = async (req, res) => {
 };
 
 const removerRole = async (req, res) => {
-  const { idutilizador, idrole } = req.body;
+  const { idutilizador } = req.body;
 
-  if (!idutilizador || !idrole) {
-    return res.status(400).json({ message: 'idutilizador e idrole são obrigatórios.' });
+  if (!idutilizador) {
+    return res.status(400).json({ message: 'idutilizador é obrigatório.' });
   }
 
   try {
-    const deleted = await UtilizadorRole.destroy({ where: { idutilizador, idrole } });
-    if (!deleted) {
-      return res.status(404).json({ message: 'Relação não encontrada.' });
+    const utilizador = await Utilizador.findByPk(idutilizador);
+    if (!utilizador) {
+      return res.status(404).json({ message: 'Utilizador não encontrado.' });
     }
+
+    // Reset para role base (consultor)
+    await utilizador.update({ idrole: ROLE_CONSULTOR });
     return res.json({ message: 'Role removida com sucesso.' });
   } catch (error) {
     console.error('Erro ao remover role:', error);
@@ -128,7 +126,7 @@ const criarUtilizador = async (req, res) => {
     const tempPassword = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
     const roleId = idrole || ROLE_CONSULTOR;
 
-    const novoUtilizador = await Utilizador.create({
+    await Utilizador.create({
       nome,
       email,
       passwordhash: tempPassword,
@@ -137,19 +135,12 @@ const criarUtilizador = async (req, res) => {
       primeirologin: true,
     });
 
-    await UtilizadorRole.create({
-      idutilizador: novoUtilizador.idutilizador,
-      idrole: roleId,
-    });
-
     return res.status(201).json({ message: 'Conta criada com sucesso. O utilizador receberá o código de ativação no primeiro login.' });
   } catch (error) {
     console.error('Erro ao criar utilizador:', error);
     return res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 };
-
-
 
 module.exports = {
   listarUtilizadores,

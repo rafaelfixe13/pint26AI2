@@ -35,12 +35,13 @@ const atualizarFoto = async (req, res) => {
 
 const getRanking = async (req, res) => {
   try {
-    const [rows] = await sequelize.query(
+    const rows = await sequelize.query(
       `SELECT idutilizador, nome, pontos, fotourl
        FROM utilizadores
        WHERE estadoconta = 'ATIVA'
        ORDER BY pontos DESC
-       LIMIT 50`
+       LIMIT 50`,
+      { type: sequelize.QueryTypes.SELECT }
     );
     return res.json(rows);
   } catch (err) {
@@ -49,4 +50,17 @@ const getRanking = async (req, res) => {
   }
 };
 
-module.exports = { atualizarFoto, atualizarPerfil, getRanking };
+const atualizarFotoBase64 = async (req, res) => {
+  const { id } = req.params;
+  const { fotourl } = req.body;
+  if (!fotourl) return res.status(400).json({ message: 'Foto em falta.' });
+  try {
+    await Utilizador.update({ fotourl }, { where: { idutilizador: id } });
+    return res.json({ message: 'Foto atualizada com sucesso.' });
+  } catch (err) {
+    console.error('Erro ao atualizar foto base64:', err);
+    return res.status(500).json({ message: 'Erro interno.' });
+  }
+};
+
+module.exports = { atualizarFoto, atualizarPerfil, getRanking, atualizarFotoBase64 };

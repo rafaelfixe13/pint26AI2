@@ -1,13 +1,12 @@
 const bcrypt = require('bcryptjs');
 const Utilizador = require('../models/Utilizador');
-const UtilizadorRole = require('../models/UtilizadorRole');
 const { enviarEmailPrimeiroLogin } = require('../config/email');
 
 const gerarCodigo = () => String(Math.floor(100000 + Math.random() * 900000));
 
 const getRolesDoUtilizador = async (idutilizador) => {
-  const registos = await UtilizadorRole.findAll({ where: { idutilizador } });
-  return registos.map((r) => r.idrole);
+  const utilizador = await Utilizador.findByPk(idutilizador);
+  return utilizador ? [utilizador.idrole] : [];
 };
 
 const login = async (req, res) => {
@@ -119,7 +118,6 @@ const confirmarEmail = async (req, res) => {
   }
 };
 
-// Usado apenas no primeiro login, após confirmação do código
 const definirPassword = async (req, res) => {
   const { email, novaPassword } = req.body;
 
@@ -156,7 +154,6 @@ const definirPassword = async (req, res) => {
   }
 };
 
-// Alteração de password para utilizadores já com conta ativa
 const alterarPassword = async (req, res) => {
   const { id, passwordAtual, novaPassword } = req.body;
 

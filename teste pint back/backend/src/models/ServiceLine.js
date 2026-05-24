@@ -3,9 +3,9 @@ const { sequelize } = require('../config/database');
 
 const ServiceLine = sequelize.define('ServiceLine', {
   idserviceline: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  nome: { type: DataTypes.STRING(200), allowNull: false },
-  descricao: { type: DataTypes.STRING(1000) },
-  ativo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-}, { tableName: 'servicelines', timestamps: false });
+  nome:          { type: DataTypes.STRING(100), allowNull: false },
+  descricao:     { type: DataTypes.TEXT },
+  ativo:         { type: DataTypes.BOOLEAN, defaultValue: true },
+}, { tableName: 'serviceline', timestamps: false });
 
 module.exports = ServiceLine;

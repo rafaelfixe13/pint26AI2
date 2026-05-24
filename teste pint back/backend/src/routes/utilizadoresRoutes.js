@@ -2,7 +2,7 @@ const express  = require('express');
 const router   = express.Router();
 const multer   = require('multer');
 const path     = require('path');
-const { atualizarFoto, atualizarPerfil, getRanking } = require('../controllers/utilizadoresController');
+const { atualizarFoto, atualizarPerfil, getRanking, atualizarFotoBase64 } = require('../controllers/utilizadoresController');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -15,8 +15,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.get('/ranking',        getRanking);         // ← novo
-router.put('/:id/foto',  upload.single('foto'), atualizarFoto);
-router.put('/:id/perfil', atualizarPerfil);
+router.get('/ranking',           getRanking);
+router.put('/:id/foto-base64',   atualizarFotoBase64);        // ← base64
+router.put('/:id/foto',          upload.single('foto'), atualizarFoto);
+router.put('/:id/perfil',        atualizarPerfil);
 
 module.exports = router;

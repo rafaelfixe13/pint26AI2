@@ -17,10 +17,9 @@ async function criarNotificacao(idutilizador, titulo, mensagem, tipo = 'candidat
 
 async function getTMsIds() {
   const [rows] = await sequelize.query(
-    `SELECT DISTINCT ur.idutilizador, u.nome, u.email
-     FROM utilizador_roles ur
-     JOIN utilizadores u ON u.idutilizador = ur.idutilizador
-     WHERE ur.idrole = 2`
+    `SELECT idutilizador, nome, email
+     FROM utilizadores
+     WHERE idrole = 2`
   );
   return rows;
 }
@@ -31,8 +30,7 @@ async function getSLsParaBadge(idbadge) {
      FROM badges b
      JOIN areas a ON a.idarea = b.idarea
      JOIN utilizadores u ON u.idserviceline = a.idserviceline
-     JOIN utilizador_roles ur ON ur.idutilizador = u.idutilizador
-     WHERE b.idbadge = :idbadge AND ur.idrole = 3`,
+     WHERE b.idbadge = :idbadge AND u.idrole = 3`,
     { replacements: { idbadge } }
   );
   return rows;
@@ -50,19 +48,10 @@ async function getEvidencias(idcandidatura) {
   return rows;
 }
 
-// Estados usados na BD (maiúsculas)
-const ESTADOS = {
-  SUBMITTED:    'SUBMITTED',
-  EM_VALIDACAO: 'EM_VALIDACAO',
-  OPEN:         'OPEN',
-  FECHADO:      'FECHADO',
-  APPROVED:     'APPROVED',
-  REJECTED:     'REJECTED',
-};
-
 // ── POST /api/candidaturas ────────────────────────────────────────────────────
 const criarCandidatura = async (req, res) => {
-  const { idbadge, idutilizador } = req.body;
+  const { idbadge, idutilizador, evidencias = [] } = req.body;
+
   if (!idbadge || !idutilizador)
     return res.status(400).json({ message: 'idbadge e idutilizador são obrigatórios.' });
 
@@ -70,7 +59,7 @@ const criarCandidatura = async (req, res) => {
     const [emProcesso] = await sequelize.query(
       `SELECT idcandidatura FROM candidaturasbadge
        WHERE user_id = :idutilizador AND badge_id = :idbadge
-       AND estado IN ('SUBMITTED', 'EM_VALIDACAO')
+       AND estado IN ('SUBMITTED', 'UNDER_REVIEW')
        LIMIT 1`,
       { replacements: { idutilizador, idbadge } }
     );
@@ -103,6 +92,10 @@ const criarCandidatura = async (req, res) => {
          )`,
         { replacements: { id } }
       );
+      await sequelize.query(
+        `DELETE FROM candidaturasrequisitos WHERE idcandidatura = :id`,
+        { replacements: { id } }
+      );
       candidatura = { idcandidatura: id };
     } else {
       const [rows] = await sequelize.query(
@@ -114,29 +107,48 @@ const criarCandidatura = async (req, res) => {
       candidatura = { idcandidatura: rows[0].idcandidatura };
     }
 
-    const files = req.files || [];
-    if (files.length > 0) {
+    if (evidencias.length > 0) {
+      const [requisitos] = await sequelize.query(
+        `SELECT idrequisito FROM requisitos
+         WHERE idbadge = :idbadge AND ativo = true
+         ORDER BY ordem`,
+        { replacements: { idbadge } }
+      );
+
+      if (requisitos.length === 0) {
+        return res.status(400).json({ message: 'Este badge não tem requisitos definidos. Não é possível submeter evidências.' });
+      }
+
       const [crRows] = await sequelize.query(
         `INSERT INTO candidaturasrequisitos (idcandidatura, idrequisito, cumprido)
-         VALUES (:idcandidatura, NULL, false)
+         VALUES (:idcandidatura, :idrequisito, false)
          RETURNING idcandidaturareq`,
-        { replacements: { idcandidatura: candidatura.idcandidatura } }
+        {
+          replacements: {
+            idcandidatura: candidatura.idcandidatura,
+            idrequisito: requisitos[0].idrequisito,
+          },
+        }
       );
       const idcandidaturareq = crRows[0].idcandidaturareq;
-      for (const file of files) {
+
+      for (const ev of evidencias) {
+        const ficheirourl = `data:${ev.mimetype || 'application/octet-stream'};base64,${ev.base64}`;
         await sequelize.query(
           `INSERT INTO evidencias (idcandidaturareq, ficheirourl, descricao, dataupload)
            VALUES (:idcandidaturareq, :ficheirourl, :descricao, NOW())`,
-          { replacements: { idcandidaturareq, ficheirourl: file.path, descricao: file.originalname } }
+          { replacements: { idcandidaturareq, ficheirourl, descricao: ev.filename } }
         );
       }
     }
 
     const [[badge]] = await sequelize.query(
-      `SELECT nome FROM badges WHERE idbadge = :idbadge`, { replacements: { idbadge } }
+      `SELECT nome FROM badges WHERE idbadge = :idbadge`,
+      { replacements: { idbadge } }
     );
     const [[consultor]] = await sequelize.query(
-      `SELECT nome, email FROM utilizadores WHERE idutilizador = :idutilizador`, { replacements: { idutilizador } }
+      `SELECT nome, email FROM utilizadores WHERE idutilizador = :idutilizador`,
+      { replacements: { idutilizador } }
     );
 
     const tms = await getTMsIds();
@@ -170,10 +182,10 @@ const listarMinhasCandidaturas = async (req, res) => {
               c.estado, c.comentariogeral AS comentario, c.datacriacao,
               c.dataaprovacao, c.datarejeicao,
               CASE
-                WHEN UPPER(c.estado) IN ('APPROVED', 'FECHADO') AND c.dataaprovacao IS NOT NULL THEN 'aprovado'
-                WHEN UPPER(c.estado) IN ('REJECTED', 'FECHADO') AND c.datarejeicao  IS NOT NULL THEN 'rejeitado'
                 WHEN UPPER(c.estado) = 'APPROVED' THEN 'aprovado'
                 WHEN UPPER(c.estado) = 'REJECTED' THEN 'rejeitado'
+                WHEN c.dataaprovacao IS NOT NULL   THEN 'aprovado'
+                WHEN c.datarejeicao  IS NOT NULL   THEN 'rejeitado'
                 ELSE NULL
               END AS resultado,
               b.nome AS badge_nome, b.imagemurl AS badge_imagem, b.pontos AS badge_pontos
@@ -213,7 +225,7 @@ const listarCandidaturasTM = async (req, res) => {
        FROM candidaturasbadge c
        JOIN badges b ON b.idbadge = c.badge_id
        JOIN utilizadores u ON u.idutilizador = c.user_id
-       WHERE UPPER(c.estado) IN ('SUBMITTED', 'EM_VALIDACAO', 'FECHADO', 'OPEN', 'APPROVED', 'REJECTED')
+       WHERE UPPER(c.estado) IN ('SUBMITTED', 'UNDER_REVIEW', 'OPEN', 'APPROVED', 'REJECTED')
        ORDER BY c.datacriacao DESC`
     );
     for (const row of rows) {
@@ -238,28 +250,29 @@ const validarTM = async (req, res) => {
   try {
     const candidatura = await CandidaturaBadge.findByPk(id);
     if (!candidatura) return res.status(404).json({ message: 'Candidatura não encontrada.' });
-    if (!['SUBMITTED', 'OPEN'].includes(UPPER(candidatura.estado))) {
+
+    if (!['SUBMITTED', 'OPEN'].includes(candidatura.estado.toUpperCase())) {
       return res.status(400).json({ message: 'Candidatura deve estar em estado "SUBMITTED" ou "OPEN".' });
     }
 
     const [[badge]] = await sequelize.query(
       `SELECT nome FROM badges WHERE idbadge = :idbadge`,
-      { replacements: { idbadge: candidatura.idbadge } }
+      { replacements: { idbadge: candidatura.badge_id } }
     );
     const [[consultor]] = await sequelize.query(
       `SELECT nome, email FROM utilizadores WHERE idutilizador = :id`,
-      { replacements: { id: candidatura.idutilizador } }
+      { replacements: { id: candidatura.user_id } }
     );
 
     if (acao === 'validar') {
       await sequelize.query(
         `UPDATE candidaturasbadge
-         SET estado = 'EM_VALIDACAO', idrevisoratual = :idtm,
+         SET estado = 'UNDER_REVIEW', idrevisoratual = :idtm,
              comentariogeral = :comentario, ultimaatualizacao = NOW()
          WHERE idcandidatura = :id`,
         { replacements: { id, idtm: idtm || null, comentario: comentario || null } }
       );
-      const sls = await getSLsParaBadge(candidatura.idbadge);
+      const sls = await getSLsParaBadge(candidatura.badge_id);
       for (const sl of sls) {
         await criarNotificacao(
           sl.idutilizador,
@@ -276,7 +289,7 @@ const validarTM = async (req, res) => {
         { replacements: { id, idtm: idtm || null, comentario: comentario || null } }
       );
       await criarNotificacao(
-        candidatura.idutilizador,
+        candidatura.user_id,
         'Candidatura devolvida',
         `A sua candidatura ao badge "${badge?.nome}" foi devolvida pelo Talent Manager.${comentario ? ` Motivo: ${comentario}` : ''}`
       );
@@ -317,7 +330,7 @@ const listarCandidaturasSL = async (req, res) => {
        JOIN areas a ON a.idarea = b.idarea
        JOIN utilizadores u ON u.idutilizador = c.user_id
        LEFT JOIN utilizadores rev ON rev.idutilizador = c.idrevisoratual
-       WHERE UPPER(c.estado) IN ('EM_VALIDACAO', 'FECHADO', 'APPROVED', 'REJECTED')
+       WHERE UPPER(c.estado) IN ('UNDER_REVIEW', 'APPROVED', 'REJECTED')
        AND a.idserviceline = :idserviceline
        ORDER BY c.datacriacao DESC`,
       { replacements: { idserviceline } }
@@ -344,17 +357,17 @@ const validarSL = async (req, res) => {
   try {
     const candidatura = await CandidaturaBadge.findByPk(id);
     if (!candidatura) return res.status(404).json({ message: 'Candidatura não encontrada.' });
-    if (candidatura.estado.toUpperCase() !== 'EM_VALIDACAO') {
-      return res.status(400).json({ message: 'Candidatura não está em estado "EM_VALIDACAO".' });
+    if (candidatura.estado.toUpperCase() !== 'UNDER_REVIEW') {
+      return res.status(400).json({ message: 'Candidatura não está em estado "UNDER_REVIEW".' });
     }
 
     const [[badge]] = await sequelize.query(
       `SELECT nome FROM badges WHERE idbadge = :idbadge`,
-      { replacements: { idbadge: candidatura.idbadge } }
+      { replacements: { idbadge: candidatura.badge_id } }
     );
     const [[consultor]] = await sequelize.query(
       `SELECT nome, email FROM utilizadores WHERE idutilizador = :id`,
-      { replacements: { id: candidatura.idutilizador } }
+      { replacements: { id: candidatura.user_id } }
     );
 
     if (acao === 'aprovar') {
@@ -369,10 +382,10 @@ const validarSL = async (req, res) => {
         `INSERT INTO utilizador_badges (idutilizador, idbadge, dataconquista)
          VALUES (:idutilizador, :idbadge, NOW())
          ON CONFLICT DO NOTHING`,
-        { replacements: { idutilizador: candidatura.idutilizador, idbadge: candidatura.idbadge } }
+        { replacements: { idutilizador: candidatura.user_id, idbadge: candidatura.badge_id } }
       );
       await criarNotificacao(
-        candidatura.idutilizador,
+        candidatura.user_id,
         'Badge aprovado!',
         `Parabéns! A sua candidatura ao badge "${badge?.nome}" foi aprovada!`
       );
@@ -387,7 +400,7 @@ const validarSL = async (req, res) => {
         { replacements: { id, idsl: idsl || null, comentario: comentario || null } }
       );
       await criarNotificacao(
-        candidatura.idutilizador,
+        candidatura.user_id,
         'Candidatura rejeitada',
         `A sua candidatura ao badge "${badge?.nome}" foi rejeitada.${comentario ? ` Motivo: ${comentario}` : ''}`
       );
@@ -402,7 +415,7 @@ const validarSL = async (req, res) => {
         { replacements: { id, idsl: idsl || null, comentario: comentario || null } }
       );
       await criarNotificacao(
-        candidatura.idutilizador,
+        candidatura.user_id,
         'Candidatura devolvida — informação adicional',
         `A sua candidatura ao badge "${badge?.nome}" foi devolvida para revisão.${comentario ? ` Comentário: ${comentario}` : ''}`
       );

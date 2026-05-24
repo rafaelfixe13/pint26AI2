@@ -64,7 +64,7 @@ const toggleLearningPath = async (req, res) => toggle(LearningPath, req.params.i
 const listarServiceLines = async (_req, res) => {
   try {
     const rows = await sequelize.query(
-      'SELECT idserviceline, nome, descricao, ativo FROM servicelines ORDER BY idserviceline',
+      'SELECT idserviceline, nome, descricao, ativo FROM serviceline ORDER BY idserviceline',
       { type: sequelize.QueryTypes.SELECT }
     );
     res.json(rows);
@@ -134,12 +134,12 @@ const toggleArea = async (req, res) => toggle(Area, req.params.id, 'idarea', res
 // ── NÍVEIS ─────────────────────────────────────────────────────
 
 const criarNivel = async (req, res) => {
-  const { idlearningpath, idarea, codigo, nome, descricao } = req.body;
-  if (!idlearningpath || !idarea || !codigo || !nome) {
-    return res.status(400).json({ error: 'idlearningpath, idarea, codigo e nome são obrigatórios.' });
+  const { nome, descricao } = req.body;
+  if (!nome) {
+    return res.status(400).json({ error: 'nome é obrigatório.' });
   }
   try {
-    const nivel = await Nivel.create({ idlearningpath, idarea, codigo, nome, descricao: descricao || null });
+    const nivel = await Nivel.create({ nome, descricao: descricao || null });
     res.status(201).json(nivel);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -147,12 +147,13 @@ const criarNivel = async (req, res) => {
 };
 
 const editarNivel = async (req, res) => {
-  const { idlearningpath, codigo, nome, descricao } = req.body;
-  if (!codigo || !nome) return res.status(400).json({ error: 'Codigo e nome são obrigatórios.' });
+  const { nome, descricao } = req.body;
+  if (!nome) return res.status(400).json({ error: 'Nome é obrigatório.' });
   try {
-    const updates = { codigo, nome, descricao: descricao || null };
-    if (idlearningpath) updates.idlearningpath = idlearningpath;
-    const [updated] = await Nivel.update(updates, { where: { idnivel: req.params.id } });
+    const [updated] = await Nivel.update(
+      { nome, descricao: descricao || null },
+      { where: { idnivel: req.params.id } }
+    );
     if (!updated) return res.status(404).json({ error: 'Nível não encontrado.' });
     res.json({ message: 'Nível atualizado.' });
   } catch (e) {
@@ -170,7 +171,11 @@ const criarRequisito = async (req, res) => {
     return res.status(400).json({ error: 'idbadge, codigo, titulo e descricao são obrigatórios.' });
   }
   try {
-    const req_ = await Requisito.create({ idbadge, codigo, titulo, descricao, imagemurl: imagemurl || null, ordem: ordem || null });
+    const req_ = await Requisito.create({
+      idbadge, codigo, titulo, descricao,
+      imagemurl: imagemurl || null,
+      ordem: ordem || null,
+    });
     res.status(201).json(req_);
   } catch (e) {
     res.status(500).json({ error: e.message });
