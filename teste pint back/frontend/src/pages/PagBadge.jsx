@@ -9,10 +9,12 @@ import { BsAward } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
+import { FiPaperclip, FiX } from "react-icons/fi";
 import { API_BASE } from "../api";
 import { MdLeaderboard } from "react-icons/md";
 
-function estadoLabel(estado, resultado) {
+
+function estadoLabel(estado) {
   const e = estado?.toUpperCase();
   if (e === "OPEN")         return { texto: "Por corrigir",    cls: "estado-open" };
   if (e === "SUBMITTED")    return { texto: "Em validação TM", cls: "estado-submitted" };
@@ -22,42 +24,59 @@ function estadoLabel(estado, resultado) {
   return { texto: estado, cls: "" };
 }
 
+
+// Lê um File e devolve { filename, mimetype, base64 }
+function lerFicheiroBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve({
+      filename: file.name,
+      mimetype: file.type || "application/octet-stream",
+      base64: reader.result.split(",")[1],
+    });
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+
+// ── Modal de candidatura com upload por requisito ─────────────────
 function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
-  const [files, setFiles] = useState([]);
+  // ficheirosReqs: { [idrequisito]: File | null }
+  const [ficheirosReqs, setFicheirosReqs] = useState(() =>
+    Object.fromEntries((badge.requisitos || []).map((r) => [r.idrequisito, null]))
+  );
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
-  const inputRef = useRef();
+  const inputRefs = useRef({});
 
-  const adicionarFicheiros = (novos) => {
-    const lista = Array.from(novos);
-    setFiles((prev) => {
-      const nomes = new Set(prev.map((f) => f.name));
-      return [...prev, ...lista.filter((f) => !nomes.has(f.name))];
-    });
+  const temRequisitos = badge.requisitos?.length > 0;
+
+  const handleFileChange = (idrequisito, file) => {
+    setFicheirosReqs((prev) => ({ ...prev, [idrequisito]: file || null }));
   };
-
-  const removerFicheiro = (idx) => setFiles((prev) => prev.filter((_, i) => i !== idx));
 
   const submeter = async () => {
     setErro("");
+
+    // Validação: pelo menos um ficheiro se houver requisitos
+    if (temRequisitos) {
+      const algumFicheiro = Object.values(ficheirosReqs).some((f) => f !== null);
+      if (!algumFicheiro) {
+        setErro("Adiciona pelo menos um ficheiro de evidência.");
+        return;
+      }
+    }
+
     setEnviando(true);
     try {
-      const evidenciasBase64 = await Promise.all(
-        files.map(
-          (f) =>
-            new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () =>
-                resolve({
-                  filename: f.name,
-                  mimetype: f.type || "application/octet-stream",
-                  base64: reader.result.split(",")[1],
-                });
-              reader.onerror = reject;
-              reader.readAsDataURL(f);
-            })
-        )
-      );
+      // Constrói array de evidências por requisito
+      const evidencias = [];
+      for (const [idrequisito, file] of Object.entries(ficheirosReqs)) {
+        if (!file) continue;
+        const b64 = await lerFicheiroBase64(file);
+        evidencias.push({ idrequisito: Number(idrequisito), ...b64 });
+      }
 
       const res = await fetch(`${API_BASE}/candidaturas`, {
         method: "POST",
@@ -65,7 +84,7 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
         body: JSON.stringify({
           idbadge: badge.idbadge,
           idutilizador: utilizador.idutilizador,
-          evidencias: evidenciasBase64,
+          evidencias,
         }),
       });
 
@@ -85,29 +104,63 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
       <div className="modal-cand-card" onClick={(e) => e.stopPropagation()}>
         <h2 className="modal-cand-titulo">Candidatar-me ao badge</h2>
         <p className="modal-cand-sub">
-          <strong>{badge.nome}</strong> — Carregue as evidências (certificados, diplomas, relatórios).
+          <strong>{badge.nome}</strong> — Carregue uma evidência por cada requisito.
         </p>
 
-        <div className="modal-cand-dropzone" onClick={() => inputRef.current.click()}>
-          <input
-            ref={inputRef}
-            type="file"
-            multiple
-            accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx"
-            onChange={(e) => { adicionarFicheiros(e.target.files); e.target.value = ""; }}
-          />
-          <p>Clique ou arraste ficheiros aqui (PDF, imagens, documentos)</p>
-        </div>
-
-        {files.length > 0 && (
-          <div className="modal-cand-files">
-            {files.map((f, i) => (
-              <div key={i} className="modal-cand-file">
-                <span>{f.name}</span>
-                <button onClick={() => removerFicheiro(i)}>✕</button>
-              </div>
-            ))}
+        {temRequisitos ? (
+          <div className="modal-cand-requisitos">
+            {badge.requisitos.map((req) => {
+              const file = ficheirosReqs[req.idrequisito];
+              return (
+                <div key={req.idrequisito} className="modal-cand-req-row">
+                  <div className="modal-cand-req-info">
+                    <span className="modal-cand-req-codigo">{req.codigo}</span>
+                    <span className="modal-cand-req-titulo">{req.titulo}</span>
+                  </div>
+                  <div className="modal-cand-req-upload">
+                    {file ? (
+                      <div className="modal-cand-file">
+                        <FiPaperclip size={13} />
+                        <span className="modal-cand-file-nome">{file.name}</span>
+                        <button
+                          className="modal-cand-file-remover"
+                          title="Remover"
+                          onClick={() => handleFileChange(req.idrequisito, null)}
+                        >
+                          <FiX size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <input
+                          ref={(el) => (inputRefs.current[req.idrequisito] = el)}
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx"
+                          style={{ display: "none" }}
+                          onChange={(e) => {
+                            handleFileChange(req.idrequisito, e.target.files[0] || null);
+                            e.target.value = "";
+                          }}
+                        />
+                        <button
+                          className="modal-cand-btn-anexar"
+                          onClick={() => inputRefs.current[req.idrequisito]?.click()}
+                        >
+                          <FiPaperclip size={13} /> Anexar ficheiro
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
+        ) : (
+          // Badge sem requisitos definidos — upload livre
+          <UploadLivre onChange={(files) => {
+            // sem requisitos, envia evidências sem idrequisito
+            setFicheirosReqs({ _livre: files });
+          }} />
         )}
 
         {erro && <p className="modal-cand-erro">{erro}</p>}
@@ -123,6 +176,58 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
   );
 }
 
+
+// Upload livre para badges sem requisitos
+function UploadLivre({ onChange }) {
+  const [files, setFiles] = useState([]);
+  const inputRef = useRef();
+
+  const adicionar = (novos) => {
+    setFiles((prev) => {
+      const nomes = new Set(prev.map((f) => f.name));
+      const merged = [...prev, ...Array.from(novos).filter((f) => !nomes.has(f.name))];
+      onChange(merged);
+      return merged;
+    });
+  };
+
+  const remover = (idx) => {
+    setFiles((prev) => {
+      const updated = prev.filter((_, i) => i !== idx);
+      onChange(updated);
+      return updated;
+    });
+  };
+
+  return (
+    <>
+      <div className="modal-cand-dropzone" onClick={() => inputRef.current.click()}>
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx"
+          onChange={(e) => { adicionar(e.target.files); e.target.value = ""; }}
+        />
+        <p>Clique ou arraste ficheiros aqui (PDF, imagens, documentos)</p>
+      </div>
+      {files.length > 0 && (
+        <div className="modal-cand-files">
+          {files.map((f, i) => (
+            <div key={i} className="modal-cand-file">
+              <FiPaperclip size={13} />
+              <span>{f.name}</span>
+              <button onClick={() => remover(i)}><FiX size={13} /></button>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+
+// ── BadgeDetalhe (sem alterações à lógica) ───────────────────────
 function BadgeDetalhe() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -192,11 +297,9 @@ function BadgeDetalhe() {
 
   const podeCandidar = isConsultor && (
     !candidatura ||
-    candidatura.estado?.toUpperCase() === "OPEN" ||
-    candidatura.estado?.toUpperCase() === "APPROVED" ||
-    candidatura.estado?.toUpperCase() === "REJECTED"
+    ["OPEN", "APPROVED", "REJECTED"].includes(candidatura.estado?.toUpperCase())
   );
-  const estadoInfo = candidatura ? estadoLabel(candidatura.estado, candidatura.resultado) : null;
+  const estadoInfo = candidatura ? estadoLabel(candidatura.estado) : null;
 
   return (
     <div className="page-wrapper">
