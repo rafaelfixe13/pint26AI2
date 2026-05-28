@@ -1,0 +1,348 @@
+.tm-dashboard-container {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.tm-dashboard-content {
+    padding: 2.5rem 5%;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.tm-dashboard-header {
+    margin-bottom: 2.5rem;
+}
+
+.tm-dashboard-header h1 {
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.tm-dashboard-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.tm-dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.tm-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #f1f5f9;
+}
+
+.tm-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+.tm-card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.bg-blue {
+    background-color: #3b82f6;
+}
+
+.bg-orange {
+    background-color: #f97316;
+}
+
+.bg-green {
+    background-color: #10b981;
+}
+
+.bg-purple {
+    background-color: #8b5cf6;
+}
+
+.tm-card-info h3 {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tm-card-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1;
+}
+
+.tm-dashboard-sections {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+}
+
+.tm-section h2 {
+    font-size: 1.25rem;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 700;
+}
+
+.tm-activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.tm-activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.tm-activity-item:hover {
+    background-color: #f8fafc;
+}
+
+.tm-activity-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.tm-activity-text {
+    flex-grow: 1;
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.tm-activity-text strong {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.tm-activity-time {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+/* Premium Layout Grid */
+.tm-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 968px) {
+    .tm-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Leaderboard & Ranking styling */
+.tm-ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tm-ranking-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+}
+
+.tm-ranking-row:hover {
+    transform: translateX(4px);
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border-color: #e2e8f0;
+}
+
+.tm-rank-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.tm-rank-badge.rank-1 {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+.tm-rank-badge.rank-2 {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.tm-rank-badge.rank-3 {
+    background: #ffedd5;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}
+
+.tm-rank-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tm-rank-avatar-placeholder {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #3b82f6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tm-rank-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.tm-rank-name {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 0.95rem;
+}
+
+.tm-rank-meta {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.tm-rank-points {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #10b981;
+    background: #ecfdf5;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid #a7f3d0;
+}
+
+/* Quick Actions Cards */
+.tm-quick-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tm-quick-action-button {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.tm-quick-action-button:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.tm-quick-action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.tm-quick-action-details h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 0.15rem 0;
+}
+
+.tm-quick-action-details p {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Status badges inside Recent Activity Feed */
+.status-approved {
+    color: #10b981 !important;
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+.status-rejected {
+    color: #ef4444 !important;
+    background: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+}
+
+.status-pending {
+    color: #f59e0b !important;
+    background: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+}
