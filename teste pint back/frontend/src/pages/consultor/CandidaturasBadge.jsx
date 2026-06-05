@@ -4,7 +4,7 @@ import Navbar from "../NavBar";
 import "../../styles/Candidaturas.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
-import { BsAward } from "react-icons/bs";
+import { BsAward, BsTrophy } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import { FaMedal } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
@@ -39,6 +39,7 @@ function CandidaturasBadge() {
     { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
     { label: "Os meus badges",     icon: <BsAward size={16} /> },
     { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+    { label: "Conquistas",         icon: <BsTrophy size={16} /> },
     { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
   ];
 
@@ -51,8 +52,10 @@ function CandidaturasBadge() {
   }, []);
 
   const handleTabChange = (label) => {
-    if (label === "Início" || label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges") navigate("/consultor");
+    if (label === "Início")         navigate("/consultor");
+    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
+    if (label === "Os meus badges") navigate("/consultor/badges");
+    if (label === "Conquistas")     navigate("/consultor/conquistas");
     if (label === "Rankings")       navigate("/consultor/rankings");
   };
 

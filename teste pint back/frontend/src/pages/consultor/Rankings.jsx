@@ -66,6 +66,7 @@ function Rankings() {
     { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
     { label: "Os meus badges",     icon: <BsAward size={16} /> },
     { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+    { label: "Conquistas",         icon: <BsTrophy size={16} /> },
     { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
   ];
 
@@ -81,6 +82,7 @@ function Rankings() {
     if (label === "Início" || label === "Catálogo de Badges") navigate("/consultor/catalogo");
     if (label === "Os meus badges") navigate("/consultor/badges");
     if (label === "Candidaturas")   navigate("/consultor/candidaturas");
+    if (label === "Conquistas")     navigate("/consultor/conquistas");
   };
 
   const top3     = ranking.slice(0, 3);
