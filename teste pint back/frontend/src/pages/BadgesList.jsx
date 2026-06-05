@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Row, Col } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import Navbar from "./NavBar";
 import "../styles/BadgesList.css";
 import { API_BASE } from "../api";
-import { BsSearch, BsStarFill, BsAward } from "react-icons/bs";
+import { BsSearch, BsStarFill, BsAward, BsTrophy } from "react-icons/bs";
 import { FaMedal } from "react-icons/fa";
 import { MdFilterList, MdOutlineAssignment } from "react-icons/md";
 import { AiOutlineLoading3Quarters, AiOutlineAppstore } from "react-icons/ai";
@@ -18,6 +18,7 @@ const NAV_ITEMS_CONSULTOR = [
   { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
   { label: "Os meus badges",     icon: <BsAward size={16} /> },
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
   { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
 ];
 
@@ -85,7 +86,8 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
       else navigate("/perfil");
     }
     if (label === "Candidaturas")   navigate("/consultor/candidaturas");
-    if (label === "Os meus badges") navigate("/consultor/OsMeusBadges");
+    if (label === "Os meus badges") navigate("/consultor/badges");
+    if (label === "Conquistas")     navigate("/consultor/conquistas");
     if (label === "Rankings")       navigate("/consultor/rankings");
   };
 
@@ -118,12 +120,14 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
         navItems={navItems}
       />
 
-      <div className="catalog-container">
+      <Container className="catalog-container">
+        {/* Cabeçalho */}
         <div className="catalog-header">
           <h1>Catálogo de Badges</h1>
           <p>Consulte todos os badges disponíveis, descrições, pontos e requisitos.</p>
         </div>
 
+        {/* Toolbar */}
         <div className="catalog-toolbar">
           <div className="search-box">
             <BsSearch className="search-icon" size={16} />
@@ -155,6 +159,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
           </div>
         </div>
 
+        {/* Loading */}
         {loading && (
           <div className="catalog-status">
             <AiOutlineLoading3Quarters size={32} className="spinner" />
@@ -162,8 +167,10 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
           </div>
         )}
 
+        {/* Erro */}
         {error && <div className="catalog-status error">{error}</div>}
 
+        {/* Vazio */}
         {!loading && !error && filtered.length === 0 && (
           <div className="catalog-status">
             <HiOutlineEmojiSad size={40} />
@@ -171,18 +178,20 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
           </div>
         )}
 
+        {/* Grelha de badges — 3 colunas (Bootstrap) */}
         {!loading && !error && filtered.length > 0 && (
-          <Row xs={1} sm={2} md={3} lg={4} className="g-3">
+          <Row xs={1} sm={2} lg={3} className="g-4">
             {filtered.map((badge) => (
               <Col key={badge.idbadge} className="d-flex">
                 <div className="badge-card">
                   {badge.ispublic === false && (
                     <span className="tag-especial">
-                      <BsStarFill size={12} style={{ marginRight: 4 }} />
+                      <BsStarFill size={12} />
                       Conquista Especial
                     </span>
                   )}
 
+                  {/* Corpo */}
                   <div className="badge-card-body">
                     <div className="badge-icon-wrap">
                       {badge.imagemurl ? (
@@ -200,7 +209,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
                         className="badge-icon-fallback"
                         style={{ display: badge.imagemurl ? "none" : "flex" }}
                       >
-                        <FaMedal size={44} color="#d97706" />
+                        <FaMedal size={42} color="#d97706" />
                       </div>
                     </div>
 
@@ -225,6 +234,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
                     </div>
                   </div>
 
+                  {/* Rodapé */}
                   <div className="badge-card-footer">
                     <span
                       className="badge-points"
@@ -245,7 +255,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
             ))}
           </Row>
         )}
-      </div>
+      </Container>
     </div>
   );
 }

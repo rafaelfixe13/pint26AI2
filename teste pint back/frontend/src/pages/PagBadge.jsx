@@ -1,17 +1,76 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./NavBar";
 import "../styles/PagBadge.css";
 import "../styles/Candidaturas.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
-import { BsAward } from "react-icons/bs";
+import { BsAward, BsTrophy } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
-import { FiPaperclip, FiX } from "react-icons/fi";
+import { FiPaperclip, FiX, FiFileText, FiExternalLink } from "react-icons/fi";
 import { API_BASE } from "../api";
 import { MdLeaderboard } from "react-icons/md";
+
+
+// ── Helpers para ficheiros base64 ──────────────────────────
+// Deteta se a string base64 (com ou sem prefixo data:) é um PDF
+function isPdf(src) {
+  if (!src) return false;
+  if (src.startsWith("data:application/pdf")) return true;
+  if (src.startsWith("data:image")) return false;
+  const raw = src.includes(",") ? src.split(",")[1] : src;
+  return raw.slice(0, 5) === "JVBER"; // "%PDF" em base64
+}
+
+// Converte base64/dataURL num Blob URL (melhor para <iframe> que data URLs grandes)
+function toBlobUrl(src) {
+  const dataUrl = src.startsWith("data:") ? src : `data:application/pdf;base64,${src}`;
+  const comma = dataUrl.indexOf(",");
+  const meta = dataUrl.slice(0, comma);
+  const b64 = dataUrl.slice(comma + 1);
+  const mime = (meta.match(/data:(.*?);base64/) || [])[1] || "application/pdf";
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return URL.createObjectURL(new Blob([bytes], { type: mime }));
+}
+
+
+// ── Modal de visualização de PDF ───────────────────────────
+function PdfModal({ src, titulo, onFechar }) {
+  const url = useMemo(() => {
+    try { return toBlobUrl(src); } catch { return null; }
+  }, [src]);
+
+  useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
+
+  return (
+    <div className="pdf-modal-overlay" onClick={onFechar}>
+      <div className="pdf-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="pdf-modal-head">
+          <span className="pdf-modal-title">{titulo || "Documento"}</span>
+          <div className="pdf-modal-actions">
+            {url && (
+              <a className="pdf-modal-open" href={url} target="_blank" rel="noreferrer">
+                <FiExternalLink size={14} /> Abrir em nova aba
+              </a>
+            )}
+            <button className="pdf-modal-close" onClick={onFechar} title="Fechar">
+              <FiX size={18} />
+            </button>
+          </div>
+        </div>
+        {url ? (
+          <iframe src={url} title={titulo || "PDF"} className="pdf-modal-frame" />
+        ) : (
+          <div className="pdf-modal-erro">Não foi possível carregar o PDF.</div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 
 function estadoLabel(estado) {
@@ -25,7 +84,6 @@ function estadoLabel(estado) {
 }
 
 
-// Lê um File e devolve { filename, mimetype, base64 }
 function lerFicheiroBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -40,7 +98,7 @@ function lerFicheiroBase64(file) {
 }
 
 
-// ── Modal de candidatura com upload por requisito ─────────────────
+// upload por requisito ─────────────────
 function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
   // ficheirosReqs: { [idrequisito]: File | null }
   const [ficheirosReqs, setFicheirosReqs] = useState(() =>
@@ -59,7 +117,6 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
   const submeter = async () => {
     setErro("");
 
-    // Validação: pelo menos um ficheiro se houver requisitos
     if (temRequisitos) {
       const algumFicheiro = Object.values(ficheirosReqs).some((f) => f !== null);
       if (!algumFicheiro) {
@@ -70,7 +127,6 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
 
     setEnviando(true);
     try {
-      // Constrói array de evidências por requisito
       const evidencias = [];
       for (const [idrequisito, file] of Object.entries(ficheirosReqs)) {
         if (!file) continue;
@@ -227,7 +283,6 @@ function UploadLivre({ onChange }) {
 }
 
 
-// ── BadgeDetalhe (sem alterações à lógica) ───────────────────────
 function BadgeDetalhe() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -241,12 +296,14 @@ function BadgeDetalhe() {
   const [activeTab, setActiveTab] = useState("Catálogo de Badges");
   const [candidatura, setCandidatura] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [pdfView, setPdfView] = useState(null);
 
   const navItems = [
     { label: "Início",             icon: <GoHome size={16} /> },
     { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
     { label: "Os meus badges",     icon: <BsAward size={16} /> },
     { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+    { label: "Conquistas",         icon: <BsTrophy size={16} /> },
     { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
   ];
 
@@ -276,7 +333,8 @@ function BadgeDetalhe() {
     setActiveTab(label);
     if (label === "Início" || label === "Catálogo de Badges") voltarParaCatalogo();
     if (label === "Candidaturas")   navigate("/consultor/candidaturas");
-    if (label === "Os meus badges") navigate("/consultor/OsMeusBadges");
+    if (label === "Os meus badges") navigate("/consultor/badges");
+    if (label === "Conquistas")     navigate("/consultor/conquistas");
     if (label === "Rankings")       navigate("/consultor/rankings");
   };
 
@@ -309,6 +367,14 @@ function BadgeDetalhe() {
           utilizador={utilizador}
           onFechar={() => setModalAberto(false)}
           onSubmetido={handleSubmetido}
+        />
+      )}
+
+      {pdfView && (
+        <PdfModal
+          src={pdfView.src}
+          titulo={pdfView.titulo}
+          onFechar={() => setPdfView(null)}
         />
       )}
 
@@ -366,7 +432,16 @@ function BadgeDetalhe() {
                           <p className="badge-req-descricao">{req.descricao}</p>
                         </div>
                         {req.imagemurl && (
-                          <img src={req.imagemurl} alt={req.titulo} className="badge-req-img" />
+                          isPdf(req.imagemurl) ? (
+                            <button
+                              className="badge-req-pdf-btn"
+                              onClick={() => setPdfView({ src: req.imagemurl, titulo: req.titulo })}
+                            >
+                              <FiFileText size={14} /> Ver PDF
+                            </button>
+                          ) : (
+                            <img src={req.imagemurl} alt={req.titulo} className="badge-req-img" />
+                          )
                         )}
                       </div>
                     ))}
