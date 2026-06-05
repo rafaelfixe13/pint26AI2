@@ -106,7 +106,7 @@ export default function DashBoard() {
         if (label === "Início") navigate("/talent/dashboard");
         if (label === "Validações") navigate("/talent/validacoes");
         if (label === "Histórico") navigate("/talent/historico");
-        if (label === "Catálogo") navigate("/talent-manager/catalogo");
+        if (label === "Catálogo") navigate("/talent/catalogo");
         if (label === "Conquistas") navigate("/talent/conquistas");
         if (label === "Relatórios") navigate("/talent-manager/relatorios");
         if (label === "Consultores") navigate("/talent/diretorio");
