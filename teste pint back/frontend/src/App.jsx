@@ -11,8 +11,11 @@ import PagBadge from "./pages/PagBadge";
 
 // Consultor
 import BadgesList from "./pages/BadgesList";
+import ConsultorDashboard from "./pages/consultor/DashBoard";
+import OsMeusBadges from "./pages/consultor/OsMeusBadges";
 import CandidaturasBadge from "./pages/consultor/CandidaturasBadge";
 import Rankings from "./pages/consultor/Rankings";
+import ConquistasConsultor from "./pages/consultor/ConquistasConsultor";
 
 // Talent
 import DashBoard from "./pages/talentM/DashBoard";
@@ -34,8 +37,21 @@ import BadgesUtilizador from "./pages/admin/BadgesUtilizador";
 import Sobre from "./pages/Sobre";
 import Ajuda from "./pages/Ajuda";
 
-// ── Guards ────────────────────────────────────────────────────────────────────
+// ── Mapeamento de roles ───────────────────────────────────────────
+const PERFIS_POR_ROLE = {
+  1: [1],
+  2: [2],
+  3: [3],
+  4: [4],
+  5: [1, 2, 3, 4],
+};
 
+const temAcesso = (utilizador, idrole) => {
+  const perfis = PERFIS_POR_ROLE[utilizador.idrole] ?? [utilizador.idrole];
+  return perfis.includes(idrole);
+};
+
+// ── Guards ────────────────────────────────────────────────────────
 function RotaProtegida({ children }) {
   const utilizador = localStorage.getItem("utilizador");
   return utilizador ? children : <Navigate to="/login" replace />;
@@ -44,33 +60,28 @@ function RotaProtegida({ children }) {
 function RotaConsultor({ children }) {
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   if (!utilizador) return <Navigate to="/login" replace />;
-  const ok = (Array.isArray(utilizador.roles) && utilizador.roles.includes(1)) || utilizador.idrole === 1;
-  return ok ? children : <Navigate to="/perfil" replace />;
+  return temAcesso(utilizador, 1) ? children : <Navigate to="/perfil" replace />;
 }
 
 function RotaTalent({ children }) {
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   if (!utilizador) return <Navigate to="/login" replace />;
-  const ok = (Array.isArray(utilizador.roles) && utilizador.roles.includes(2)) || utilizador.idrole === 2;
-  return ok ? children : <Navigate to="/perfil" replace />;
+  return temAcesso(utilizador, 2) ? children : <Navigate to="/perfil" replace />;
 }
 
 function RotaSL({ children }) {
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   if (!utilizador) return <Navigate to="/login" replace />;
-  const ok = (Array.isArray(utilizador.roles) && utilizador.roles.includes(3)) || utilizador.idrole === 3;
-  return ok ? children : <Navigate to="/perfil" replace />;
+  return temAcesso(utilizador, 3) ? children : <Navigate to="/perfil" replace />;
 }
 
 function RotaAdmin({ children }) {
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   if (!utilizador) return <Navigate to="/login" replace />;
-  const ok = (Array.isArray(utilizador.roles) && utilizador.roles.includes(4)) || utilizador.idrole === 4;
-  return ok ? children : <Navigate to="/perfil" replace />;
+  return temAcesso(utilizador, 4) ? children : <Navigate to="/perfil" replace />;
 }
 
-// ── App ───────────────────────────────────────────────────────────────────────
-
+// ── App ───────────────────────────────────────────────────────────
 function App() {
   return (
     <BrowserRouter>
@@ -90,10 +101,12 @@ function App() {
         <Route path="/ajuda"            element={<RotaProtegida><Ajuda /></RotaProtegida>} />
 
         {/* Consultor (role 1) */}
-        <Route path="/consultor/catalogo"              element={<RotaConsultor><BadgesList /></RotaConsultor>} />
-        <Route path="/consultor/dashboard"    element={<RotaConsultor><BadgesList /></RotaConsultor>} />
-        <Route path="/consultor/badges"       element={<RotaConsultor><BadgesList /></RotaConsultor>} />
+        <Route path="/consultor"              element={<RotaConsultor><ConsultorDashboard /></RotaConsultor>} />
+        <Route path="/consultor/dashboard"    element={<RotaConsultor><ConsultorDashboard /></RotaConsultor>} />
+        <Route path="/consultor/catalogo"     element={<RotaConsultor><BadgesList /></RotaConsultor>} />
+        <Route path="/consultor/badges"       element={<RotaConsultor><OsMeusBadges /></RotaConsultor>} />
         <Route path="/consultor/candidaturas" element={<RotaConsultor><CandidaturasBadge /></RotaConsultor>} />
+        <Route path="/consultor/conquistas"   element={<RotaConsultor><ConquistasConsultor /></RotaConsultor>} />
         <Route path="/consultor/rankings"     element={<RotaConsultor><Rankings /></RotaConsultor>} />
 
         {/* Talent Manager (role 2) */}
