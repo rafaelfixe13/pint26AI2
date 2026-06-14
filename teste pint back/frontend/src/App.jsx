@@ -23,6 +23,7 @@ import CatalogoBadgesTalent from "./pages/talentM/catalagoBadgesTM";
 import DiretorioConsultores from "./pages/talentM/DirConsultoresTM";
 import ConquistasTalent from "./pages/talentM/ConquistasTM";
 import ValidacoesTM from "./pages/talentM/ValidacoesTM";
+import RelatoriosTM from "./pages/talentM/relatoriosTM";
 
 // Service Line
 import ValidacoesSL from "./pages/ValidacoesSL";
@@ -115,6 +116,7 @@ function App() {
         <Route path="/talent/catalogo"   element={<RotaTalent><CatalogoBadgesTalent /></RotaTalent>} />
         <Route path="/talent/diretorio"  element={<RotaTalent><DiretorioConsultores /></RotaTalent>} />
         <Route path="/talent/conquistas" element={<RotaTalent><ConquistasTalent /></RotaTalent>} />
+        <Route path="/talent/relatorios" element={<RotaTalent><RelatoriosTM /></RotaTalent>} />
 
         {/* Service Line (role 3) */}
         <Route path="/sl/validacoes" element={<RotaSL><ValidacoesSL /></RotaSL>} />
