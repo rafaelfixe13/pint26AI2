@@ -1,0 +1,313 @@
+.relatorios-container {
+  padding: 30px 40px;
+  background-color: #FAFAFA;
+  font-family: 'Inter', sans-serif;
+}
+
+.relatorios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.relatorios-header h1 {
+  font-size: 24px;
+  color: #1a202c;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #718096;
+  font-size: 14px;
+  margin: 0;
+}
+
+.header-filters {
+  display: flex;
+  gap: 10px;
+}
+.filter-select {
+  width: 100px;
+  height: 32px;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: white;
+  border-radius: 12px;
+  padding: 24px 0;
+  border: 1px solid #EDF2F7;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
+  margin-bottom: 30px;
+}
+
+.kpi-card {
+  text-align: center;
+}
+.kpi-card.divider {
+  border-left: 1px solid #EDF2F7;
+  border-right: 1px solid #EDF2F7;
+}
+
+.kpi-card h2 {
+  font-size: 32px;
+  color: #2D3748;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.kpi-card p {
+  color: #A0AEC0;
+  font-size: 12px;
+  margin: 0;
+}
+
+/* Layout dos Gráficos */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  margin-bottom: 35px;
+}
+
+.chart-box {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #EDF2F7;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
+}
+
+.chart-box h3 {
+  font-size: 15px;
+  color: #2D3748;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.chart-header h3 { margin: 0; }
+
+.badge-growth {
+  background-color: #ECFDF5;
+  color: #10B981;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* CSS do Gráfico de Barras Nativo */
+.mock-chart-container {
+  position: relative;
+  height: 220px;
+  margin-top: 10px;
+}
+
+.chart-grid-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.chart-grid-lines div {
+  width: 100%;
+  border-bottom: 1px dashed #E2E8F0;
+  height: 0;
+  position: relative;
+}
+
+.chart-grid-lines span {
+  position: absolute;
+  left: -25px;
+  top: -8px;
+  font-size: 10px;
+  color: #94A3B8;
+}
+
+.mock-bars-wrapper {
+  position: absolute;
+  left: 15px;
+  right: 0;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.mock-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.mock-bar {
+  width: 55%;
+  background-color: #3B6695;
+  border-radius: 4px 4px 0 0;
+  min-height: 2px;
+}
+
+.mock-bar-label {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-top: 8px;
+}
+
+/* CSS do Gráfico Donut Nativo */
+.mock-donut-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 220px;
+}
+
+.mock-donut-chart {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  /* Conic gradient divide o círculo com as fatias exatas do mockup */
+  background: conic-gradient(
+    #3B82F6 0% 35%, 
+    #8B5CF6 35% 50%, 
+    #F59E0B 50% 75%, 
+    #10B981 75% 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mock-donut-hole {
+  width: 85px;
+  height: 85px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.mock-donut-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  color: #64748B;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.legend-dot.júnior { background-color: #3B82F6; }
+.legend-dot.intermedio { background-color: #10B981; }
+.legend-dot.senior { background-color: #F59E0B; }
+.legend-dot.especialista { background-color: #8B5CF6; }
+
+/* Secção Exportação */
+.section-title {
+  font-size: 15px;
+  color: #2D3748;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.export-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px 16px;
+  border: 1px solid #EDF2F7;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.01);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.blue-bg { background-color: #EFF6FF; }
+.yellow-bg { background-color: #FEF3C7; }
+.purple-bg { background-color: #F3E8FF; }
+.green-bg { background-color: #ECFDF5; }
+.red-bg { background-color: #FEF2F2; }
+
+.export-card h4 {
+  font-size: 13px;
+  color: #2D3748;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.export-buttons {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+}
+
+.export-buttons button {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+.export-buttons .excel {
+  background-color: #10B981;
+  color: white;
+}
+
+.export-buttons .excel.generating {
+  background-color: #047857;
+  color: white;
+  cursor: not-allowed;
+}
+
+.export-buttons .pdf {
+  background-color: #EF4444;
+  color: white;
+}
