@@ -8,6 +8,7 @@ import { AiOutlineAppstore } from "react-icons/ai";
 import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
 import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy } from "react-icons/bs";
 import { FaMedal } from "react-icons/fa";
+import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
 
 const NAV_ITEMS = [
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
   { label: "Conquistas",         icon: <BsTrophy size={16} /> },
   { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+  { label: "Lembretes",          icon: <FiClock size={16} /> },
 ];
 
 const ESTADOS_ATIVOS = ["OPEN", "SUBMITTED", "UNDER_REVIEW", "EM_VALIDACAO"];
@@ -149,6 +151,7 @@ export default function DashBoard() {
     if (label === "Candidaturas")       navigate("/consultor/candidaturas");
     if (label === "Conquistas")         navigate("/consultor/conquistas");
     if (label === "Rankings")           navigate("/consultor/rankings");
+    if (label === "Lembretes")          navigate("/consultor/lembretes");
   };
 
   return (

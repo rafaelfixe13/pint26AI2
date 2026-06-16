@@ -146,6 +146,42 @@ const enviarEmailCandidaturaSendBack = async (email, nome, badgeNome, comentario
   });
 };
 
+const enviarEmailBadgeAExpirar = async (email, nome, badgeNome, dataExpiracao, diasRestantes) => {
+  const dataFmt = new Date(dataExpiracao).toLocaleDateString('pt-PT');
+  await transporter.sendMail({
+    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `O seu badge "${badgeNome}" está a expirar`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #d97706;">Aviso de expiração</h2>
+        <p>Olá, ${nome}. O seu badge <strong>${badgeNome}</strong> expira em
+        <strong>${diasRestantes} dia(s)</strong> (a ${dataFmt}).</p>
+        <p>Renove a sua certificação antes da data de expiração para a manter ativa no seu perfil.</p>
+        <p style="color: #6b7280; font-size: 13px;">Este é um aviso automático da Plataforma PINT.</p>
+      </div>`,
+  });
+};
+
+const enviarEmailLembrete = async (email, nome, titulo, descricao, prazo, diasRestantes, badgeNome) => {
+  const dataFmt = new Date(prazo).toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const estado = diasRestantes < 0 ? 'está em atraso' : 'chegou ao prazo';
+  await transporter.sendMail({
+    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `Lembrete: ${titulo}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #2563eb;">Lembrete</h2>
+        <p>Olá, ${nome}. O seu lembrete <strong>${titulo}</strong> ${estado}
+        (prazo: ${dataFmt}).</p>
+        ${descricao ? `<p>${descricao}</p>` : ''}
+        ${badgeNome ? `<p style="color: #6b7280;">Badge associado: <strong>${badgeNome}</strong></p>` : ''}
+        <p style="color: #6b7280; font-size: 13px;">Este é um aviso automático da Plataforma PINT.</p>
+      </div>`,
+  });
+};
+
 module.exports = {
   enviarEmailConfirmacao,
   enviarEmailPrimeiroLogin,
@@ -154,4 +190,6 @@ module.exports = {
   enviarEmailCandidaturaAprovada,
   enviarEmailCandidaturaRejeitada,
   enviarEmailCandidaturaSendBack,
+  enviarEmailBadgeAExpirar,
+  enviarEmailLembrete,
 };

@@ -378,12 +378,6 @@ const validarSL = async (req, res) => {
          WHERE idcandidatura = :id`,
         { replacements: { id, idsl: idsl || null, comentario: comentario || null } }
       );
-      await sequelize.query(
-        `INSERT INTO utilizador_badges (idutilizador, idbadge, dataconquista)
-         VALUES (:idutilizador, :idbadge, NOW())
-         ON CONFLICT DO NOTHING`,
-        { replacements: { idutilizador: candidatura.user_id, idbadge: candidatura.badge_id } }
-      );
       await criarNotificacao(
         candidatura.user_id,
         'Badge aprovado!',

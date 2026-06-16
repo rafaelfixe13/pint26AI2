@@ -479,8 +479,8 @@ function BadgeDetalhe() {
             </div>
 
             <div className="badge-detail-right">
-              {badge.ispublic === false && (
-                <span className="badge-tag-special">⭐ Conquista Especial</span>
+              {badge.idespecial && (
+                <span className="badge-tag-special">⭐ {badge.especial_nome || "Badge Especial"}</span>
               )}
               <div className="badge-detail-points" style={{ backgroundColor: getPointsColor(badge.pontos) }}>
                 {badge.pontos} Pontos

@@ -35,5 +35,6 @@ app.use('/api/utilizadores', require('./routes/utilizadoresRoutes'));
 app.use('/api/notificacoes', require('./routes/notificacoesRoutes'));
 app.use('/api/talent',       tmRoutes);
 app.use('/api/candidaturas', require('./routes/candidaturaRoutes'));
+app.use('/api/lembretes',    require('./routes/lembretesRoutes'));
 
 module.exports = app;

@@ -15,11 +15,16 @@ require('./models/UtilizadorBadge');
 require('./models/Notificacao');
 require('./models/CandidaturaBadge');
 require('./models/EvidenciaCandidatura');
+require('./models/Lembrete');
+
+const { iniciarJobExpiracao } = require('./jobs/expiracaoBadges');
 
 const PORT = 3000;
 
 const startServer = async () => {
   await connectDB();
+
+  iniciarJobExpiracao();
 
   app.listen(PORT, () => {
     console.log(`🚀 Servidor em http://localhost:${PORT}`);

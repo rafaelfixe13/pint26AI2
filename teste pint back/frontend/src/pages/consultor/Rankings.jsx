@@ -5,7 +5,7 @@ import "../../styles/Rankings.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsTrophy, BsClockHistory } from "react-icons/bs";
-import { FiAward } from "react-icons/fi";
+import { FiAward, FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
 import { MdLeaderboard } from "react-icons/md";
 import { BsAward } from "react-icons/bs";
@@ -68,6 +68,7 @@ function Rankings() {
     { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
     { label: "Conquistas",         icon: <BsTrophy size={16} /> },
     { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+    { label: "Lembretes",          icon: <FiClock size={16} /> },
   ];
 
   useEffect(() => {
@@ -83,6 +84,7 @@ function Rankings() {
     if (label === "Os meus badges") navigate("/consultor/badges");
     if (label === "Candidaturas")   navigate("/consultor/candidaturas");
     if (label === "Conquistas")     navigate("/consultor/conquistas");
+    if (label === "Lembretes")      navigate("/consultor/lembretes");
   };
 
   const top3     = ranking.slice(0, 3);

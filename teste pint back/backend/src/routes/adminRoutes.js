@@ -8,7 +8,7 @@ const {
 const { uploadImagem } = require('../controllers/uploadController');
 
 const {
-  getAllBadges, createBadge, updateBadge, toggleBadge, listarNiveis, listarHierarquia, getBadgesUtilizador, listarBadgesComRequisitos,
+  getAllBadges, createBadge, updateBadge, toggleBadge, listarNiveis, listarHierarquia, getBadgesUtilizador, listarBadgesComRequisitos, listarEspeciais,
 } = require('../controllers/badgeController');
 
 const {
@@ -39,6 +39,7 @@ router.patch('/badges/:id/ativo', toggleBadge);
 router.get('/niveis', listarNiveis);
 router.get('/hierarquia', listarHierarquia);
 router.get('/badges-com-requisitos', listarBadgesComRequisitos);
+router.get('/especiais', listarEspeciais);
 
 // Learning Paths
 router.get('/learningpaths', listarLearningPaths);

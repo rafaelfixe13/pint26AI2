@@ -7,7 +7,7 @@ import { AiOutlineAppstore } from "react-icons/ai";
 import { BsAward, BsTrophy } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import { FaMedal } from "react-icons/fa";
-import { FiDownload } from "react-icons/fi";
+import { FiDownload, FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
 import { MdLeaderboard } from "react-icons/md";
 
@@ -41,6 +41,7 @@ function CandidaturasBadge() {
     { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
     { label: "Conquistas",         icon: <BsTrophy size={16} /> },
     { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+    { label: "Lembretes",          icon: <FiClock size={16} /> },
   ];
 
   useEffect(() => {
@@ -57,6 +58,7 @@ function CandidaturasBadge() {
     if (label === "Os meus badges") navigate("/consultor/badges");
     if (label === "Conquistas")     navigate("/consultor/conquistas");
     if (label === "Rankings")       navigate("/consultor/rankings");
+    if (label === "Lembretes")      navigate("/consultor/lembretes");
   };
 
   const filtradas = candidaturas.filter((c) => {

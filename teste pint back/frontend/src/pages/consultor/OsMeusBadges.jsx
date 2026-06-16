@@ -10,6 +10,7 @@ import { BsAward, BsAwardFill, BsStarFill, BsLinkedin, BsSearch, BsGrid3X3Gap, B
 import { IoEyeOutline } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
 import { HiOutlineEmojiSad } from "react-icons/hi";
+import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
 
 const NAV_ITEMS = [
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
   { label: "Conquistas",         icon: <BsTrophy size={16} /> },
   { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+  { label: "Lembretes",          icon: <FiClock size={16} /> },
 ];
 
 // Calcula estado de expiração a partir da data de conquista + meses
@@ -99,6 +101,7 @@ function OsMeusBadges() {
     if (label === "Candidaturas")       navigate("/consultor/candidaturas");
     if (label === "Conquistas")         navigate("/consultor/conquistas");
     if (label === "Rankings")           navigate("/consultor/rankings");
+    if (label === "Lembretes")          navigate("/consultor/lembretes");
   };
 
   // ── Filtros ─────────────────────────────────────────

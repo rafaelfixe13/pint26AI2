@@ -12,6 +12,7 @@ import { HiOutlineEmojiSad } from "react-icons/hi";
 import { IoEyeOutline } from "react-icons/io5";
 import { GoHome } from "react-icons/go";
 import { MdLeaderboard } from "react-icons/md";
+import { FiClock } from "react-icons/fi";
 
 const NAV_ITEMS_CONSULTOR = [
   { label: "Início",             icon: <GoHome size={16} /> },
@@ -20,6 +21,7 @@ const NAV_ITEMS_CONSULTOR = [
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
   { label: "Conquistas",         icon: <BsTrophy size={16} /> },
   { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+  { label: "Lembretes",          icon: <FiClock size={16} /> },
 ];
 
 function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInicial }) {
@@ -89,6 +91,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
     if (label === "Os meus badges") navigate("/consultor/badges");
     if (label === "Conquistas")     navigate("/consultor/conquistas");
     if (label === "Rankings")       navigate("/consultor/rankings");
+    if (label === "Lembretes")      navigate("/consultor/lembretes");
   };
 
   const uniqueValues = (key) => [...new Set(badges.map((b) => b[key]).filter(Boolean))];
@@ -184,10 +187,10 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
             {filtered.map((badge) => (
               <Col key={badge.idbadge} className="d-flex">
                 <div className="badge-card">
-                  {badge.ispublic === false && (
+                  {badge.idespecial && (
                     <span className="tag-especial">
                       <BsStarFill size={12} />
-                      Conquista Especial
+                      {badge.especial_nome || "Especial"}
                     </span>
                   )}
 

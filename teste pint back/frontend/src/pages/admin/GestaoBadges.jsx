@@ -527,11 +527,11 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
 }
 
 // ── Modal criar Badge ─────────────────────────────────────────────
-function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
+function ModalCriarBadge({ hierarquia, especiais, onFechar, onGuardar }) {
   const [form, setForm] = useState({
     nome: "", descricao: "", pontos: "",
     expiremeses: "", linkpublicobase: "", ispublico: true,
-    competencias: "", idnivel: "", idarea: "",
+    competencias: "", idnivel: "", idarea: "", idespecial: "",
   });
   const [pendingFile, setPendingFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -662,6 +662,27 @@ function ModalCriarBadge({ hierarquia, onFechar, onGuardar }) {
           </div>
         </div>
       </div>
+
+      <div className="gb-modal-secao">
+        <div className="gb-modal-secao-titulo">Badge Especial</div>
+        <div className="gb-form-grupo">
+          <label>Tipo especial</label>
+          <select
+            value={form.idespecial}
+            onChange={(e) => setForm((p) => ({ ...p, idespecial: e.target.value ? Number(e.target.value) : "" }))}
+          >
+            <option value="">Nenhum (badge normal)</option>
+            {especiais.map((esp) => (
+              <option key={esp.idespecial} value={esp.idespecial}>{esp.nome}</option>
+            ))}
+          </select>
+          {form.idespecial !== "" && (
+            <p style={{ fontSize: 12, color: "#6b7280", marginTop: "0.25rem" }}>
+              {especiais.find((esp) => esp.idespecial === form.idespecial)?.descricao}
+            </p>
+          )}
+        </div>
+      </div>
     </Modal>
   );
 }
@@ -672,6 +693,7 @@ function GestaoBadges() {
   const [hierarquia, setHierarquia] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
   const [badges, setBadges] = useState([]);
+  const [especiais, setEspeciais] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
@@ -697,17 +719,20 @@ function GestaoBadges() {
   const carregar = async () => {
     setLoading(true);
     try {
-      const [resH, resLP, resB] = await Promise.all([
+      const [resH, resLP, resB, resE] = await Promise.all([
         fetch(`${API}/hierarquia`),
         fetch(`${API}/learningpaths`),
         fetch(`${API}/badges-com-requisitos`),
+        fetch(`${API}/especiais`),
       ]);
       const h = await resH.json();
       const lps = await resLP.json();
       const bs = await resB.json();
+      const es = await resE.json();
       setHierarquia(Array.isArray(h) ? h : []);
       setLearningPaths(Array.isArray(lps) ? lps : []);
       setBadges(Array.isArray(bs) ? bs : []);
+      setEspeciais(Array.isArray(es) ? es : []);
 
       const sl = {}, ar = {};
       h.forEach((s) => {
@@ -851,6 +876,7 @@ function GestaoBadges() {
         ispublico: form.ispublico,
         competencias: form.competencias || null,
         idnivel: form.idnivel || null,
+        idespecial: form.idespecial || null,
       }),
     });
     const data = await res.json();
@@ -1141,6 +1167,7 @@ function GestaoBadges() {
       {modalCriarBadge && (
         <ModalCriarBadge
           hierarquia={hierarquia}
+          especiais={especiais}
           onFechar={() => setModalCriarBadge(false)}
           onGuardar={handleCriarBadge}
         />

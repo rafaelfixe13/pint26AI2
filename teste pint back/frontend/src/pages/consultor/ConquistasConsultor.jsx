@@ -10,6 +10,7 @@ import { AiOutlineAppstore, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
 import { BsAward, BsTrophy } from "react-icons/bs";
 import { HiOutlineEmojiSad } from "react-icons/hi";
+import { FiClock } from "react-icons/fi";
 
 const NAV_ITEMS = [
   { label: "Início",             icon: <GoHome size={16} /> },
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
   { label: "Conquistas",         icon: <BsTrophy size={16} /> },
   { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+  { label: "Lembretes",          icon: <FiClock size={16} /> },
 ];
 
 function ConquistasConsultor() {
@@ -44,6 +46,7 @@ function ConquistasConsultor() {
     if (label === "Candidaturas")       navigate("/consultor/candidaturas");
     if (label === "Conquistas")         navigate("/consultor/conquistas");
     if (label === "Rankings")           navigate("/consultor/rankings");
+    if (label === "Lembretes")          navigate("/consultor/lembretes");
   };
 
   return (

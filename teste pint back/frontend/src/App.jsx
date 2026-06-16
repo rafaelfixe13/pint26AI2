@@ -16,6 +16,7 @@ import OsMeusBadges from "./pages/consultor/OsMeusBadges";
 import CandidaturasBadge from "./pages/consultor/CandidaturasBadge";
 import Rankings from "./pages/consultor/Rankings";
 import ConquistasConsultor from "./pages/consultor/ConquistasConsultor";
+import Lembretes from "./pages/consultor/Lembretes";
 
 // Talent
 import DashBoard from "./pages/talentM/DashBoard";
@@ -109,6 +110,7 @@ function App() {
         <Route path="/consultor/candidaturas" element={<RotaConsultor><CandidaturasBadge /></RotaConsultor>} />
         <Route path="/consultor/conquistas"   element={<RotaConsultor><ConquistasConsultor /></RotaConsultor>} />
         <Route path="/consultor/rankings"     element={<RotaConsultor><Rankings /></RotaConsultor>} />
+        <Route path="/consultor/lembretes"    element={<RotaConsultor><Lembretes /></RotaConsultor>} />
 
         {/* Talent Manager (role 2) */}
         <Route path="/talent/dashboard"  element={<RotaTalent><DashBoard /></RotaTalent>} />

@@ -7,11 +7,13 @@ const getAllBadges = async (_req, res) => {
       SELECT b.*,
              nv.nome AS nivel,
              a.nome  AS area,
-             sl.nome AS serviceline
+             sl.nome AS serviceline,
+             esp.nome AS especial_nome
       FROM badges b
-      LEFT JOIN nivel       nv ON nv.idnivel      = b.idnivel
-      LEFT JOIN areas       a  ON a.idarea         = b.idarea
-      LEFT JOIN serviceline sl ON sl.idserviceline = a.idserviceline
+      LEFT JOIN nivel       nv  ON nv.idnivel       = b.idnivel
+      LEFT JOIN areas       a   ON a.idarea          = b.idarea
+      LEFT JOIN serviceline sl  ON sl.idserviceline  = a.idserviceline
+      LEFT JOIN especial    esp ON esp.idespecial    = b.idespecial
       WHERE b.ativo = true
       ORDER BY b.idbadge
     `, { type: sequelize.QueryTypes.SELECT });
@@ -29,13 +31,15 @@ const getBadgeById = async (req, res) => {
         nv.nome           AS nivel,
         a.idarea,         a.nome  AS area,
         sl.idserviceline, sl.nome AS serviceline,
+        esp.nome AS especial_nome,
         r.idrequisito, r.codigo AS req_codigo, r.titulo AS req_titulo,
         r.descricao AS req_descricao, r.imagemurl AS req_imagemurl, r.ordem AS req_ordem
       FROM badges b
-      LEFT JOIN nivel        nv ON nv.idnivel       = b.idnivel
-      LEFT JOIN areas        a  ON a.idarea          = b.idarea
-      LEFT JOIN serviceline  sl ON sl.idserviceline  = a.idserviceline
-      LEFT JOIN requisitos   r  ON r.idbadge = b.idbadge AND r.ativo = true
+      LEFT JOIN nivel        nv  ON nv.idnivel       = b.idnivel
+      LEFT JOIN areas        a   ON a.idarea          = b.idarea
+      LEFT JOIN serviceline  sl  ON sl.idserviceline  = a.idserviceline
+      LEFT JOIN especial     esp ON esp.idespecial    = b.idespecial
+      LEFT JOIN requisitos   r   ON r.idbadge = b.idbadge AND r.ativo = true
       WHERE b.idbadge = :id
       ORDER BY r.ordem, r.idrequisito
     `, { replacements: { id: req.params.id }, type: sequelize.QueryTypes.SELECT });
@@ -51,6 +55,7 @@ const getBadgeById = async (req, res) => {
       nivel: f.nivel,
       area: f.area, idarea: f.idarea,
       serviceline: f.serviceline, idserviceline: f.idserviceline,
+      idespecial: f.idespecial, especial_nome: f.especial_nome,
       requisitos: rows
         .filter((r) => r.idrequisito)
         .map((r) => ({
@@ -329,7 +334,22 @@ const listarBadgesComRequisitos = async (_req, res) => {
   }
 };
 
+const listarEspeciais = async (_req, res) => {
+  try {
+    const especiais = await sequelize.query(`
+      SELECT idespecial, nome, descricao, ativo
+      FROM especial
+      WHERE ativo = true
+      ORDER BY idespecial
+    `, { type: sequelize.QueryTypes.SELECT });
+    res.json(especiais);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllBadges, getBadgeById, createBadge, updateBadge, deleteBadge,
   toggleBadge, listarNiveis, listarHierarquia, getBadgesUtilizador, listarBadgesComRequisitos,
+  listarEspeciais,
 };

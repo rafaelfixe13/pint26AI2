@@ -35,6 +35,13 @@ function Navbar({ activeTab, onTabChange, navItems }) {
     }
   }, [utilizador?.idutilizador]);
 
+  // Polling: atualiza notificações periodicamente (quase tempo real)
+  useEffect(() => {
+    if (!utilizador?.idutilizador) return;
+    const intervalo = setInterval(fetchNotificacoes, 30000);
+    return () => clearInterval(intervalo);
+  }, [utilizador?.idutilizador]);
+
   const getInitials = (nome) => {
     if (!nome) return "?";
     return nome.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
