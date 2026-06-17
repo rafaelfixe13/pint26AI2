@@ -63,4 +63,17 @@ const atualizarFotoBase64 = async (req, res) => {
   }
 };
 
-module.exports = { atualizarFoto, atualizarPerfil, getRanking, atualizarFotoBase64 };
+// PUT /api/utilizadores/:id/rgpd  body: { rgpd: true }
+const atualizarRgpd = async (req, res) => {
+  const { id } = req.params;
+  const { rgpd } = req.body;
+  try {
+    await Utilizador.update({ rgpd: !!rgpd }, { where: { idutilizador: id } });
+    return res.json({ message: 'Consentimento RGPD atualizado.', rgpd: !!rgpd });
+  } catch (err) {
+    console.error('Erro ao atualizar RGPD:', err);
+    return res.status(500).json({ message: 'Erro interno.' });
+  }
+};
+
+module.exports = { atualizarFoto, atualizarPerfil, getRanking, atualizarFotoBase64, atualizarRgpd };
