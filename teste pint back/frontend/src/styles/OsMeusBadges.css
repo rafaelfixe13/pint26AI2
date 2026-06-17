@@ -142,6 +142,169 @@
 .mb-select:hover,
 .mb-select:focus { border-color: #1a2e5a; }
 
+/* ── Galeria pública: pesquisa de consultores ─────────── */
+.mb-galeria {
+    background: #ffffff;
+    border: 1px solid #eef1f6;
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+}
+
+.mb-galeria-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    color: #1d4ed8;
+}
+
+.mb-galeria-head h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a2e5a;
+    margin: 0 0 2px;
+}
+
+.mb-galeria-head p {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.mb-galeria-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+.mb-galeria-search input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    background: transparent;
+    color: #374151;
+}
+
+.mb-galeria-results {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mb-galeria-empty {
+    font-size: 13px;
+    color: #94a3b8;
+    padding: 8px 2px;
+}
+
+.mb-cons-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.mb-cons-row:hover {
+    background: #fff;
+    transform: translateX(3px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.mb-cons-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.mb-cons-avatar-ini {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.mb-cons-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.mb-cons-nome {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.mb-cons-meta {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.mb-cons-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1d4ed8;
+    background: #eef2ff;
+    border-radius: 20px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+
+.mb-cons-chevron { color: #cbd5e1; flex-shrink: 0; }
+
+/* ── Interruptor público/privado no card ──────────────── */
+.mb-toggle-publico {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    z-index: 2;
+}
+
+.mb-toggle-publico.on {
+    color: #047857;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.mb-toggle-publico.off {
+    color: #64748b;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+.mb-toggle-publico:hover { filter: brightness(0.97); }
+
 /* ── Grelha de badges (3 colunas) ─────────────────────── */
 .mb-grid {
     display: grid;
@@ -308,6 +471,15 @@
 }
 
 .mb-btn-linkedin:hover { background: #084d92; }
+
+.mb-btn-cert {
+    flex: 0 0 auto;
+    background: #10b981;
+    color: #ffffff;
+    padding: 11px 16px;
+}
+
+.mb-btn-cert:hover { background: #059669; }
 
 /* ── Estados (loading / vazio) ────────────────────────── */
 .mb-status {

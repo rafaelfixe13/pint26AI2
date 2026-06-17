@@ -1,0 +1,263 @@
+/* ═══════════════════════════════════════════════════════════
+   Modal RGPD
+   ═══════════════════════════════════════════════════════════ */
+
+.rgpd-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+
+.rgpd-modal {
+  position: relative;
+  background: #fff;
+  border-radius: 18px;
+  width: min(460px, 100%);
+  padding: 28px 26px 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.rgpd-modal * { box-sizing: border-box; }
+
+.rgpd-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rgpd-close:hover { background: #e2e8f0; }
+
+.rgpd-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1d4ed8, #4f46e5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.rgpd-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+}
+
+.rgpd-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.rgpd-terms {
+  background: #f8fafc;
+  border: 1px solid #eef1f6;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.rgpd-terms p { margin: 0 0 8px; }
+.rgpd-terms ul { margin: 0 0 8px; padding-left: 18px; }
+.rgpd-terms li { margin-bottom: 4px; }
+.rgpd-nota { font-size: 12px; color: #94a3b8; margin: 0; }
+
+.rgpd-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.rgpd-btn-cancelar,
+.rgpd-btn-aceitar {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.rgpd-btn-cancelar {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.rgpd-btn-cancelar:hover { background: #e2e8f0; }
+
+.rgpd-btn-aceitar {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.rgpd-btn-aceitar:hover { background: #1e40af; }
+.rgpd-btn-aceitar:disabled,
+.rgpd-btn-cancelar:disabled { opacity: 0.6; cursor: default; }
+
+/* ── Estado dentro das Configurações ── */
+.cfg-rgpd-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.cfg-rgpd-estado.on  { color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; }
+.cfg-rgpd-estado.off { color: #b45309; background: #fffbeb; border: 1px solid #fde68a; }
+
+/* ── Página Configurações ── */
+.cfg-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cfg-page * { box-sizing: border-box; }
+
+.cfg-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a2e5a;
+  margin: 0 0 20px;
+}
+
+.cfg-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid #eef1f6;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+  padding: 24px;
+}
+
+.cfg-card + .cfg-card { margin-top: 20px; }
+
+/* Cabeçalho de secção */
+.cfg-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.cfg-section-icon { color: #3F6AA3; }
+
+.cfg-section h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.cfg-subhead {
+  font-size: 14px;
+  color: #475569;
+  font-weight: 600;
+  margin: 14px 0 10px;
+}
+
+/* Linha com toggle */
+.cfg-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.cfg-toggle-row:last-child { border-bottom: none; }
+
+.cfg-toggle-row--box {
+  border-bottom: none;
+  background: #f8fafc;
+  border: 1px solid #eef1f6;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.cfg-toggle-text { display: flex; flex-direction: column; gap: 3px; }
+
+.cfg-toggle-label { font-size: 15px; color: #1e293b; }
+
+.cfg-toggle-sub { font-size: 12px; color: #94a3b8; line-height: 1.4; max-width: 460px; }
+
+/* Botão de ação (alterar palavra-passe) */
+.cfg-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 18px;
+  background: #fff;
+  color: #3F6AA3;
+  border: 1.5px solid #3F6AA3;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.cfg-action-btn:hover { background: #f1f5ff; }
+
+/* Interruptor */
+.cfg-switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.cfg-switch.on { background: #3F6AA3; }
+
+.cfg-switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: left 0.2s;
+}
+
+.cfg-switch.on .cfg-switch-knob { left: 23px; }
+
+.cfg-switch:disabled { opacity: 0.6; cursor: default; }

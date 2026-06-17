@@ -1,0 +1,101 @@
+.cel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+}
+
+/* Confetti */
+.cel-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cel-piece {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.9;
+  animation-name: cel-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes cel-fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(540deg); opacity: 0.9; }
+}
+
+/* Card */
+.cel-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 28px 26px;
+  width: min(380px, 90%);
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+  animation: cel-pop 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@keyframes cel-pop {
+  from { opacity: 0; transform: scale(0.85) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.cel-emoji {
+  font-size: 54px;
+  line-height: 1;
+  margin-bottom: 10px;
+  animation: cel-bounce 1s ease infinite;
+}
+
+@keyframes cel-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.cel-titulo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+}
+
+.cel-msg {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin: 0 0 6px;
+}
+
+.cel-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.cel-btn {
+  padding: 11px 26px;
+  background: linear-gradient(135deg, #1d4ed8, #4f46e5);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.cel-btn:hover { filter: brightness(1.08); }

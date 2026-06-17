@@ -16,6 +16,14 @@
 }
 
 /* Logo */
+.nb-logo { 
+  display: flex; 
+  align-items: baseline; 
+  gap: 0;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
 .logo-soft { color: #1d4ed8; font-weight: 800; font-size: 20px; }
 
 /* Search */
@@ -29,6 +37,7 @@
   border-radius: 8px;
   padding: 8px 12px;
   gap: 8px;
+  min-width: 0;
 }
 
 .nb-search svg {
@@ -53,6 +62,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 /* Notificações */
@@ -482,4 +492,19 @@
   font-size: 12px;
   color: #6b7280;
   text-align: center;
+}
+
+/* ===== Responsivo ===== */
+@media (max-width: 640px) {
+  .nb-top { padding: 10px 14px; gap: 10px; }
+  .nb-search { max-width: none; }
+  .nb-profile-info { display: none; }        /* poupa espaço: fica só o avatar */
+  .nb-profile { padding: 4px; gap: 0; }
+  .nb-nav { padding: 0 8px; }
+  .nb-nav-item { padding: 10px 12px; }
+  .notifications-popup { width: min(92vw, 380px); }
+}
+
+@media (max-width: 420px) {
+  .nb-search { display: none; }              /* pesquisa some nos ecrãs muito pequenos */
 }

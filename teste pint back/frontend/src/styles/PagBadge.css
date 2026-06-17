@@ -344,6 +344,34 @@
   font-size: 14px;
 }
 
+/* ── Competências ───────────────────────────────────────────────────────── */
+.badge-competencias {
+  margin-top: 18px;
+}
+
+.badge-competencias-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 10px;
+}
+
+.badge-competencias-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge-competencia-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4f46e5;
+  background: #eef2ff;
+  border: 1px solid #e0e7ff;
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
 /* ── Candidatura section ────────────────────────────────────────────────── */
 .badge-cand-section {
   margin-top: 20px;

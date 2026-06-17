@@ -19,51 +19,39 @@
   margin-bottom: 24px;
 }
 
-.pf-hero-cover {
-  height: 120px;
-  background: linear-gradient(120deg, #1d4ed8 0%, #4f46e5 55%, #7c3aed 100%);
-  position: relative;
-}
-
-.pf-hero-cover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 12% 120%, rgba(255, 255, 255, 0.18), transparent 45%),
-    radial-gradient(circle at 88% -20%, rgba(255, 255, 255, 0.14), transparent 40%);
-}
+.pf-hero-cover { display: none; }
 
 .pf-hero-pass {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 7px;
   padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #ffffff;
+  background: #f1f5ff;
+  border: 1px solid #dbe4ff;
+  color: #1d4ed8;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  backdrop-filter: blur(4px);
   transition: background 0.2s;
 }
 
-.pf-hero-pass:hover { background: rgba(255, 255, 255, 0.28); }
+.pf-hero-pass:hover { background: #e0e9ff; }
 
 .pf-hero-body {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 22px;
-  padding: 0 32px 26px;
-  margin-top: -52px;
+  padding: 28px 32px;
   position: relative;
   flex-wrap: wrap;
+}
+
+.pf-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
 }
 
 /* Avatar */
