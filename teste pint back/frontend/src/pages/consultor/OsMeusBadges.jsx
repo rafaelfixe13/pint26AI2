@@ -7,11 +7,14 @@ import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
 import { BsAward, BsAwardFill, BsStarFill, BsLinkedin, BsSearch, BsGrid3X3Gap, BsTrophy } from "react-icons/bs";
-import { IoEyeOutline } from "react-icons/io5";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
+import { FiUsers, FiChevronRight, FiDownload, FiClock } from "react-icons/fi";
 import { HiOutlineEmojiSad } from "react-icons/hi";
-import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
+import { gerarCertificadoPDF } from "../../utils/certificado";
+import { definirRgpd } from "../../utils/rgpd";
+import RgpdModal from "../../components/RgpdModal";
 
 const NAV_ITEMS = [
   { label: "Início",             icon: <GoHome size={16} /> },
@@ -46,10 +49,16 @@ function OsMeusBadges() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
+  const [activeTab, setActiveTab] = useState("Os meus badges");
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filtroSL, setFiltroSL] = useState("");
+
+  // Pesquisa de consultores (galeria pública)
+  const [consultorQuery, setConsultorQuery] = useState("");
+  const [consultorResults, setConsultorResults] = useState([]);
+  const [searchingCons, setSearchingCons] = useState(false);
 
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
@@ -74,6 +83,7 @@ function OsMeusBadges() {
           const m = meta[c.idbadge] || {};
           return {
             idbadge: c.idbadge,
+            idcandidatura: c.idcandidatura,
             nome: c.badge_nome || m.nome,
             descricao: m.descricao,
             imagemurl: c.badge_imagem || m.imagemurl,
@@ -85,6 +95,9 @@ function OsMeusBadges() {
             expiremeses: m.expiremeses,
             ispublico: m.ispublico,
             linkpublicobase: m.linkpublicobase,
+            publico: c.publico ?? false,
+            idespecial: m.idespecial,
+            especial_nome: m.especial_nome,
           };
         });
 
@@ -94,7 +107,101 @@ function OsMeusBadges() {
       .catch(() => setLoading(false));
   }, []);
 
+  // Pesquisar consultores (debounce simples)
+  useEffect(() => {
+    const q = consultorQuery.trim();
+    if (q.length < 2) { setConsultorResults([]); return; }
+    setSearchingCons(true);
+    const t = setTimeout(() => {
+      fetch(`${API_BASE}/publico/consultores?nome=${encodeURIComponent(q)}`)
+        .then((r) => r.json())
+        .then((data) => setConsultorResults(Array.isArray(data) ? data : []))
+        .catch(() => setConsultorResults([]))
+        .finally(() => setSearchingCons(false));
+    }, 300);
+    return () => clearTimeout(t);
+  }, [consultorQuery]);
+
+  // ── RGPD ───────────────────────────────────────────────
+  const [rgpd, setRgpd] = useState(utilizador?.rgpd === true);
+  const [pendingAccao, setPendingAccao] = useState(null);
+  const [rgpdLoading, setRgpdLoading] = useState(false);
+
+  const aceitarRgpd = async () => {
+    setRgpdLoading(true);
+    try {
+      await definirRgpd(utilizador.idutilizador, true);
+      setRgpd(true);
+      const accao = pendingAccao;
+      setPendingAccao(null);
+      if (accao) accao();
+    } catch {
+      alert("Não foi possível registar o consentimento. Tente novamente.");
+    } finally {
+      setRgpdLoading(false);
+    }
+  };
+
+  // Alternar visibilidade pública de um badge
+  const doToggle = async (b, novo) => {
+    setBadges((prev) => prev.map((x) => x.idbadge === b.idbadge ? { ...x, publico: novo } : x));
+    try {
+      const res = await fetch(`${API_BASE}/publico/badge`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idutilizador: utilizador.idutilizador, idbadge: b.idbadge, publico: novo }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      setBadges((prev) => prev.map((x) => x.idbadge === b.idbadge ? { ...x, publico: !novo } : x));
+    }
+  };
+
+  const togglePublico = (b) => {
+    const novo = !b.publico;
+    if (novo && !rgpd) {                       // tornar público exige RGPD
+      setPendingAccao(() => () => doToggle(b, true));
+      return;
+    }
+    doToggle(b, novo);
+  };
+
+  // Gera e abre o certificado em PDF (novo separador)
+  const baixarCertificado = (b) => {
+    gerarCertificadoPDF({
+      nome: utilizador?.nome,
+      badgeNome: b.nome,
+      nivel: b.nivel,
+      area: b.area,
+      serviceline: b.serviceline,
+      pontos: b.pontos,
+      data: b.dataconquista,
+      idcandidatura: b.idcandidatura,
+      imagemurl: b.imagemurl,
+    });
+  };
+
+  // Partilha o link de verificação da credencial no LinkedIn
+  const doShare = (b) => {
+    const url = b.idcandidatura
+      ? `${window.location.origin}/verificar/${b.idcandidatura}`
+      : (b.linkpublicobase || `${window.location.origin}/publico/consultor/${utilizador.idutilizador}`);
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      "_blank", "noopener,noreferrer"
+    );
+  };
+
+  const partilharLinkedin = (b) => {
+    if (!rgpd) {                               // partilhar exige RGPD
+      setPendingAccao(() => () => doShare(b));
+      return;
+    }
+    doShare(b);
+  };
+
   const handleTabChange = (label) => {
+    setActiveTab(label);
     if (label === "Início")             navigate("/consultor");
     if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
     if (label === "Os meus badges")     navigate("/consultor/badges");
@@ -120,12 +227,78 @@ function OsMeusBadges() {
 
   return (
     <div className="mb-container">
-      <Navbar activeTab="Os meus badges" onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      {pendingAccao && (
+        <RgpdModal
+          onAccept={aceitarRgpd}
+          onCancel={() => setPendingAccao(null)}
+          loading={rgpdLoading}
+        />
+      )}
+
+      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
 
       <main className="mb-content">
         <div className="mb-header">
           <h1>Os meus badges</h1>
           <p>Todos os badges que conquistou na plataforma.</p>
+        </div>
+
+        {/* Galeria pública — pesquisar consultores */}
+        <div className="mb-galeria">
+          <div className="mb-galeria-head">
+            <FiUsers size={18} />
+            <div>
+              <h2>Galeria pública de consultores</h2>
+              <p>Pesquise um consultor para ver os badges que ele tornou públicos.</p>
+            </div>
+          </div>
+          <div className="mb-galeria-search">
+            <BsSearch size={15} color="#94a3b8" />
+            <input
+              type="text"
+              placeholder="Pesquisar consultor por nome..."
+              value={consultorQuery}
+              onChange={(e) => setConsultorQuery(e.target.value)}
+            />
+          </div>
+
+          {consultorQuery.trim().length >= 2 && (
+            <div className="mb-galeria-results">
+              {searchingCons ? (
+                <p className="mb-galeria-empty">A pesquisar…</p>
+              ) : consultorResults.length === 0 ? (
+                <p className="mb-galeria-empty">Nenhum consultor encontrado.</p>
+              ) : (
+                consultorResults.map((c) => (
+                  <button
+                    key={c.idutilizador}
+                    className="mb-cons-row"
+                    onClick={() => navigate(`/publico/consultor/${c.idutilizador}`)}
+                  >
+                    {c.fotourl ? (
+                      <img
+                        src={c.fotourl.startsWith("data:") ? c.fotourl : `data:image/jpeg;base64,${c.fotourl}`}
+                        alt={c.nome}
+                        className="mb-cons-avatar"
+                      />
+                    ) : (
+                      <div className="mb-cons-avatar mb-cons-avatar-ini">
+                        {c.nome?.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
+                      </div>
+                    )}
+                    <div className="mb-cons-info">
+                      <span className="mb-cons-nome">{c.nome}</span>
+                      <span className="mb-cons-meta">
+                        {[c.serviceline, c.area].filter(Boolean).join(" • ") || "Consultor"}
+                      </span>
+                    </div>
+                    <span className="mb-cons-count">{Number(c.publicos) || 0} públicos</span>
+                    <FiChevronRight size={18} className="mb-cons-chevron" />
+                  </button>
+                ))
+              )}
+            </div>
+          )}
         </div>
 
         {/* Resumo */}
@@ -204,11 +377,20 @@ function OsMeusBadges() {
               const exp = expiryInfo(b.dataconquista, b.expiremeses);
               return (
                 <div key={b.idbadge} className="mb-card">
-                  {b.ispublico === false && (
+                  {b.idespecial != null && (
                     <span className="mb-tag-especial">
-                      <BsStarFill size={11} /> Conquista Especial
+                      <BsStarFill size={11} /> {b.especial_nome || "Badge Especial"}
                     </span>
                   )}
+
+                  <button
+                    className={`mb-toggle-publico ${b.publico ? "on" : "off"}`}
+                    onClick={() => togglePublico(b)}
+                    title={b.publico ? "Visível na galeria pública — clique para ocultar" : "Oculto — clique para tornar público"}
+                  >
+                    {b.publico ? <IoEyeOutline size={13} /> : <IoEyeOffOutline size={13} />}
+                    {b.publico ? "Público" : "Privado"}
+                  </button>
 
                   <div className="mb-icon-wrap">
                     {b.imagemurl ? (
@@ -258,6 +440,9 @@ function OsMeusBadges() {
                   <div className="mb-card-acoes">
                     <button className="mb-btn mb-btn-ver" onClick={() => navigate(`/badges/${b.idbadge}`)}>
                       <IoEyeOutline size={15} /> Ver Detalhes
+                    </button>
+                    <button className="mb-btn mb-btn-cert" title="Descarregar certificado (PDF)" onClick={() => baixarCertificado(b)}>
+                      <FiDownload size={15} />
                     </button>
                     <button className="mb-btn mb-btn-linkedin" title="Partilhar no LinkedIn" onClick={() => partilharLinkedin(b)}>
                       <BsLinkedin size={15} />

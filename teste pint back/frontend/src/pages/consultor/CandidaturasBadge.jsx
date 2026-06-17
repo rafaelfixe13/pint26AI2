@@ -16,7 +16,7 @@ const toDownloadUrl = (url) => url
        .replace('/video/upload/', '/video/upload/fl_attachment/')
   : url;
 
-function estadoInfo(estado, resultado) {
+function estadoInfo(estado) {
   const e = estado?.toUpperCase();
   if (e === "OPEN")         return { texto: "Por corrigir",    cls: "estado-open" };
   if (e === "SUBMITTED")    return { texto: "Em validação TM", cls: "estado-submitted" };
@@ -30,6 +30,7 @@ function CandidaturasBadge() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
+  const [activeTab, setActiveTab] = useState("Candidaturas");
   const [candidaturas, setCandidaturas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState("todos");
@@ -53,12 +54,14 @@ function CandidaturasBadge() {
   }, []);
 
   const handleTabChange = (label) => {
-    if (label === "Início")         navigate("/consultor");
+    setActiveTab(label);
+    if (label === "Início")             navigate("/consultor");
     if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges") navigate("/consultor/badges");
-    if (label === "Conquistas")     navigate("/consultor/conquistas");
-    if (label === "Rankings")       navigate("/consultor/rankings");
-    if (label === "Lembretes")      navigate("/consultor/lembretes");
+    if (label === "Os meus badges")     navigate("/consultor/badges");
+    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
+    if (label === "Conquistas")         navigate("/consultor/conquistas");
+    if (label === "Rankings")           navigate("/consultor/rankings");
+    if (label === "Lembretes")          navigate("/consultor/lembretes");
   };
 
   const filtradas = candidaturas.filter((c) => {
@@ -71,7 +74,7 @@ function CandidaturasBadge() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab="Candidaturas" onTabChange={handleTabChange} navItems={navItems} />
+      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={navItems} />
 
       <div className="cand-page">
         <h1 className="cand-titulo">As minhas candidaturas</h1>

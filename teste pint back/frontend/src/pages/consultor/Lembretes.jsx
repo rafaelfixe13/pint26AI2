@@ -38,7 +38,6 @@ function estadoLembrete(l) {
   if (l.concluido) return { texto: "Concluído", cls: "lemb-estado-ok", expirado: false };
   const agora = new Date();
   const prazo = new Date(l.prazo);
-  // Compara o instante exato: se o prazo já passou, está expirado (mesmo que seja hoje)
   if (prazo <= agora) return { texto: "Prazo expirado", cls: "lemb-estado-atrasado", expirado: true };
   const dias = Math.ceil((prazo - agora) / (1000 * 60 * 60 * 24));
   if (dias <= 1) return { texto: "Termina hoje", cls: "lemb-estado-aviso", expirado: false };
@@ -131,7 +130,6 @@ function Calendario({ lembretes }) {
     (porDia[k] = porDia[k] || []).push(l);
   });
 
-  // Início da grelha: segunda-feira igual ou anterior ao dia 1
   const primeiro = new Date(ano, mes, 1);
   const offset = (primeiro.getDay() + 6) % 7;
   const inicio = new Date(ano, mes, 1 - offset);
@@ -179,6 +177,7 @@ function Lembretes() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
+  const [activeTab, setActiveTab] = useState("Lembretes");
   const [lembretes, setLembretes] = useState([]);
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -214,6 +213,7 @@ function Lembretes() {
   }, []);
 
   const handleTabChange = (label) => {
+    setActiveTab(label);
     if (label === "Início")             navigate("/consultor");
     if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
     if (label === "Os meus badges")     navigate("/consultor/badges");
@@ -253,7 +253,7 @@ function Lembretes() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab="Lembretes" onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
 
       {modalAberto && (
         <ModalNovoLembrete

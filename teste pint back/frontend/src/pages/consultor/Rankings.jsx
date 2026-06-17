@@ -4,14 +4,22 @@ import Navbar from "../NavBar";
 import "../../styles/Rankings.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
-import { BsTrophy, BsClockHistory } from "react-icons/bs";
-import { FiAward, FiClock } from "react-icons/fi";
+import { BsTrophy, BsTrophyFill, BsAward, BsStarFill } from "react-icons/bs";
+import { MdLeaderboard, MdOutlineAssignment } from "react-icons/md";
+import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
-import { MdLeaderboard } from "react-icons/md";
-import { BsAward } from "react-icons/bs";
-import { MdFilterList, MdOutlineAssignment } from "react-icons/md";
 
-function Avatar({ foto, nome, className }) {
+const NAV_ITEMS = [
+  { label: "Início",             icon: <GoHome size={16} /> },
+  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
+  { label: "Os meus badges",     icon: <BsAward size={16} /> },
+  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
+  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+  { label: "Lembretes",          icon: <FiClock size={16} /> },
+];
+
+function Avatar({ foto, nome, className, phClassName }) {
   if (foto) {
     const src = foto.startsWith("data:") ? foto : `data:image/jpeg;base64,${foto}`;
     return <img src={src} alt={nome} className={className} />;
@@ -19,57 +27,38 @@ function Avatar({ foto, nome, className }) {
   const iniciais = nome
     ? nome.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase()
     : "?";
-  const placeholderClass = className
-    .replace("podio-foto", "podio-foto-placeholder")
-    .replace("ranking-foto", "ranking-foto-placeholder");
-  return <div className={placeholderClass}>{iniciais}</div>;
+  return <div className={phClassName || className}>{iniciais}</div>;
 }
 
-function Podio({ utilizadores }) {
-  const [primeiro, segundo, terceiro] = utilizadores;
-
-  const PodioItem = ({ user, posicao, cls }) => {
-    if (!user) return <div className={`podio-item ${cls}`} />;
-    const primeiroNome = user.nome.split(" ")[0];
-    const segundoNome  = user.nome.split(" ")[1] || "";
-    return (
-      <div className={`podio-item ${cls}`}>
-        <div className="podio-foto-wrap">
-          {posicao === 1 && <span className="podio-coroa">👑</span>}
-          <Avatar foto={user.fotourl} nome={user.nome} className="podio-foto" />
-          <span className="podio-pos-badge">{posicao}</span>
-        </div>
-        <p className="podio-nome">{primeiroNome}<br />{segundoNome}</p>
-        <p className="podio-pontos">{user.pontos}</p>
-      </div>
-    );
-  };
-
+function PodioCard({ user, posicao }) {
+  if (!user) return <div className={`rk-pod rk-pod-${posicao} rk-pod-vazio`} />;
   return (
-    <div className="rankings-podio">
-      <PodioItem user={segundo}  posicao={2} cls="segundo"  />
-      <PodioItem user={primeiro} posicao={1} cls="primeiro" />
-      <PodioItem user={terceiro} posicao={3} cls="terceiro" />
+    <div className={`rk-pod rk-pod-${posicao}`}>
+      <div className="rk-pod-info">
+        {posicao === 1 && <span className="rk-crown">👑</span>}
+        <Avatar
+          foto={user.fotourl}
+          nome={user.nome}
+          className="rk-pod-avatar"
+          phClassName="rk-pod-avatar rk-pod-avatar-ph"
+        />
+        <span className="rk-pod-nome">{user.nome}</span>
+        <span className="rk-pod-pts"><BsStarFill size={11} /> {user.pontos} pts</span>
+      </div>
+      <div className="rk-pod-base">
+        <span className="rk-pod-rank">{posicao}</span>
+      </div>
     </div>
   );
 }
 
 function Rankings() {
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
+  const [activeTab, setActiveTab] = useState("Rankings");
   const [ranking, setRanking] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const navItems = [
-    { label: "Início",             icon: <GoHome size={16} /> },
-    { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Os meus badges",     icon: <BsAward size={16} /> },
-    { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-    { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-    { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-    { label: "Lembretes",          icon: <FiClock size={16} /> },
-  ];
 
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
@@ -80,52 +69,84 @@ function Rankings() {
   }, []);
 
   const handleTabChange = (label) => {
-    if (label === "Início" || label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges") navigate("/consultor/badges");
-    if (label === "Candidaturas")   navigate("/consultor/candidaturas");
-    if (label === "Conquistas")     navigate("/consultor/conquistas");
-    if (label === "Lembretes")      navigate("/consultor/lembretes");
+    setActiveTab(label);
+    if (label === "Início")             navigate("/consultor");
+    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
+    if (label === "Os meus badges")     navigate("/consultor/badges");
+    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
+    if (label === "Conquistas")         navigate("/consultor/conquistas");
+    if (label === "Rankings")           navigate("/consultor/rankings");
+    if (label === "Lembretes")          navigate("/consultor/lembretes");
   };
 
-  const top3     = ranking.slice(0, 3);
+  const [primeiro, segundo, terceiro] = ranking;
   const restante = ranking.slice(3);
+  const minhaPos = ranking.findIndex((u) => u.idutilizador === utilizador?.idutilizador) + 1;
 
   return (
-    <div className="page-wrapper">
-      <Navbar activeTab="Rankings" onTabChange={handleTabChange} navItems={navItems} />
+    <div className="rk-container">
+      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
 
-      <div className="rankings-page">
-        <div className="rankings-header">
-          <h1>🏆 Ranking</h1>
-        </div>
+      <main className="rk-wrap">
+        {/* Hero */}
+        <section className="rk-hero">
+          <div className="rk-hero-cover" />
+          <div className="rk-hero-body">
+            <div className="rk-hero-text">
+              <span className="rk-hero-icon"><BsTrophyFill size={22} /></span>
+              <div>
+                <h1>Ranking de Consultores</h1>
+                <p>Os consultores com mais pontos na plataforma.</p>
+              </div>
+            </div>
+            {minhaPos > 0 && (
+              <div className="rk-minha-pos">
+                <span className="rk-minha-pos-label">A tua posição</span>
+                <span className="rk-minha-pos-num">#{minhaPos}</span>
+              </div>
+            )}
+          </div>
+        </section>
 
-        {loading && <p className="rankings-loading">A carregar ranking...</p>}
-
+        {loading && <p className="rk-status">A carregar ranking…</p>}
         {!loading && ranking.length === 0 && (
-          <p className="rankings-vazio">Ainda não há dados de ranking.</p>
+          <p className="rk-status">Ainda não há dados de ranking.</p>
         )}
 
         {!loading && ranking.length > 0 && (
           <>
-            <Podio utilizadores={top3} />
+            {/* Pódio top 3 */}
+            <section className="rk-podium">
+              <PodioCard user={segundo}  posicao={2} />
+              <PodioCard user={primeiro} posicao={1} />
+              <PodioCard user={terceiro} posicao={3} />
+            </section>
 
-            <div className="rankings-lista">
-              {restante.map((u, i) => {
-                const pos   = i + 4;
-                const isYou = u.idutilizador === utilizador?.idutilizador;
-                return (
-                  <div key={u.idutilizador} className={`ranking-row${isYou ? " you" : ""}`}>
-                    <div className="ranking-pos">{pos}</div>
-                    <Avatar foto={u.fotourl} nome={u.nome} className="ranking-foto" />
-                    <span className="ranking-nome">{isYou ? "You" : u.nome}</span>
-                    <span className="ranking-pontos">{u.pontos}</span>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Restante lista */}
+            {restante.length > 0 && (
+              <section className="rk-list">
+                {restante.map((u, i) => {
+                  const pos = i + 4;
+                  const isYou = u.idutilizador === utilizador?.idutilizador;
+                  return (
+                    <div key={u.idutilizador} className={`rk-row${isYou ? " you" : ""}`}>
+                      <span className="rk-row-pos">{pos}</span>
+                      <Avatar
+                        foto={u.fotourl}
+                        nome={u.nome}
+                        className="rk-row-avatar"
+                        phClassName="rk-row-avatar rk-row-avatar-ph"
+                      />
+                      <span className="rk-row-nome">{u.nome}{isYou && <span className="rk-tu">Tu</span>}</span>
+                      <span className="rk-row-pts">{u.pontos} pts</span>
+                    </div>
+                  );
+                })}
+              </section>
+            )}
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 }

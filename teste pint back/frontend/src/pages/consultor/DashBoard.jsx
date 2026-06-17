@@ -10,6 +10,8 @@ import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy } from "reac
 import { FaMedal } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
+import { verificarMarcos } from "../../utils/marcos";
+import CelebracaoModal from "../../components/CelebracaoModal";
 
 const NAV_ITEMS = [
   { label: "Início",             icon: <GoHome size={16} /> },
@@ -60,10 +62,12 @@ export default function DashBoard() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
+  const [activeTab, setActiveTab] = useState("Início");
   const [candidaturas, setCandidaturas] = useState([]);
   const [recomendados, setRecomendados] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [marco, setMarco] = useState(null);
 
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
@@ -79,32 +83,90 @@ export default function DashBoard() {
       `${API_BASE}/admin/utilizadores/${utilizador.idutilizador}/badges`
     ).then((r) => r.json()).catch(() => []);
 
-    Promise.all([fetchCandidaturas, fetchBadges, fetchHierarquia])
-      .then(([cands, badges, hierarquia]) => {
+    const fetchRanking = fetch(`${API_BASE}/utilizadores/ranking`)
+      .then((r) => r.json()).catch(() => []);
+
+    Promise.all([fetchCandidaturas, fetchBadges, fetchHierarquia, fetchRanking])
+      .then(([cands, badges, hierarquia, ranking]) => {
         const listaCands = Array.isArray(cands) ? cands : [];
         const listaBadges = Array.isArray(badges) ? badges : [];
         setCandidaturas(listaCands);
         setLearningPaths(Array.isArray(hierarquia) ? hierarquia : []);
 
-        // Badges já conquistados ou em processo — não recomendar
-        const jaTem = new Set(
+        const meta = {};
+        listaBadges.forEach((b) => { meta[b.idbadge] = b; });
+
+        const indispo = new Set(
           listaCands
             .filter((c) => ["APPROVED", ...ESTADOS_ATIVOS].includes(c.estado?.toUpperCase()))
             .map((c) => c.idbadge)
         );
 
-        // Recomendados: badges da área do consultor que ainda não tem
-        let reco = listaBadges.filter((b) => !jaTem.has(b.idbadge));
-        if (utilizador.idarea != null) {
-          const daArea = reco.filter((b) => String(b.idarea) === String(utilizador.idarea));
-          // Se houver badges da área, prioriza-os; senão mostra os restantes
-          reco = daArea.length > 0 ? daArea : reco;
+        const nivelOrder = (b) => {
+          if (b.idnivel != null) return Number(b.idnivel);
+          const m = (b.nivel || "").trim().match(/^([A-E])/i);
+          return m ? m[1].toUpperCase().charCodeAt(0) - 64 : 99;
+        };
+
+        // Recomendar o PRÓXIMO NÍVEL de cada área: o badge de nível mais baixo
+        // ainda não conquistado nem em processo dessa área.
+        const listaHier = Array.isArray(hierarquia) ? hierarquia : [];
+        const candidatos = [];
+        listaHier.forEach((sl) =>
+          (sl.areas || []).forEach((area) => {
+            const badgesArea = (area.badges || [])
+              .map((b) => ({ ...meta[b.idbadge], ...b }))
+              .sort((a, b) => nivelOrder(a) - nivelOrder(b));
+            const conquered = badgesArea.filter((b) => b.conquistado).length;
+            const next = badgesArea.find((b) => !b.conquistado && !indispo.has(b.idbadge));
+            if (next) {
+              candidatos.push({
+                ...next,
+                pontos: next.pontos ?? 0,
+                _conquered: conquered,
+                _own: utilizador.idarea != null && String(area.idarea) === String(utilizador.idarea),
+              });
+            }
+          })
+        );
+
+        // Prioridade: áreas já iniciadas → área do consultor → mais progresso → nível mais baixo
+        candidatos.sort((a, b) => {
+          const aStarted = a._conquered > 0 ? 1 : 0;
+          const bStarted = b._conquered > 0 ? 1 : 0;
+          if (bStarted !== aStarted) return bStarted - aStarted;
+          if (b._own !== a._own) return (b._own ? 1 : 0) - (a._own ? 1 : 0);
+          if (b._conquered !== a._conquered) return b._conquered - a._conquered;
+          return nivelOrder(a) - nivelOrder(b);
+        });
+
+        let reco = candidatos.slice(0, 6);
+
+        // Fallback: se a hierarquia não devolver nada, usar a lógica por área/pontos
+        if (reco.length === 0) {
+          reco = listaBadges.filter((b) => !indispo.has(b.idbadge));
+          if (utilizador.idarea != null) {
+            const daArea = reco.filter((b) => String(b.idarea) === String(utilizador.idarea));
+            reco = daArea.length > 0 ? daArea : reco;
+          }
+          reco = reco.sort((a, b) => (a.pontos ?? 0) - (b.pontos ?? 0)).slice(0, 6);
         }
-        reco = reco
-          .sort((a, b) => (a.pontos ?? 0) - (b.pontos ?? 0))
-          .slice(0, 6);
 
         setRecomendados(reco);
+
+        // Celebração de marcos (req. 16)
+        const aprov = listaCands.filter((c) => c.estado?.toUpperCase() === "APPROVED");
+        const listaRanking = Array.isArray(ranking) ? ranking : [];
+        const primeiroRanking =
+          listaRanking.length > 0 &&
+          String(listaRanking[0].idutilizador) === String(utilizador.idutilizador);
+        const m = verificarMarcos(utilizador.idutilizador, {
+          totalBadges: aprov.length,
+          totalPontos: aprov.reduce((s, c) => s + (c.badge_pontos || 0), 0),
+          primeiroRanking,
+        });
+        if (m) setMarco(m);
+
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -127,13 +189,6 @@ export default function DashBoard() {
   const conquistadosLP = allHierBadges.filter((b) => b.conquistado).length;
   const pctBadges = totalBadgesLP ? Math.round((conquistadosLP / totalBadgesLP) * 100) : 0;
 
-  let totalReq = 0, reqOk = 0;
-  allHierBadges.forEach((b) => (b.requisitos || []).forEach((r) => {
-    totalReq++;
-    if (r.concluido) reqOk++;
-  }));
-  const pctReq = totalReq ? Math.round((reqOk / totalReq) * 100) : 0;
-
   const porNivel = Object.values(
     allHierBadges.reduce((acc, b) => {
       const lvl = b.nivel || "Sem nível";
@@ -145,6 +200,7 @@ export default function DashBoard() {
   ).sort((a, b) => a.nivel.localeCompare(b.nivel));
 
   const handleTabChange = (label) => {
+    setActiveTab(label);
     if (label === "Início")             navigate("/consultor");
     if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
     if (label === "Os meus badges")     navigate("/consultor/badges");
@@ -155,8 +211,10 @@ export default function DashBoard() {
   };
 
   return (
-    <div className="cons-dashboard-container">
-      <Navbar activeTab="Início" onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+    <div className="page-wrapper">
+      {marco && <CelebracaoModal marco={marco} onClose={() => setMarco(null)} />}
+
+      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
 
       <main className="cons-dashboard-content">
         <div className="cons-dashboard-header">
@@ -217,11 +275,6 @@ export default function DashBoard() {
                   <span className="cons-ring-label">Badges concluídos</span>
                   <span className="cons-ring-sub">{conquistadosLP} de {totalBadgesLP}</span>
                 </div>
-                <div className="cons-ring-card">
-                  <ProgressRing pct={pctReq} color="#10b981" />
-                  <span className="cons-ring-label">Requisitos cumpridos</span>
-                  <span className="cons-ring-sub">{reqOk} de {totalReq}</span>
-                </div>
               </div>
 
               <div className="cons-metrics-bars">
@@ -251,7 +304,7 @@ export default function DashBoard() {
         {/* Progresso nos Learning Paths */}
         <div className="cons-section cons-lp-section">
           <div className="cons-section-head">
-            <h2>📈 Progresso nos Learning Paths</h2>
+            <h2>📈 Progresso nas Áreas</h2>
             <button className="cons-section-link" onClick={() => navigate("/consultor/badges")}>
               Os meus badges
             </button>
@@ -272,7 +325,7 @@ export default function DashBoard() {
               .filter((a) => a.total > 0);
 
             if (areas.length === 0) {
-              return <p className="cons-empty">Sem Learning Paths disponíveis de momento.</p>;
+              return <p className="cons-empty">Sem areas disponíveis de momento.</p>;
             }
 
             return (
@@ -306,7 +359,7 @@ export default function DashBoard() {
           {/* Badges recomendados */}
           <div className="cons-section">
             <div className="cons-section-head">
-              <h2>⭐ Badges Recomendados</h2>
+              <h2>⭐ Próximos níveis recomendados</h2>
               <button className="cons-section-link" onClick={() => navigate("/consultor/catalogo")}>
                 Ver catálogo
               </button>
