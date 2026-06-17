@@ -15,6 +15,7 @@ require('./models/UtilizadorBadge');
 require('./models/Notificacao');
 require('./models/CandidaturaBadge');
 require('./models/EvidenciaCandidatura');
+require('./models/Especial');
 require('./models/Lembrete');
 
 const { iniciarJobExpiracao } = require('./jobs/expiracaoBadges');
@@ -24,6 +25,7 @@ const PORT = 3000;
 const startServer = async () => {
   await connectDB();
 
+  // Jobs: avisos de expiração de badges + lembretes
   iniciarJobExpiracao();
 
   app.listen(PORT, () => {
