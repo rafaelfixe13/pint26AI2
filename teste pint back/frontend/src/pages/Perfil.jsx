@@ -11,7 +11,7 @@ import {
 } from "react-icons/bs";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
-import { FiUsers, FiLock, FiChevronRight } from "react-icons/fi";
+import { FiUsers, FiLock, FiChevronRight, FiClock } from "react-icons/fi";
 import { FaMedal } from "react-icons/fa";
 import { API_BASE } from "../api";
 
@@ -23,6 +23,7 @@ const NAV_CONSULTOR = [
   { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
   { label: "Conquistas",         icon: <BsTrophy size={16} /> },
   { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+  { label: "Lembretes",          icon: <FiClock size={16} /> },
 ];
 
 const NAV_TALENT = [
@@ -144,6 +145,7 @@ function Perfil() {
       if (label === "Candidaturas")       navigate("/consultor/candidaturas");
       if (label === "Conquistas")         navigate("/consultor/conquistas");
       if (label === "Rankings")           navigate("/consultor/rankings");
+      if (label === "Lembretes")          navigate("/consultor/lembretes");
     }
     if (perfilAtivo === "2") {
       if (label === "Início")      navigate("/talent");
@@ -232,12 +234,6 @@ function Perfil() {
 
         {/* ===== HERO ===== */}
         <section className="pf-hero">
-          <div className="pf-hero-cover" />
-
-          <button className="pf-hero-pass" onClick={() => navigate("/alterar-password")}>
-            <FiLock size={14} /> Alterar palavra-passe
-          </button>
-
           <div className="pf-hero-body">
             <div className="pf-avatar-wrap">
               {fotoAtual ? (
@@ -260,24 +256,28 @@ function Perfil() {
               </div>
             </div>
 
-            {isConsultor && (
-              <div className="pf-hero-stats">
-                <div className="pf-hero-stat">
-                  <span className="pf-hero-stat-num">{loading ? "…" : totalObtidos}</span>
-                  <span className="pf-hero-stat-label">Badges</span>
+            <div className="pf-hero-right">
+              
+
+              {isConsultor && (
+                <div className="pf-hero-stats">
+                  <div className="pf-hero-stat">
+                    <span className="pf-hero-stat-num">{loading ? "…" : totalObtidos}</span>
+                    <span className="pf-hero-stat-label">Badges</span>
+                  </div>
+                  <div className="pf-hero-divider" />
+                  <div className="pf-hero-stat">
+                    <span className="pf-hero-stat-num">{loading ? "…" : totalPontos}</span>
+                    <span className="pf-hero-stat-label">Pontos</span>
+                  </div>
+                  <div className="pf-hero-divider" />
+                  <div className="pf-hero-stat">
+                    <span className="pf-hero-stat-num">{loading ? "…" : emCurso}</span>
+                    <span className="pf-hero-stat-label">Em curso</span>
+                  </div>
                 </div>
-                <div className="pf-hero-divider" />
-                <div className="pf-hero-stat">
-                  <span className="pf-hero-stat-num">{loading ? "…" : totalPontos}</span>
-                  <span className="pf-hero-stat-label">Pontos</span>
-                </div>
-                <div className="pf-hero-divider" />
-                <div className="pf-hero-stat">
-                  <span className="pf-hero-stat-num">{loading ? "…" : emCurso}</span>
-                  <span className="pf-hero-stat-label">Em curso</span>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </section>
 

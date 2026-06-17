@@ -35,13 +35,6 @@ function Navbar({ activeTab, onTabChange, navItems }) {
     }
   }, [utilizador?.idutilizador]);
 
-  // Polling: atualiza notificações periodicamente (quase tempo real)
-  useEffect(() => {
-    if (!utilizador?.idutilizador) return;
-    const intervalo = setInterval(fetchNotificacoes, 30000);
-    return () => clearInterval(intervalo);
-  }, [utilizador?.idutilizador]);
-
   const getInitials = (nome) => {
     if (!nome) return "?";
     return nome.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
@@ -90,6 +83,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
   const handleLogout = () => {
     localStorage.removeItem("utilizador");
     localStorage.removeItem("perfilAtivo");
+    localStorage.removeItem("lembrar");
     navigate("/login");
   };
 
@@ -179,7 +173,11 @@ function Navbar({ activeTab, onTabChange, navItems }) {
         <div className="nb-top">
 
           {/* Logo */}
-          <div className="navbar-logo" onClick={navegarParaHome} style={{ cursor: "pointer" }}>
+          <div
+            className="nb-logo"
+            onClick={navegarParaHome}
+            style={{ cursor: "pointer" }}
+          >
             <span className="logo-soft">Softinsa</span>
           </div>
 
@@ -301,7 +299,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                     Trocar de perfil
                   </button>
 
-                  <button className="nb-dropdown-item" onClick={() => setMenuAberto(false)}>
+                  <button className="nb-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/configuracoes"); }}>
                     <IoSettingsOutline size={15} />
                     Configurações
                   </button>

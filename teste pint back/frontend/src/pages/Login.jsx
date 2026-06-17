@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 import { API_BASE } from "../api";
@@ -10,10 +10,18 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [lembrar, setLembrar] = useState(localStorage.getItem("lembrar") !== "false");
   const [erro, setErro] = useState("");
   const [emailNaoConfirmado, setEmailNaoConfirmado] = useState(false);
   const [emailPorConfirmar, setEmailPorConfirmar] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Sessão guardada: salta o login
+  useEffect(() => {
+    if (localStorage.getItem("utilizador") && localStorage.getItem("lembrar") === "true") {
+      navigate("/perfil");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,6 +63,7 @@ function Login() {
       }
 
       localStorage.setItem("utilizador", JSON.stringify(utilizadorParaGuardar));
+      localStorage.setItem("lembrar", lembrar ? "true" : "false");
       navigate("/perfil");
     } catch {
       setErro("Não foi possível ligar ao servidor.");
@@ -100,6 +109,15 @@ function Login() {
             </span>
           </div>
 
+          <label className="auth-remember">
+            <input
+              type="checkbox"
+              checked={lembrar}
+              onChange={(e) => setLembrar(e.target.checked)}
+            />
+            Manter sessão iniciada
+          </label>
+
           {erro && <p className="auth-erro">{erro}</p>}
 
           {emailNaoConfirmado && (
@@ -119,6 +137,19 @@ function Login() {
             {loading ? "A entrar..." : "Entrar"}
           </button>
         </form>
+
+        <p className="auth-link-texto">
+          <Link to="/recuperar-password" className="auth-link">
+            Esqueceu-se da palavra-passe?
+          </Link>
+        </p>
+
+        <p className="auth-link-texto">
+          Não tem conta?{" "}
+          <Link to="/register" className="auth-link">
+            Criar conta
+          </Link>
+        </p>
       </div>
     </div>
   );

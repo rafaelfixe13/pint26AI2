@@ -14,7 +14,9 @@ import {
   MdHelpOutline,
 } from "react-icons/md";
 import { FiChevronDown } from "react-icons/fi";
-import { BsLightbulb, BsQuestionCircle } from "react-icons/bs";
+import { BsLightbulb } from "react-icons/bs";
+import Navbar from "./NavBar";
+import { getNavItems, navegarTab } from "../utils/navConfig";
 
 const ajudaItems = [
   {
@@ -161,6 +163,7 @@ const ajudaItems = [
 
 function Ajuda() {
   const navigate = useNavigate();
+  const perfilAtivo = localStorage.getItem("perfilAtivo") || "1";
   const [expandido, setExpandido] = useState(new Set());
 
   const toggle = (index) => {
@@ -172,17 +175,12 @@ function Ajuda() {
   };
 
   return (
-    <div>
-      {/* Topo */}
-      <div className="sobre-topo">
-        <button className="sobre-voltar" onClick={() => navigate(-1)}>
-          ← Voltar
-        </button>
-        <div className="sobre-topo-titulo">
-          <BsQuestionCircle size={18} />
-          <span>Ajuda</span>
-        </div>
-      </div>
+    <div className="page-wrapper">
+      <Navbar
+        activeTab=""
+        navItems={getNavItems(perfilAtivo)}
+        onTabChange={(l) => navegarTab(navigate, perfilAtivo, l)}
+      />
 
       <div className="ajuda-wrapper">
         <div className="ajuda-lista">

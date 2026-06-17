@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 import { API_BASE } from "../api";
 
 function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ nome: "", email: "", password: "", confirmar: "" });
+  const [form, setForm] = useState({ nome: "", email: "", idarea: "" });
+  const [areas, setAreas] = useState([]);
+  const [lembrar, setLembrar] = useState(true);
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/auth/areas`)
+      .then((r) => r.json())
+      .then((data) => setAreas(Array.isArray(data) ? data : []))
+      .catch(() => setAreas([]));
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,21 +26,23 @@ function Register() {
     e.preventDefault();
     setErro("");
 
-    if (form.password !== form.confirmar) {
-      setErro("As passwords não coincidem.");
+    if (!form.idarea) {
+      setErro("Selecione a sua área.");
       return;
     }
 
     setLoading(true);
 
     try {
+      const areaSel = areas.find((a) => String(a.idarea) === String(form.idarea));
       const res = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nome: form.nome,
           email: form.email,
-          password: form.password,
+          idarea: Number(form.idarea),
+          idserviceline: areaSel?.idserviceline ?? null,
         }),
       });
 
@@ -42,7 +53,8 @@ function Register() {
         return;
       }
 
-      navigate("/confirmar-email", { state: { email: form.email } });
+      localStorage.setItem("lembrar", lembrar ? "true" : "false");
+      navigate("/confirmar-email", { state: { email: form.email, primeiroLogin: true } });
     } catch {
       setErro("Não foi possível ligar ao servidor.");
     } finally {
@@ -86,34 +98,37 @@ function Register() {
           </div>
 
           <div className="auth-field">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              value={form.password}
+            <label htmlFor="idarea">Área</label>
+            <select
+              id="idarea"
+              name="idarea"
+              value={form.idarea}
               onChange={handleChange}
               required
-              autoComplete="new-password"
-            />
+            >
+              <option value="">Selecione a sua área</option>
+              {areas.map((a) => (
+                <option key={a.idarea} value={a.idarea}>
+                  {a.serviceline ? `${a.serviceline} — ${a.nome}` : a.nome}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="auth-field">
-            <label htmlFor="confirmar">Confirmar password</label>
+          <label className="auth-remember">
             <input
-              id="confirmar"
-              name="confirmar"
-              type="password"
-              placeholder="••••••••"
-              value={form.confirmar}
-              onChange={handleChange}
-              required
-              autoComplete="new-password"
+              type="checkbox"
+              checked={lembrar}
+              onChange={(e) => setLembrar(e.target.checked)}
             />
-          </div>
+            Manter sessão iniciada
+          </label>
 
           {erro && <p className="auth-erro">{erro}</p>}
+
+          <p className="auth-nota">
+            Após o registo, irá receber um código por email para confirmar a conta e definir a palavra-passe.
+          </p>
 
           <button type="submit" className="auth-btn" disabled={loading}>
             {loading ? "A criar conta..." : "Criar conta"}

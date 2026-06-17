@@ -1,22 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/Sobre.css";
-import { BsInfoCircle } from "react-icons/bs";
+import Navbar from "./NavBar";
+import { getNavItems, navegarTab } from "../utils/navConfig";
 
 function Sobre() {
   const navigate = useNavigate();
+  const perfilAtivo = localStorage.getItem("perfilAtivo") || "1";
 
   return (
-    <div>
-      {/* Topo */}
-      <div className="sobre-topo">
-        <button className="sobre-voltar" onClick={() => navigate(-1)}>
-          ← Voltar
-        </button>
-        <div className="sobre-topo-titulo">
-          <BsInfoCircle size={18} />
-          <span>Sobre</span>
-        </div>
-      </div>
+    <div className="page-wrapper">
+      <Navbar
+        activeTab=""
+        navItems={getNavItems(perfilAtivo)}
+        onTabChange={(l) => navegarTab(navigate, perfilAtivo, l)}
+      />
 
       <div className="sobre-wrapper">
         <div className="sobre-intro">

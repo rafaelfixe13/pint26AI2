@@ -12,7 +12,7 @@ import { HiOutlineEmojiSad } from "react-icons/hi";
 import { IoEyeOutline } from "react-icons/io5";
 import { GoHome } from "react-icons/go";
 import { MdLeaderboard } from "react-icons/md";
-import { FiClock } from "react-icons/fi";
+import { FiExternalLink, FiClock } from "react-icons/fi";
 
 const NAV_ITEMS_CONSULTOR = [
   { label: "Início",             icon: <GoHome size={16} /> },
@@ -130,6 +130,24 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
           <p>Consulte todos os badges disponíveis, descrições, pontos e requisitos.</p>
         </div>
 
+        {/* Integração com softinsa.pt — info sobre competências da Softinsa */}
+        <a
+          className="catalog-softinsa"
+          href="https://www.softinsa.pt"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div className="catalog-softinsa-info">
+            <span className="catalog-softinsa-logo">Softinsa</span>
+            <span className="catalog-softinsa-text">
+              Conheça as competências e áreas de especialização da Softinsa em softinsa.pt
+            </span>
+          </div>
+          <span className="catalog-softinsa-cta">
+            Visitar site <FiExternalLink size={15} />
+          </span>
+        </a>
+
         {/* Toolbar */}
         <div className="catalog-toolbar">
           <div className="search-box">
@@ -187,10 +205,10 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
             {filtered.map((badge) => (
               <Col key={badge.idbadge} className="d-flex">
                 <div className="badge-card">
-                  {badge.idespecial && (
+                  {badge.idespecial != null && (
                     <span className="tag-especial">
                       <BsStarFill size={12} />
-                      {badge.especial_nome || "Especial"}
+                      {badge.especial_nome || "Badge Especial"}
                     </span>
                   )}
 

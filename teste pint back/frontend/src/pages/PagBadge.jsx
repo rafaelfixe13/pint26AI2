@@ -9,42 +9,38 @@ import { BsAward, BsTrophy } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
-import { FiPaperclip, FiX, FiFileText, FiExternalLink } from "react-icons/fi";
+import { FiPaperclip, FiX, FiFileText, FiExternalLink, FiClock } from "react-icons/fi";
 import { API_BASE } from "../api";
 import { MdLeaderboard } from "react-icons/md";
 
 
 // ── Helpers para ficheiros base64 ──────────────────────────
-// Deteta se a string base64 (com ou sem prefixo data:) é um PDF
-function isPdf(src) {
+// É uma imagem? (data:image ou URL terminada em extensão de imagem)
+function isImagem(src) {
   if (!src) return false;
-  if (src.startsWith("data:application/pdf")) return true;
-  if (src.startsWith("data:image")) return false;
-  const raw = src.includes(",") ? src.split(",")[1] : src;
-  return raw.slice(0, 5) === "JVBER"; // "%PDF" em base64
+  if (src.startsWith("data:image")) return true;
+  return /\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(src);
 }
 
-// Converte base64/dataURL num Blob URL (melhor para <iframe> que data URLs grandes)
+const ehHttpUrl = (src) => /^https?:\/\//i.test(src || "");
+
+// Converte base64/dataURL num Blob URL, forçando o mime de PDF para o browser o mostrar
 function toBlobUrl(src) {
-  const dataUrl = src.startsWith("data:") ? src : `data:application/pdf;base64,${src}`;
-  const comma = dataUrl.indexOf(",");
-  const meta = dataUrl.slice(0, comma);
-  const b64 = dataUrl.slice(comma + 1);
-  const mime = (meta.match(/data:(.*?);base64/) || [])[1] || "application/pdf";
-  const bin = atob(b64);
+  const raw = (src.includes(",") ? src.split(",").pop() : src).replace(/\s/g, "");
+  const bin = atob(raw);
   const bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return URL.createObjectURL(new Blob([bytes], { type: mime }));
+  return URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
 }
 
 
 // ── Modal de visualização de PDF ───────────────────────────
 function PdfModal({ src, titulo, onFechar }) {
   const url = useMemo(() => {
-    try { return toBlobUrl(src); } catch { return null; }
+    try { return ehHttpUrl(src) ? src : toBlobUrl(src); } catch { return null; }
   }, [src]);
 
-  useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
+  useEffect(() => () => { if (url && url.startsWith("blob:")) URL.revokeObjectURL(url); }, [url]);
 
   return (
     <div className="pdf-modal-overlay" onClick={onFechar}>
@@ -305,6 +301,7 @@ function BadgeDetalhe() {
     { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
     { label: "Conquistas",         icon: <BsTrophy size={16} /> },
     { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+    { label: "Lembretes",          icon: <FiClock size={16} /> },
   ];
 
   useEffect(() => {
@@ -336,6 +333,7 @@ function BadgeDetalhe() {
     if (label === "Os meus badges") navigate("/consultor/badges");
     if (label === "Conquistas")     navigate("/consultor/conquistas");
     if (label === "Rankings")       navigate("/consultor/rankings");
+    if (label === "Lembretes")      navigate("/consultor/lembretes");
   };
 
   const handleSubmetido = () => {
@@ -353,9 +351,10 @@ function BadgeDetalhe() {
     return "#d97706";
   };
 
+  const jaConquistado = candidatura?.estado?.toUpperCase() === "APPROVED";
   const podeCandidar = isConsultor && (
     !candidatura ||
-    ["OPEN", "APPROVED", "REJECTED"].includes(candidatura.estado?.toUpperCase())
+    ["OPEN", "REJECTED"].includes(candidatura.estado?.toUpperCase())
   );
   const estadoInfo = candidatura ? estadoLabel(candidatura.estado) : null;
 
@@ -418,6 +417,22 @@ function BadgeDetalhe() {
                 </div>
               </div>
 
+              {(() => {
+                const competencias = (badge.competencias || "")
+                  .split(/[;,\n]/).map((c) => c.trim()).filter(Boolean);
+                if (competencias.length === 0) return null;
+                return (
+                  <div className="badge-competencias">
+                    <h3 className="badge-competencias-titulo">Competências certificadas</h3>
+                    <div className="badge-competencias-tags">
+                      {competencias.map((c, i) => (
+                        <span key={i} className="badge-competencia-tag">{c}</span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {badge.requisitos?.length > 0 && (
                 <div className="badge-requisitos-section">
                   <h3 className="badge-requisitos-titulo">
@@ -432,15 +447,15 @@ function BadgeDetalhe() {
                           <p className="badge-req-descricao">{req.descricao}</p>
                         </div>
                         {req.imagemurl && (
-                          isPdf(req.imagemurl) ? (
+                          isImagem(req.imagemurl) ? (
+                            <img src={req.imagemurl} alt={req.titulo} className="badge-req-img" />
+                          ) : (
                             <button
                               className="badge-req-pdf-btn"
                               onClick={() => setPdfView({ src: req.imagemurl, titulo: req.titulo })}
                             >
                               <FiFileText size={14} /> Ver PDF
                             </button>
-                          ) : (
-                            <img src={req.imagemurl} alt={req.titulo} className="badge-req-img" />
                           )
                         )}
                       </div>
@@ -469,7 +484,12 @@ function BadgeDetalhe() {
                         : "Candidatar-me"}
                     </button>
                   )}
-                  {candidatura && !podeCandidar && (
+                  {jaConquistado && (
+                    <p style={{ fontSize: ".9rem", color: "#047857", fontWeight: 600 }}>
+                      ✓ Já conquistou este badge.
+                    </p>
+                  )}
+                  {candidatura && !podeCandidar && !jaConquistado && (
                     <p style={{ fontSize: ".85rem", color: "#6b7280" }}>
                       Candidatura em curso — aguarda validação.
                     </p>
@@ -479,7 +499,7 @@ function BadgeDetalhe() {
             </div>
 
             <div className="badge-detail-right">
-              {badge.idespecial && (
+              {badge.idespecial != null && (
                 <span className="badge-tag-special">⭐ {badge.especial_nome || "Badge Especial"}</span>
               )}
               <div className="badge-detail-points" style={{ backgroundColor: getPointsColor(badge.pontos) }}>
