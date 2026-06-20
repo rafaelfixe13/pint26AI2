@@ -14,6 +14,7 @@ import { AiOutlineAppstore } from "react-icons/ai";
 import { FiUsers, FiLock, FiChevronRight, FiClock } from "react-icons/fi";
 import { FaMedal } from "react-icons/fa";
 import { API_BASE } from "../api";
+import { listarCelebrados } from "../utils/marcos";
 
 // ─── Nav items por perfil ──────────────────────────────────
 const NAV_CONSULTOR = [
@@ -202,6 +203,11 @@ function Perfil() {
   const totalObtidos = obtidos.length;
   const totalPontos = obtidos.reduce((s, c) => s + (c.badge_pontos || 0), 0);
 
+  // Marcos conquistados (mesma fonte dos pop-ups de celebração)
+  const marcos = isConsultor && utilizador?.idutilizador
+    ? listarCelebrados(utilizador.idutilizador)
+    : [];
+
   const competencias = Object.values(
     obtidos.reduce((acc, b) => {
       const area = b.area || "Outros";
@@ -377,6 +383,30 @@ function Perfil() {
                     })}
                   </div>
                 )}
+              </div>
+            )}
+
+            {isConsultor && marcos.length > 0 && (
+              <div className="pf-card">
+                <div className="pf-card-head">
+                  <h3>Marcos conquistados</h3>
+                  <span className="pf-marcos-count">
+                    {marcos.length} marco{marcos.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+                <div className="pf-marcos">
+                  {marcos.map((m) => (
+                    <div key={m.id} className="pf-marco">
+                      <span className="pf-marco-emoji">{m.emoji}</span>
+                      <span className="pf-marco-titulo">{m.titulo}</span>
+                      {m.celebradoEm && (
+                        <span className="pf-marco-data">
+                          {new Date(m.celebradoEm).toLocaleDateString("pt-PT")}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
