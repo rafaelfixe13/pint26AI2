@@ -6,7 +6,7 @@ import "../../styles/ConsultorDashboard.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
-import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy } from "react-icons/bs";
+import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy, BsCheckLg } from "react-icons/bs";
 import { FaMedal } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
@@ -36,25 +36,107 @@ function estadoInfo(estado) {
   return { texto: estado, cls: "" };
 }
 
-// Anel de progresso circular (SVG)
-function ProgressRing({ pct = 0, size = 132, stroke = 13, color = "#3b82f6" }) {
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const offset = c - (pct / 100) * c;
+// ── Níveis (visualização estilo app mobile) ───────────────
+const NOMES_NIVEL = { A: "Júnior", B: "Interm.", C: "Sénior", D: "Expert", E: "Líder" };
+
+// Letra do nível (A-E) a partir do nome ("A - Nível Júnior" -> "A")
+function letraNivel(badge) {
+  const m = (badge?.nivel || "").trim().match(/^([A-E])/i);
+  return m ? m[1].toUpperCase() : "?";
+}
+
+function nivelOrder(badge) {
+  if (badge?.idnivel != null) return Number(badge.idnivel);
+  const l = letraNivel(badge);
+  return l === "?" ? 99 : l.charCodeAt(0) - 64;
+}
+
+function nomeGrupo(letra) {
+  return NOMES_NIVEL[(letra || "").toUpperCase()] ?? letra;
+}
+
+// Estado de um nível: badge conquistado tem prioridade, senão usa a candidatura em curso
+function estadoNivel(badge, estadoPorBadge) {
+  if (badge?.conquistado) return "APPROVED";
+  const e = estadoPorBadge[badge?.idbadge];
+  if (e === "EM_VALIDACAO") return "UNDER_REVIEW";
+  return e || "NAO_INICIADO";
+}
+
+// Estado agregado de um nível de dificuldade (pode ter mais de um badge):
+// aprovado tem prioridade, depois em validação, depois aberto. (Lógica do mobile.)
+function estadoNivelAgrupado(badges, estadoPorBadge) {
+  const estados = badges.map((b) => estadoNivel(b, estadoPorBadge));
+  if (estados.includes("APPROVED")) return "APPROVED";
+  if (estados.some((e) => e === "SUBMITTED" || e === "UNDER_REVIEW")) return "SUBMITTED";
+  if (estados.includes("OPEN")) return "OPEN";
+  return "NAO_INICIADO";
+}
+
+function classeEstado(estado) {
+  if (estado === "APPROVED") return "aprovado";
+  if (estado === "SUBMITTED" || estado === "UNDER_REVIEW") return "validacao";
+  if (estado === "OPEN") return "aberto";
+  return "nao-iniciado";
+}
+
+// Bolinha de um nível (A-E)
+function NivelDot({ letra, estado }) {
+  const cls = classeEstado(estado);
   return (
-    <svg width={size} height={size} className="cons-ring">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#eef2f7" strokeWidth={stroke} />
-      <circle
-        cx={size / 2} cy={size / 2} r={r} fill="none"
-        stroke={color} strokeWidth={stroke} strokeLinecap="round"
-        strokeDasharray={c} strokeDashoffset={offset}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        style={{ transition: "stroke-dashoffset 0.6s ease" }}
-      />
-      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" className="cons-ring-text">
-        {pct}%
-      </text>
-    </svg>
+    <div className="cons-nivel">
+      <div className={`cons-nivel-dot ${cls}`}>
+        {estado === "APPROVED" ? <BsCheckLg size={18} /> : letra}
+      </div>
+      <span className={`cons-nivel-label ${cls}`}>{nomeGrupo(letra)}</span>
+    </div>
+  );
+}
+
+// Chip de estado da área (Completo / aprovados-total / 0-total)
+function AreaStatusChip({ niveis }) {
+  const total = niveis.length;
+  const aprovados = niveis.filter((n) => n.estado === "APPROVED").length;
+  const emProgresso = niveis.filter((n) =>
+    ["SUBMITTED", "UNDER_REVIEW", "OPEN"].includes(n.estado)
+  ).length;
+
+  if (total > 0 && aprovados === total) {
+    return <span className="cons-area-chip completo">Completo</span>;
+  }
+  if (aprovados > 0 || emProgresso > 0) {
+    return <span className="cons-area-chip ativo">{aprovados}/{total}</span>;
+  }
+  return <span className="cons-area-chip vazio">0/{total}</span>;
+}
+
+// Card de uma área com a trilha de níveis A-E (ligados por conectores)
+function AreaProgressCard({ area }) {
+  const niveis = area.niveis;
+  return (
+    <div className="cons-area-card">
+      <div className="cons-area-head">
+        <div className="cons-area-titles">
+          {area.serviceline && <span className="cons-area-sl">{area.serviceline}</span>}
+          <span className="cons-area-title">{area.nome}</span>
+        </div>
+        <AreaStatusChip niveis={niveis} />
+      </div>
+      <div className="cons-niveis-row">
+        {niveis.map((n, i) => {
+          const prevAprovado = i > 0 && niveis[i - 1].estado === "APPROVED";
+          return (
+            <div className="cons-nivel-item" key={n.idbadge ?? i}>
+              {i > 0 && <span className={`cons-conn ${prevAprovado ? "ok" : ""}`} />}
+              <NivelDot letra={n.letra} estado={n.estado} />
+              {i < niveis.length - 1 && (
+                <span className={`cons-conn ${n.estado === "APPROVED" ? "ok" : ""}`} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -67,7 +149,7 @@ export default function DashBoard() {
   const [recomendados, setRecomendados] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [marco, setMarco] = useState(null);
+  const [marcos, setMarcos] = useState([]);
 
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
@@ -83,11 +165,8 @@ export default function DashBoard() {
       `${API_BASE}/admin/utilizadores/${utilizador.idutilizador}/badges`
     ).then((r) => r.json()).catch(() => []);
 
-    const fetchRanking = fetch(`${API_BASE}/utilizadores/ranking`)
-      .then((r) => r.json()).catch(() => []);
-
-    Promise.all([fetchCandidaturas, fetchBadges, fetchHierarquia, fetchRanking])
-      .then(([cands, badges, hierarquia, ranking]) => {
+    Promise.all([fetchCandidaturas, fetchBadges, fetchHierarquia])
+      .then(([cands, badges, hierarquia]) => {
         const listaCands = Array.isArray(cands) ? cands : [];
         const listaBadges = Array.isArray(badges) ? badges : [];
         setCandidaturas(listaCands);
@@ -101,12 +180,6 @@ export default function DashBoard() {
             .filter((c) => ["APPROVED", ...ESTADOS_ATIVOS].includes(c.estado?.toUpperCase()))
             .map((c) => c.idbadge)
         );
-
-        const nivelOrder = (b) => {
-          if (b.idnivel != null) return Number(b.idnivel);
-          const m = (b.nivel || "").trim().match(/^([A-E])/i);
-          return m ? m[1].toUpperCase().charCodeAt(0) - 64 : 99;
-        };
 
         // Recomendar o PRÓXIMO NÍVEL de cada área: o badge de nível mais baixo
         // ainda não conquistado nem em processo dessa área.
@@ -154,18 +227,9 @@ export default function DashBoard() {
 
         setRecomendados(reco);
 
-        // Celebração de marcos (req. 16)
-        const aprov = listaCands.filter((c) => c.estado?.toUpperCase() === "APPROVED");
-        const listaRanking = Array.isArray(ranking) ? ranking : [];
-        const primeiroRanking =
-          listaRanking.length > 0 &&
-          String(listaRanking[0].idutilizador) === String(utilizador.idutilizador);
-        const m = verificarMarcos(utilizador.idutilizador, {
-          totalBadges: aprov.length,
-          totalPontos: aprov.reduce((s, c) => s + (c.badge_pontos || 0), 0),
-          primeiroRanking,
-        });
-        if (m) setMarco(m);
+        // Celebração de marcos (req. 16) — alinhado com a app mobile
+        const novosMarcos = verificarMarcos(utilizador.idutilizador, listaCands);
+        if (novosMarcos.length > 0) setMarcos(novosMarcos);
 
         setLoading(false);
       })
@@ -183,21 +247,11 @@ export default function DashBoard() {
     .sort((a, b) => new Date(b.datacriacao) - new Date(a.datacriacao))
     .slice(0, 5);
 
-  // ── Métricas de progresso visual ───────────────────────
+  // Progresso global do Learning Path (usado no cabeçalho)
   const allHierBadges = learningPaths.flatMap((sl) => (sl.areas || []).flatMap((a) => a.badges || []));
   const totalBadgesLP = allHierBadges.length;
   const conquistadosLP = allHierBadges.filter((b) => b.conquistado).length;
   const pctBadges = totalBadgesLP ? Math.round((conquistadosLP / totalBadgesLP) * 100) : 0;
-
-  const porNivel = Object.values(
-    allHierBadges.reduce((acc, b) => {
-      const lvl = b.nivel || "Sem nível";
-      acc[lvl] = acc[lvl] || { nivel: lvl, total: 0, ok: 0 };
-      acc[lvl].total++;
-      if (b.conquistado) acc[lvl].ok++;
-      return acc;
-    }, {})
-  ).sort((a, b) => a.nivel.localeCompare(b.nivel));
 
   const handleTabChange = (label) => {
     setActiveTab(label);
@@ -212,7 +266,12 @@ export default function DashBoard() {
 
   return (
     <div className="page-wrapper">
-      {marco && <CelebracaoModal marco={marco} onClose={() => setMarco(null)} />}
+      {marcos.length > 0 && (
+        <CelebracaoModal
+          marco={marcos[0]}
+          onClose={() => setMarcos((prev) => prev.slice(1))}
+        />
+      )}
 
       <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
 
@@ -257,54 +316,10 @@ export default function DashBoard() {
           </div>
         </div>
 
-        {/* Métricas de progresso visual */}
-        <div className="cons-section cons-metrics-section">
-          <div className="cons-section-head">
-            <h2>📊 Métricas de progresso</h2>
-          </div>
-
-          {loading ? (
-            <p className="cons-empty">A carregar...</p>
-          ) : totalBadgesLP === 0 ? (
-            <p className="cons-empty">Sem dados de progresso de momento.</p>
-          ) : (
-            <div className="cons-metrics">
-              <div className="cons-metrics-rings">
-                <div className="cons-ring-card">
-                  <ProgressRing pct={pctBadges} color="#3b82f6" />
-                  <span className="cons-ring-label">Badges concluídos</span>
-                  <span className="cons-ring-sub">{conquistadosLP} de {totalBadgesLP}</span>
-                </div>
-              </div>
-
-              <div className="cons-metrics-bars">
-                <h4 className="cons-metrics-bars-title">Progresso por nível</h4>
-                {porNivel.map((n) => {
-                  const pct = n.total ? Math.round((n.ok / n.total) * 100) : 0;
-                  return (
-                    <div className="cons-lp-row" key={n.nivel}>
-                      <div className="cons-lp-row-top">
-                        <span className="cons-lp-area">{n.nivel}</span>
-                        <span className="cons-lp-count">{n.ok}/{n.total} · {pct}%</span>
-                      </div>
-                      <div className="cons-lp-bar">
-                        <div
-                          className={`cons-lp-fill ${pct === 100 ? "completo" : ""}`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Progresso nos Learning Paths */}
+        {/* Progresso nas Áreas — níveis A-E ligados (estilo app mobile) */}
         <div className="cons-section cons-lp-section">
           <div className="cons-section-head">
-            <h2>📈 Progresso nas Áreas</h2>
+            <h2>📈 Progresso nos Learning Paths</h2>
             <button className="cons-section-link" onClick={() => navigate("/consultor/badges")}>
               Os meus badges
             </button>
@@ -312,47 +327,73 @@ export default function DashBoard() {
 
           {loading ? (
             <p className="cons-empty">A carregar...</p>
-          ) : (() => {
-            const areas = learningPaths
-              .flatMap((sl) =>
-                (sl.areas || []).map((a) => ({
-                  serviceline: sl.nome,
-                  nome: a.nome,
-                  total: (a.badges || []).length,
-                  conquered: (a.badges || []).filter((b) => b.conquistado).length,
-                }))
-              )
-              .filter((a) => a.total > 0);
+          ) : (
+            <>
+              {/* Cabeçalho com o progresso geral do Learning Path (estilo dashboard mobile) */}
+              <div className="cons-lp-banner">
+                <span className="cons-lp-kicker">Learning Path</span>
+                <h3 className="cons-lp-banner-title">Jornada Técnica</h3>
+                <p className="cons-lp-banner-sub">
+                  {conquistadosLP} de {totalBadgesLP} badges conquistados
+                </p>
+                <div className="cons-lp-banner-track">
+                  <div className="cons-lp-banner-fill" style={{ width: `${pctBadges}%` }} />
+                </div>
+                <span className="cons-lp-banner-pct">{pctBadges}% completo</span>
+              </div>
+
+              {(() => {
+            // Mapa idbadge -> estado da candidatura em curso (para níveis ainda não conquistados)
+            const estadoPorBadge = {};
+            candidaturas.forEach((c) => {
+              const e = c.estado?.toUpperCase();
+              if (e) estadoPorBadge[c.idbadge] = e;
+            });
+
+            // Lista plana de áreas; cada card mostra a sua Service Line.
+            // Os badges são agrupados por NÍVEL de dificuldade (idnivel) — um ponto
+            // por nível — e numerados A-E por posição, tal como o mobile
+            // (nivel_grupo = CHR(64 + ROW_NUMBER()) sobre níveis distintos).
+            const areas = [];
+            learningPaths.forEach((sl) => {
+              (sl.areas || []).forEach((a) => {
+                // Agrupar por idnivel (fallback: cada badge é o seu próprio nível)
+                const grupos = new Map();
+                (a.badges || []).forEach((b, i) => {
+                  const chave = b.idnivel != null ? `n${b.idnivel}` : `b${i}`;
+                  const ord = b.idnivel != null ? Number(b.idnivel) : 1000 + i;
+                  if (!grupos.has(chave)) grupos.set(chave, { ord, badges: [] });
+                  grupos.get(chave).badges.push(b);
+                });
+
+                const niveis = [...grupos.values()]
+                  .sort((x, y) => x.ord - y.ord)
+                  .slice(0, 5)
+                  .map((g, idx) => ({
+                    letra: String.fromCharCode(65 + idx),
+                    estado: estadoNivelAgrupado(g.badges, estadoPorBadge),
+                  }));
+
+                if (niveis.length > 0) {
+                  areas.push({ serviceline: sl.nome, nome: a.nome, niveis });
+                }
+              });
+            });
 
             if (areas.length === 0) {
-              return <p className="cons-empty">Sem areas disponíveis de momento.</p>;
+              return <p className="cons-empty">Sem áreas disponíveis de momento.</p>;
             }
 
             return (
-              <div className="cons-lp-list">
-                {areas.map((a, i) => {
-                  const pct = a.total ? Math.round((a.conquered / a.total) * 100) : 0;
-                  return (
-                    <div key={`${a.nome}-${i}`} className="cons-lp-row">
-                      <div className="cons-lp-row-top">
-                        <span className="cons-lp-area">
-                          {a.nome}
-                          <span className="cons-lp-sl">{a.serviceline}</span>
-                        </span>
-                        <span className="cons-lp-count">{a.conquered}/{a.total} badges</span>
-                      </div>
-                      <div className="cons-lp-bar">
-                        <div
-                          className={`cons-lp-fill ${pct === 100 ? "completo" : ""}`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="cons-lp-tree">
+                {areas.map((area, j) => (
+                  <AreaProgressCard area={area} key={`${area.serviceline}-${area.nome}-${j}`} />
+                ))}
               </div>
             );
-          })()}
+              })()}
+            </>
+          )}
         </div>
 
         <div className="cons-dashboard-grid">

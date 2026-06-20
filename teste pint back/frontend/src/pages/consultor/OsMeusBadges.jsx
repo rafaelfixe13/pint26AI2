@@ -181,23 +181,45 @@ function OsMeusBadges() {
     });
   };
 
-  // Partilha o link de verificação da credencial no LinkedIn
-  const doShare = (b) => {
+  // Adiciona o badge à secção "Licenças e Certificados" do perfil do LinkedIn
+  // (fluxo "Add to profile" — pré-preenche nome, organização, datas e URL de verificação)
+  const doAddToProfile = (b) => {
     const url = b.idcandidatura
       ? `${window.location.origin}/verificar/${b.idcandidatura}`
       : (b.linkpublicobase || `${window.location.origin}/publico/consultor/${utilizador.idutilizador}`);
+
+    const params = new URLSearchParams({
+      startTask: "CERTIFICATION_NAME",
+      name: b.nome || "Badge Softinsa",
+      organizationName: "Softinsa",
+      certUrl: url,
+    });
+    if (b.idcandidatura) params.set("certId", String(b.idcandidatura));
+
+    const d = b.dataconquista ? new Date(b.dataconquista) : null;
+    if (d && !isNaN(d)) {
+      params.set("issueYear", String(d.getFullYear()));
+      params.set("issueMonth", String(d.getMonth() + 1));
+      if (b.expiremeses) {
+        const exp = new Date(d);
+        exp.setMonth(exp.getMonth() + Number(b.expiremeses));
+        params.set("expirationYear", String(exp.getFullYear()));
+        params.set("expirationMonth", String(exp.getMonth() + 1));
+      }
+    }
+
     window.open(
-      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      `https://www.linkedin.com/profile/add?${params.toString()}`,
       "_blank", "noopener,noreferrer"
     );
   };
 
-  const partilharLinkedin = (b) => {
-    if (!rgpd) {                               // partilhar exige RGPD
-      setPendingAccao(() => () => doShare(b));
+  const adicionarAoPerfilLinkedin = (b) => {
+    if (!rgpd) {                               // adicionar ao perfil exige RGPD
+      setPendingAccao(() => () => doAddToProfile(b));
       return;
     }
-    doShare(b);
+    doAddToProfile(b);
   };
 
   const handleTabChange = (label) => {
@@ -444,7 +466,7 @@ function OsMeusBadges() {
                     <button className="mb-btn mb-btn-cert" title="Descarregar certificado (PDF)" onClick={() => baixarCertificado(b)}>
                       <FiDownload size={15} />
                     </button>
-                    <button className="mb-btn mb-btn-linkedin" title="Partilhar no LinkedIn" onClick={() => partilharLinkedin(b)}>
+                    <button className="mb-btn mb-btn-linkedin" title="Adicionar aos certificados do LinkedIn" onClick={() => adicionarAoPerfilLinkedin(b)}>
                       <BsLinkedin size={15} />
                     </button>
                   </div>
