@@ -1,14 +1,23 @@
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
+const { DB_NAME, DB_USER, DB_PASSWORD } = process.env;
+
+if (!DB_NAME || !DB_USER || !DB_PASSWORD) {
+  throw new Error(
+    'Faltam variáveis de ambiente da base de dados (DB_NAME, DB_USER, DB_PASSWORD). Verifica o ficheiro .env (ver .env.example).'
+  );
+}
+
 const sequelize = new Sequelize(
-  'testes2',   // ⚠️ mete aqui o nome da base de dados
-  'pint',     // user
-  'pint26',     // ⚠️ mete a password
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
   {
-    host: '100.105.58.22',
-    port: 5432,           // default do postgres
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: Number(process.env.DB_PORT) || 5432,
     dialect: 'postgres',
-    logging: false
+    logging: false,
   }
 );
 
