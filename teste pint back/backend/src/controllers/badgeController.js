@@ -213,7 +213,7 @@ const getBadgesUtilizador = async (req, res) => {
         a.idarea, a.nome AS area_nome, a.ativo AS area_ativo,
         b.idbadge, b.nome AS badge_nome, b.descricao AS badge_descricao,
         b.pontos, b.imagemurl AS badge_imagem, b.ispublico, b.expiremeses, b.ativo AS badge_ativo,
-        nv.nome AS nivel_nome,
+        b.idnivel, nv.nome AS nivel_nome,
         r.idrequisito, r.codigo AS req_codigo, r.titulo AS req_titulo,
         r.descricao AS req_descricao, r.ativo AS req_ativo,
         CASE WHEN cr.cumprido = true THEN true ELSE false END AS req_concluido,
@@ -227,7 +227,7 @@ const getBadgesUtilizador = async (req, res) => {
       LEFT JOIN requisitos r          ON r.idbadge = b.idbadge
       LEFT JOIN candidaturasbadge cb  ON cb.badge_id = b.idbadge AND cb.user_id = :idutilizador
       LEFT JOIN candidaturasrequisitos cr ON cr.idrequisito = r.idrequisito AND cr.idcandidatura = cb.idcandidatura
-      ORDER BY sl.idserviceline, a.idarea, b.idbadge, r.codigo
+      ORDER BY sl.idserviceline, a.idarea, b.idnivel, b.idbadge, r.codigo
     `, {
       type: sequelize.QueryTypes.SELECT,
       replacements: { idutilizador },
@@ -256,7 +256,7 @@ const getBadgesUtilizador = async (req, res) => {
           idbadge: row.idbadge, nome: row.badge_nome, descricao: row.badge_descricao,
           pontos: row.pontos, imagemurl: row.badge_imagem, ispublico: row.ispublico,
           conquistado: row.badge_conquistado, dataconquista: row.badge_dataconquista,
-          ativo: row.badge_ativo, nivel: row.nivel_nome, requisitos: [],
+          ativo: row.badge_ativo, idnivel: row.idnivel, nivel: row.nivel_nome, requisitos: [],
         };
       }
 
