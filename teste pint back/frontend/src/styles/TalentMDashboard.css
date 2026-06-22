@@ -76,6 +76,10 @@
     background-color: #8b5cf6;
 }
 
+.bg-red {
+    background-color: #ef4444;
+}
+
 .tm-card-info h3 {
     font-size: 0.875rem;
     color: #64748b;

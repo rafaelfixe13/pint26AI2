@@ -16,10 +16,11 @@ const toDownloadUrl = (url) => url
 import { API_BASE } from "../api";
 
 function estadoInfo(estado, resultado) {
-  if (estado === "em_validacao") return { texto: "Aguarda validação SL", cls: "estado-em_validacao" };
-  if (estado === "fechado" && resultado === "aprovado")  return { texto: "Aprovado",  cls: "estado-fechado-aprovado" };
-  if (estado === "fechado" && resultado === "rejeitado") return { texto: "Rejeitado", cls: "estado-fechado-rejeitado" };
-  if (estado === "open")        return { texto: "Devolvida",             cls: "estado-open" };
+  const e = (estado || "").toUpperCase();
+  if (e === "UNDER_REVIEW") return { texto: "Aguarda validação SL", cls: "estado-em_validacao" };
+  if (e === "APPROVED") return { texto: "Aprovado",  cls: "estado-fechado-aprovado" };
+  if (e === "REJECTED") return { texto: "Rejeitado", cls: "estado-fechado-rejeitado" };
+  if (e === "OPEN")     return { texto: "Devolvida", cls: "estado-open" };
   return { texto: estado, cls: "" };
 }
 
@@ -38,13 +39,13 @@ function ValidacoesSL() {
     { label: "Início",      icon: <GoHome size={16} /> },
     { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
     { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
+    { label: "Conquistas",  icon: <FaMedal size={14} /> },
     { label: "Relatórios",  icon: <BsBarChart size={16} /> },
-    { label: "Consultores", icon: <FiUsers size={16} /> },
   ];
 
-  const carregar = () => {
+  const carregar = (silencioso = false) => {
     if (!utilizador?.idserviceline) return;
-    setLoading(true);
+    if (!silencioso) setLoading(true);
     fetch(`${API_BASE}/candidaturas/sl/lista?idserviceline=${utilizador.idserviceline}`)
       .then((r) => r.json())
       .then((data) => { setCandidaturas(Array.isArray(data) ? data : []); setLoading(false); })
@@ -58,12 +59,16 @@ function ValidacoesSL() {
       return;
     }
     carregar();
+    const intervalo = setInterval(() => carregar(true), 20000); // status ~tempo real
+    return () => clearInterval(intervalo);
   }, []);
 
   const handleTabChange = (label) => {
-    if (label === "Início")      navigate("/sl/validacoes");
+    if (label === "Início")      navigate("/sl/dashboard");
     if (label === "Validações")  navigate("/sl/validacoes");
-    if (label === "Catálogo")    navigate("/consultor");
+    if (label === "Catálogo")    navigate("/sl/catalogo");
+    if (label === "Conquistas")  navigate("/sl/conquistas");
+    if (label === "Relatórios")  navigate("/sl/relatorios");
   };
 
   const agir = async (idcandidatura, acao) => {
@@ -92,8 +97,9 @@ function ValidacoesSL() {
   };
 
   const filtradas = candidaturas.filter((c) => {
-    if (filtro === "EM_VALIDACAO") return c.estado === "em_validacao";
-    if (filtro === "historico")    return c.estado === "fechado" || c.estado === "open";
+    const e = (c.estado || "").toUpperCase();
+    if (filtro === "EM_VALIDACAO") return e === "UNDER_REVIEW";
+    if (filtro === "historico")    return e === "APPROVED" || e === "REJECTED" || e === "OPEN";
     return true;
   });
 
@@ -134,7 +140,7 @@ function ValidacoesSL() {
         <div className="val-lista">
           {filtradas.map((c) => {
             const info = estadoInfo(c.estado, c.resultado);
-            const em_historico = c.estado !== "EM_VALIDACAO";
+            const em_historico = (c.estado || "").toUpperCase() !== "UNDER_REVIEW";
             return (
               <div key={c.idcandidatura} className="val-card">
                 <div className="val-card-top">

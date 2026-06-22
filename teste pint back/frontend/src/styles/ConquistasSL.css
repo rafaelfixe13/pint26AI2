@@ -1,0 +1,212 @@
+/* ── Conquistas Especiais (Service Line) ───────────────────────────────── */
+.cqsl-page {
+  padding: 2rem 5%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #0f172a;
+}
+
+.cqsl-header { margin-bottom: 1.8rem; }
+.cqsl-header h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0 0 .35rem 0;
+  color: #1e293b;
+}
+.cqsl-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: .95rem;
+}
+
+.cqsl-section-titulo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.2rem 0;
+}
+
+/* Estado de carregamento / vazio */
+.cqsl-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .6rem;
+  padding: 2.5rem 0;
+  color: #94a3b8;
+}
+.cqsl-spinner { animation: cqsl-spin 1s linear infinite; }
+@keyframes cqsl-spin { to { transform: rotate(360deg); } }
+
+/* Grelha de conquistas */
+.cqsl-grelha {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.2rem;
+}
+
+.cqsl-card {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.4rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .04);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.cqsl-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px -4px rgba(0, 0, 0, .08);
+}
+
+.cqsl-card-icone {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+}
+
+.cqsl-card-corpo h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 .3rem 0;
+  color: #0f172a;
+}
+.cqsl-card-desc {
+  font-size: .85rem;
+  color: #64748b;
+  margin: 0 0 .6rem 0;
+}
+.cqsl-regra {
+  display: inline-block;
+  font-size: .75rem;
+  font-weight: 600;
+  color: #3b6695;
+  background: #eef2f7;
+  padding: .25rem .65rem;
+  border-radius: 20px;
+}
+
+.cqsl-card-rodape {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  padding-top: .9rem;
+  border-top: 1px solid #f1f5f9;
+}
+.cqsl-unlock-count {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+.cqsl-unlock-label {
+  font-size: .78rem;
+  color: #94a3b8;
+}
+
+/* Lista de consultores */
+.cqsl-consultores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.2rem;
+}
+
+.cqsl-consultor {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.3rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .04);
+}
+
+.cqsl-consultor-topo {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  margin-bottom: 1rem;
+}
+.cqsl-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.cqsl-avatar-iniciais {
+  background: #3b6695;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: .9rem;
+}
+.cqsl-consultor-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+.cqsl-consultor-nome {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: .98rem;
+}
+.cqsl-consultor-meta {
+  font-size: .8rem;
+  color: #64748b;
+}
+.cqsl-consultor-total {
+  font-weight: 800;
+  font-size: .95rem;
+  color: #3b6695;
+  background: #eef2f7;
+  padding: .25rem .6rem;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.cqsl-medalhas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.cqsl-medalha {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: .25rem .7rem .25rem .3rem;
+  font-size: .78rem;
+  font-weight: 600;
+  color: #334155;
+}
+.cqsl-medalha-icone {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+}
+.cqsl-sem-medalhas {
+  font-size: .82rem;
+  color: #94a3b8;
+  margin: 0;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .cqsl-consultores { grid-template-columns: 1fr; }
+}

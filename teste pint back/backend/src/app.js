@@ -34,6 +34,7 @@ app.use('/api/admin',        require('./routes/adminRoutes'));
 app.use('/api/utilizadores', require('./routes/utilizadoresRoutes'));
 app.use('/api/notificacoes', require('./routes/notificacoesRoutes'));
 app.use('/api/talent',       tmRoutes);
+app.use('/api/sl',           require('./routes/slRoutes'));
 app.use('/api/candidaturas', require('./routes/candidaturaRoutes'));
 app.use('/api/publico',      require('./routes/publicoRoutes'));
 app.use('/api/lembretes',    require('./routes/lembretesRoutes'));

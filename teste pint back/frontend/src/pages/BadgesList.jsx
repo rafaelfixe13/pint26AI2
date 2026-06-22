@@ -259,9 +259,9 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
                   <div className="badge-card-footer">
                     <span
                       className="badge-points"
-                      style={{ backgroundColor: getPointsColor(badge.pontos) }}
+                      style={{ backgroundColor: badge.pontos ? getPointsColor(badge.pontos) : "#9ca3af" }}
                     >
-                      {badge.pontos} Pontos
+                      {badge.pontos ? `${badge.pontos} Pontos` : "Sem pontos"}
                     </span>
                     <button
                       className="btn-detalhes"

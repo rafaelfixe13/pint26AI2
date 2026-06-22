@@ -14,7 +14,7 @@ const PERFIS = {
   4: { nome: "Administrador", descricao: "Acesso total à gestão da plataforma.",                         icone: "⚙️" },
 };
 
-const DESTINOS = { 1: "/consultor/dashboard", 2: "/talent/dashboard", 3: "/sl/validacoes", 4: "/admin/utilizadores" };
+const DESTINOS = { 1: "/consultor/dashboard", 2: "/talent/dashboard", 3: "/sl/dashboard", 4: "/admin/utilizadores" };
 
 // Mapeamento de idrole → perfis disponíveis
 const PERFIS_POR_ROLE = {

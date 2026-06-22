@@ -285,6 +285,7 @@ function BadgeDetalhe() {
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   const perfilAtivo = Number(localStorage.getItem("perfilAtivo") || "0");
   const isConsultor = perfilAtivo === 1;
+  const isSL = perfilAtivo === 3;
 
   const [badge, setBadge] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -294,15 +295,23 @@ function BadgeDetalhe() {
   const [modalAberto, setModalAberto] = useState(false);
   const [pdfView, setPdfView] = useState(null);
 
-  const navItems = [
-    { label: "Início",             icon: <GoHome size={16} /> },
-    { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Os meus badges",     icon: <BsAward size={16} /> },
-    { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-    { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-    { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-    { label: "Lembretes",          icon: <FiClock size={16} /> },
-  ];
+  const navItems = isSL
+    ? [
+        { label: "Início",     icon: <GoHome size={16} /> },
+        { label: "Validações", icon: <MdOutlineAssignment size={16} /> },
+        { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
+        { label: "Conquistas", icon: <BsTrophy size={16} /> },
+        { label: "Relatórios", icon: <MdLeaderboard size={16} /> },
+      ]
+    : [
+        { label: "Início",             icon: <GoHome size={16} /> },
+        { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
+        { label: "Os meus badges",     icon: <BsAward size={16} /> },
+        { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
+        { label: "Conquistas",         icon: <BsTrophy size={16} /> },
+        { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
+        { label: "Lembretes",          icon: <FiClock size={16} /> },
+      ];
 
   useEffect(() => {
     fetch(`${API_BASE}/badges/${id}`)
@@ -322,12 +331,23 @@ function BadgeDetalhe() {
   const voltarParaCatalogo = () => {
     if (perfilAtivo === 1) navigate("/consultor/catalogo");
     else if (perfilAtivo === 2) navigate("/talent/catalogo");
+    else if (perfilAtivo === 3) navigate("/sl/catalogo");
     else if (perfilAtivo === 4) navigate("/admin/utilizadores");
     else navigate("/perfil");
   };
 
   const handleTabChange = (label) => {
     setActiveTab(label);
+
+    if (isSL) {
+      if (label === "Início")     navigate("/sl/dashboard");
+      if (label === "Validações") navigate("/sl/validacoes");
+      if (label === "Catálogo")   navigate("/sl/catalogo");
+      if (label === "Conquistas") navigate("/sl/conquistas");
+      if (label === "Relatórios") navigate("/sl/relatorios");
+      return;
+    }
+
     if (label === "Início" || label === "Catálogo de Badges") voltarParaCatalogo();
     if (label === "Candidaturas")   navigate("/consultor/candidaturas");
     if (label === "Os meus badges") navigate("/consultor/badges");
@@ -502,8 +522,8 @@ function BadgeDetalhe() {
               {badge.idespecial != null && (
                 <span className="badge-tag-special">⭐ {badge.especial_nome || "Badge Especial"}</span>
               )}
-              <div className="badge-detail-points" style={{ backgroundColor: getPointsColor(badge.pontos) }}>
-                {badge.pontos} Pontos
+              <div className="badge-detail-points" style={{ backgroundColor: badge.pontos ? getPointsColor(badge.pontos) : "#9ca3af" }}>
+                {badge.pontos ? `${badge.pontos} Pontos` : "Sem pontos"}
               </div>
             </div>
           </div>

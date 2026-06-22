@@ -26,6 +26,10 @@ import ValidacoesTM from "./pages/talentM/ValidacoesTM";
 import RelatoriosTM from "./pages/talentM/relatoriosTM";
 
 import ValidacoesSL from "./pages/ValidacoesSL";
+import DashBoardSL from "./pages/sl/DashBoardSL";
+import CatalogoSL from "./pages/sl/CatalogoSL";
+import ConquistasSL from "./pages/sl/ConquistasSL";
+import RelatoriosSL from "./pages/sl/RelatoriosSL";
 
 import GestaoUtilizadores from "./pages/admin/GestaoUtilizadores";
 import GestaoBadges from "./pages/admin/GestaoBadges";
@@ -117,7 +121,11 @@ function App() {
         <Route path="/talent/conquistas" element={<RotaTalent><ConquistasTalent /></RotaTalent>} />
         <Route path="/talent/relatorios" element={<RotaTalent><RelatoriosTM /></RotaTalent>} />
 
+        <Route path="/sl/dashboard" element={<RotaSL><DashBoardSL /></RotaSL>} />
         <Route path="/sl/validacoes" element={<RotaSL><ValidacoesSL /></RotaSL>} />
+        <Route path="/sl/catalogo" element={<RotaSL><CatalogoSL /></RotaSL>} />
+        <Route path="/sl/conquistas" element={<RotaSL><ConquistasSL /></RotaSL>} />
+        <Route path="/sl/relatorios" element={<RotaSL><RelatoriosSL /></RotaSL>} />
 
         <Route path="/admin/utilizadores" element={<RotaAdmin><GestaoUtilizadores /></RotaAdmin>} />
         <Route path="/admin/utilizadores/:id" element={<RotaAdmin><DetalhesUtilizador /></RotaAdmin>} />

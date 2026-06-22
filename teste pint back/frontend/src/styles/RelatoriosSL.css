@@ -1,0 +1,195 @@
+/* ── Relatórios Service Line ───────────────────────────────────────────── */
+.relsl-page {
+  padding: 2rem 5%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #0f172a;
+}
+
+/* Cabeçalho */
+.relsl-header {
+  margin-bottom: 1.8rem;
+}
+.relsl-header h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0 0 .35rem 0;
+  color: #1e293b;
+}
+.relsl-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: .95rem;
+}
+
+/* Mensagem (aviso) */
+.relsl-msg {
+  margin-bottom: 1.2rem;
+  padding: .7rem 1rem;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  color: #92400e;
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+/* KPIs */
+.relsl-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+.relsl-kpi {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.4rem 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .04);
+}
+.relsl-kpi-valor {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #0f172a;
+}
+.relsl-kpi-label {
+  margin-top: .5rem;
+  font-size: .8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #64748b;
+}
+.relsl-kpi.destaque .relsl-kpi-valor { color: #3b6695; }
+
+/* Cartão genérico */
+.relsl-card {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .04);
+  margin-bottom: 1.8rem;
+}
+.relsl-card-titulo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.1rem 0;
+}
+
+/* Barra de filtros */
+.relsl-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  align-items: flex-end;
+}
+.relsl-campo {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+.relsl-campo label {
+  font-size: .78rem;
+  font-weight: 600;
+  color: #475569;
+}
+.relsl-campo select,
+.relsl-campo input {
+  padding: .55rem .8rem;
+  border-radius: 9px;
+  border: 1px solid #cbd5e1;
+  font-size: .9rem;
+  color: #0f172a;
+  background: #fff;
+  min-width: 180px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.relsl-campo select:focus,
+.relsl-campo input:focus {
+  outline: none;
+  border-color: #3b6695;
+  box-shadow: 0 0 0 3px rgba(59, 102, 149, .12);
+}
+
+/* Botão Gerar PDF */
+.relsl-btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .62rem 1.4rem;
+  border: none;
+  border-radius: 9px;
+  background: #3b6695;
+  color: #fff;
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
+  margin-left: auto;
+}
+.relsl-btn-pdf:hover:not(:disabled) {
+  background: #2f5277;
+  transform: translateY(-1px);
+}
+.relsl-btn-pdf:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Tabela de pré-visualização */
+.relsl-tabela-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+}
+.relsl-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+.relsl-tabela thead th {
+  text-align: left;
+  padding: .8rem 1rem;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  border-bottom: 1px solid #e2e8f0;
+}
+.relsl-tabela tbody td {
+  padding: .8rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+.relsl-tabela tbody tr:last-child td { border-bottom: none; }
+.relsl-tabela tbody tr:hover { background: #f8fafc; }
+.relsl-tabela .relsl-vazio {
+  padding: 1.4rem 1rem;
+  color: #94a3b8;
+  text-align: center;
+}
+.relsl-tabela .relsl-badge-nome { font-weight: 600; color: #0f172a; }
+
+/* Contador */
+.relsl-contador {
+  display: inline-block;
+  margin-left: .5rem;
+  padding: .1rem .55rem;
+  border-radius: 20px;
+  background: #eef2f7;
+  color: #3b6695;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .relsl-kpis { grid-template-columns: 1fr; }
+  .relsl-btn-pdf { margin-left: 0; width: 100%; justify-content: center; }
+}
