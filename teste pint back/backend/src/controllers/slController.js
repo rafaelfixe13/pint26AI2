@@ -144,7 +144,7 @@ const conquistasSL = async (req, res) => {
 
   try {
     const consultores = await sequelize.query(
-      `SELECT u.idutilizador, u.nome, u.fotourl, ar.nome AS area,
+      `SELECT u.idutilizador, u.nome, u.email, u.fotourl, ar.nome AS area,
               COALESCE(u.pontos, 0)::int AS totalpontos,
               COUNT(c.idcandidatura) FILTER (WHERE UPPER(c.estado) = 'APPROVED')::int AS totalbadges,
               COALESCE(

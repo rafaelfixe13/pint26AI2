@@ -2,6 +2,7 @@ const { sequelize } = require('../config/database');
 const CandidaturaBadge = require('../models/CandidaturaBadge');
 const Notificacao = require('../models/Notificacao');
 const {
+  enviarEmailNovaCandidaturaSL,
   enviarEmailCandidaturaConfirmada,
   enviarEmailCandidaturaDevolvida,
   enviarEmailCandidaturaAprovada,
@@ -257,11 +258,11 @@ const validarTM = async (req, res) => {
 
     const [[badge]] = await sequelize.query(
       `SELECT nome FROM badges WHERE idbadge = :idbadge`,
-      { replacements: { idbadge: candidatura.badge_id } }
+      { replacements: { idbadge: candidatura.idbadge } }
     );
     const [[consultor]] = await sequelize.query(
       `SELECT nome, email FROM utilizadores WHERE idutilizador = :id`,
-      { replacements: { id: candidatura.user_id } }
+      { replacements: { id: candidatura.idutilizador } }
     );
 
     if (acao === 'validar') {
@@ -272,13 +273,14 @@ const validarTM = async (req, res) => {
          WHERE idcandidatura = :id`,
         { replacements: { id, idtm: idtm || null, comentario: comentario || null } }
       );
-      const sls = await getSLsParaBadge(candidatura.badge_id);
+      const sls = await getSLsParaBadge(candidatura.idbadge);
       for (const sl of sls) {
         await criarNotificacao(
           sl.idutilizador,
           'Candidatura para validação final',
           `${consultor.nome} candidatou-se ao badge "${badge?.nome}". Aguarda a sua validação final.`
         );
+        try { await enviarEmailNovaCandidaturaSL(sl.email, sl.nome, consultor.nome, badge?.nome); } catch (_) {}
       }
     } else {
       await sequelize.query(
@@ -289,7 +291,7 @@ const validarTM = async (req, res) => {
         { replacements: { id, idtm: idtm || null, comentario: comentario || null } }
       );
       await criarNotificacao(
-        candidatura.user_id,
+        candidatura.idutilizador,
         'Candidatura devolvida',
         `A sua candidatura ao badge "${badge?.nome}" foi devolvida pelo Talent Manager.${comentario ? ` Motivo: ${comentario}` : ''}`
       );
@@ -311,7 +313,7 @@ const listarCandidaturasSL = async (req, res) => {
   try {
     const [rows] = await sequelize.query(
       `SELECT c.idcandidatura, c.user_id AS idutilizador, c.badge_id AS idbadge,
-              c.estado, c.datacriacao, c.ultimaatualizacao,
+              c.estado, c.datacriacao, c.datasubmissao, c.ultimaatualizacao,
               c.comentariogeral AS comentario,
               c.dataaprovacao, c.datarejeicao,
               CASE
@@ -321,15 +323,19 @@ const listarCandidaturasSL = async (req, res) => {
                 WHEN c.datarejeicao  IS NOT NULL   THEN 'rejeitado'
                 ELSE NULL
               END AS resultado,
-              b.nome AS badge_nome, b.imagemurl AS badge_imagem,
+              b.nome AS badge_nome, b.imagemurl AS badge_imagem, b.pontos,
               u.nome AS consultor_nome, u.email AS consultor_email,
               rev.nome AS tm_nome,
-              a.nome AS area_nome
+              a.nome AS area_nome,
+              nv.nome AS nivel_nome,
+              sl.nome AS serviceline_nome
        FROM candidaturasbadge c
        JOIN badges b ON b.idbadge = c.badge_id
        JOIN areas a ON a.idarea = b.idarea
        JOIN utilizadores u ON u.idutilizador = c.user_id
        LEFT JOIN utilizadores rev ON rev.idutilizador = c.idrevisoratual
+       LEFT JOIN nivel nv ON nv.idnivel = b.idnivel
+       LEFT JOIN serviceline sl ON sl.idserviceline = a.idserviceline
        WHERE UPPER(c.estado) IN ('UNDER_REVIEW', 'APPROVED', 'REJECTED')
        AND a.idserviceline = :idserviceline
        ORDER BY c.datacriacao DESC`,
@@ -363,11 +369,11 @@ const validarSL = async (req, res) => {
 
     const [[badge]] = await sequelize.query(
       `SELECT nome FROM badges WHERE idbadge = :idbadge`,
-      { replacements: { idbadge: candidatura.badge_id } }
+      { replacements: { idbadge: candidatura.idbadge } }
     );
     const [[consultor]] = await sequelize.query(
       `SELECT nome, email FROM utilizadores WHERE idutilizador = :id`,
-      { replacements: { id: candidatura.user_id } }
+      { replacements: { id: candidatura.idutilizador } }
     );
 
     if (acao === 'aprovar') {
@@ -379,10 +385,17 @@ const validarSL = async (req, res) => {
         { replacements: { id, idsl: idsl || null, comentario: comentario || null } }
       );
       await criarNotificacao(
-        candidatura.user_id,
+        candidatura.idutilizador,
         'Badge aprovado!',
         `Parabéns! A sua candidatura ao badge "${badge?.nome}" foi aprovada!`
       );
+      if (idsl) {
+        await criarNotificacao(
+          idsl,
+          'Aprovação registada',
+          `Aprovaste o badge "${badge?.nome}" de ${consultor.nome}.`
+        );
+      }
       try { await enviarEmailCandidaturaAprovada(consultor.email, consultor.nome, badge?.nome); } catch (_) {}
 
     } else if (acao === 'rejeitar') {
@@ -394,10 +407,17 @@ const validarSL = async (req, res) => {
         { replacements: { id, idsl: idsl || null, comentario: comentario || null } }
       );
       await criarNotificacao(
-        candidatura.user_id,
+        candidatura.idutilizador,
         'Candidatura rejeitada',
         `A sua candidatura ao badge "${badge?.nome}" foi rejeitada.${comentario ? ` Motivo: ${comentario}` : ''}`
       );
+      if (idsl) {
+        await criarNotificacao(
+          idsl,
+          'Rejeição registada',
+          `Rejeitaste o badge "${badge?.nome}" de ${consultor.nome}.${comentario ? ` Motivo: ${comentario}` : ''}`
+        );
+      }
       try { await enviarEmailCandidaturaRejeitada(consultor.email, consultor.nome, badge?.nome, comentario); } catch (_) {}
 
     } else {
@@ -409,7 +429,7 @@ const validarSL = async (req, res) => {
         { replacements: { id, idsl: idsl || null, comentario: comentario || null } }
       );
       await criarNotificacao(
-        candidatura.user_id,
+        candidatura.idutilizador,
         'Candidatura devolvida — informação adicional',
         `A sua candidatura ao badge "${badge?.nome}" foi devolvida para revisão.${comentario ? ` Comentário: ${comentario}` : ''}`
       );

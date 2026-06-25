@@ -73,6 +73,22 @@ const enviarEmailPrimeiroLogin = async (email, nome, codigo) => {
   });
 };
 
+const enviarEmailNovaCandidaturaSL = async (email, slNome, consultorNome, badgeNome) => {
+  await transporter.sendMail({
+    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `Nova candidatura para validação: ${badgeNome}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #239292;">Nova candidatura para validar</h2>
+        <p>Olá, ${slNome}. O consultor <strong>${consultorNome}</strong> tem uma candidatura
+        ao badge <strong>${badgeNome}</strong> a aguardar a sua validação final.</p>
+        <p>Aceda à área de <strong>Validações</strong> da sua Service Line para a rever.</p>
+        <p style="color: #6b7280; font-size: 13px;">Este é um aviso automático da Plataforma PINT.</p>
+      </div>`,
+  });
+};
+
 const enviarEmailCandidaturaConfirmada = async (email, nome, badgeNome) => {
   await transporter.sendMail({
     from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
@@ -185,6 +201,7 @@ const enviarEmailLembrete = async (email, nome, titulo, descricao, prazo, diasRe
 module.exports = {
   enviarEmailConfirmacao,
   enviarEmailPrimeiroLogin,
+  enviarEmailNovaCandidaturaSL,
   enviarEmailCandidaturaConfirmada,
   enviarEmailCandidaturaDevolvida,
   enviarEmailCandidaturaAprovada,

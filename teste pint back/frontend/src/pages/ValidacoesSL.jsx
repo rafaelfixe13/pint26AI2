@@ -5,9 +5,33 @@ import "../styles/Candidaturas.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsBarChart } from "react-icons/bs";
-import { MdOutlineVerified } from "react-icons/md";
+import { MdOutlineVerified, MdLeaderboard } from "react-icons/md";
 import { FiUsers, FiDownload } from "react-icons/fi";
-import { FaMedal } from "react-icons/fa";
+import { FaMedal, FaAward } from "react-icons/fa";
+import { BsClockHistory, BsChevronDown, BsChevronUp } from "react-icons/bs";
+import { gerarCertificadoPDF } from "../utils/certificado";
+
+const fmtDataHora = (v) => {
+  if (!v) return null;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime())
+    ? null
+    : d.toLocaleString("pt-PT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+};
+
+// Constrói a linha-do-tempo de um processo de candidatura a partir dos campos existentes.
+function construirTimeline(c) {
+  const estado = (c.estado || "").toUpperCase();
+  const eventos = [];
+  eventos.push({ titulo: "Candidatura criada", data: c.datacriacao, cor: "#64748b" });
+  if (c.datasubmissao) eventos.push({ titulo: "Evidências submetidas pelo consultor", data: c.datasubmissao, cor: "#2563eb" });
+  if (c.tm_nome) eventos.push({ titulo: `Validada pelo Talent Manager (${c.tm_nome})`, data: null, cor: "#0891b2", nota: "Encaminhada para o Service Line" });
+  if (estado === "UNDER_REVIEW") eventos.push({ titulo: "A aguardar validação do Service Line", data: null, cor: "#d97706", pendente: true });
+  if (estado === "APPROVED") eventos.push({ titulo: "Aprovada pelo Service Line", data: c.dataaprovacao || c.ultimaatualizacao, cor: "#059669", nota: c.comentario });
+  if (estado === "REJECTED") eventos.push({ titulo: "Rejeitada pelo Service Line", data: c.datarejeicao || c.ultimaatualizacao, cor: "#dc2626", nota: c.comentario });
+  if (estado === "OPEN") eventos.push({ titulo: "Devolvida para revisão", data: c.ultimaatualizacao, cor: "#7c3aed", nota: c.comentario });
+  return eventos;
+}
 
 const toDownloadUrl = (url) => url
   ? url.replace('/image/upload/', '/image/upload/fl_attachment/')
@@ -34,12 +58,17 @@ function ValidacoesSL() {
   const [comentarios, setComentarios] = useState({});
   const [processando, setProcessando] = useState(null);
   const [msg, setMsg] = useState("");
+  const [historicoAberto, setHistoricoAberto] = useState({});
+
+  const toggleHistorico = (id) =>
+    setHistoricoAberto((p) => ({ ...p, [id]: !p[id] }));
 
   const navItems = [
     { label: "Início",      icon: <GoHome size={16} /> },
     { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
     { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
     { label: "Conquistas",  icon: <FaMedal size={14} /> },
+    { label: "Ranking",     icon: <MdLeaderboard size={16} /> },
     { label: "Relatórios",  icon: <BsBarChart size={16} /> },
   ];
 
@@ -68,7 +97,23 @@ function ValidacoesSL() {
     if (label === "Validações")  navigate("/sl/validacoes");
     if (label === "Catálogo")    navigate("/sl/catalogo");
     if (label === "Conquistas")  navigate("/sl/conquistas");
+    if (label === "Ranking")     navigate("/sl/ranking");
     if (label === "Relatórios")  navigate("/sl/relatorios");
+  };
+
+  // Gera o certificado em PDF do badge atribuído ao consultor (novo separador)
+  const baixarCertificado = (c) => {
+    gerarCertificadoPDF({
+      nome: c.consultor_nome,
+      badgeNome: c.badge_nome,
+      nivel: c.nivel_nome,
+      area: c.area_nome,
+      serviceline: c.serviceline_nome,
+      pontos: c.pontos,
+      data: c.dataaprovacao || c.ultimaatualizacao,
+      idcandidatura: c.idcandidatura,
+      imagemurl: c.badge_imagem,
+    });
   };
 
   const agir = async (idcandidatura, acao) => {
@@ -183,6 +228,46 @@ function ValidacoesSL() {
 
                 {c.comentario && (
                   <p className="val-card-historico"><strong>Comentário TM:</strong> {c.comentario}</p>
+                )}
+
+                {(() => {
+                  const aprovado = (c.estado || "").toUpperCase() === "APPROVED";
+                  const aberto = !!historicoAberto[c.idcandidatura];
+                  return (
+                    <div className="val-card-cert">
+                      <button
+                        className="btn-certificado"
+                        disabled={!aprovado}
+                        title={aprovado ? "Gerar certificado em PDF" : "Disponível após aprovação"}
+                        onClick={() => baixarCertificado(c)}
+                      >
+                        <FaAward size={14} /> Certificado (PDF)
+                      </button>
+                      <button
+                        className="btn-historico"
+                        onClick={() => toggleHistorico(c.idcandidatura)}
+                        title="Ver histórico do processo"
+                      >
+                        <BsClockHistory size={14} /> Histórico
+                        {aberto ? <BsChevronUp size={12} /> : <BsChevronDown size={12} />}
+                      </button>
+                    </div>
+                  );
+                })()}
+
+                {historicoAberto[c.idcandidatura] && (
+                  <div className="val-timeline">
+                    {construirTimeline(c).map((ev, i) => (
+                      <div key={i} className={`val-tl-item ${ev.pendente ? "pendente" : ""}`}>
+                        <span className="val-tl-dot" style={{ background: ev.cor }} />
+                        <div className="val-tl-conteudo">
+                          <p className="val-tl-titulo">{ev.titulo}</p>
+                          {ev.data && <span className="val-tl-data">{fmtDataHora(ev.data)}</span>}
+                          {ev.nota && <p className="val-tl-nota">{ev.nota}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 {!em_historico && (

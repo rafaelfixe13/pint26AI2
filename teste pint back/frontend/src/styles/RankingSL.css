@@ -1,0 +1,95 @@
+/* ── Ranking Service Line ──────────────────────────────────────────────── */
+.rksl-page {
+  padding: 2rem 5%;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #0f172a;
+}
+
+.rksl-header { margin-bottom: 1.5rem; }
+.rksl-header h1 { font-size: 1.7rem; font-weight: 700; margin: 0 0 .35rem 0; color: #1e293b; }
+.rksl-header p { margin: 0; color: #64748b; font-size: .95rem; }
+
+/* Controlos */
+.rksl-controlos {
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+  margin-bottom: 2rem;
+}
+.rksl-toggle { display: inline-flex; background: #f1f5f9; border-radius: 10px; padding: .25rem; gap: .25rem; }
+.rksl-toggle button {
+  display: inline-flex; align-items: center; gap: .4rem;
+  border: none; background: transparent; color: #64748b;
+  padding: .5rem 1.1rem; border-radius: 8px; font-size: .88rem; font-weight: 600; cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.rksl-toggle button.active { background: #fff; color: #3b6695; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.rksl-area {
+  padding: .55rem .9rem; border-radius: 9px; border: 1px solid #cbd5e1;
+  font-size: .9rem; color: #0f172a; background: #fff; min-width: 180px;
+}
+.rksl-area:focus { outline: none; border-color: #3b6695; box-shadow: 0 0 0 3px rgba(59,102,149,.12); }
+
+/* Estado vazio / loading */
+.rksl-status { display: flex; flex-direction: column; align-items: center; gap: .6rem; padding: 2.5rem 0; color: #94a3b8; }
+.rksl-spinner { animation: rksl-spin 1s linear infinite; }
+@keyframes rksl-spin { to { transform: rotate(360deg); } }
+
+/* Pódio */
+.rksl-podio {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; align-items: end; margin-bottom: 2rem;
+}
+.rksl-pod {
+  position: relative; background: #fff; border: 1px solid #f1f5f9; border-radius: 16px;
+  padding: 1.3rem 1rem .8rem; display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.05);
+}
+.rksl-pod-vazio { background: transparent; border: none; box-shadow: none; }
+.rksl-pod-1 { transform: translateY(-14px); border-color: #fde68a; background: linear-gradient(180deg,#fffbeb,#fff); }
+.rksl-pod-2 { border-color: #e2e8f0; }
+.rksl-pod-3 { border-color: #fed7aa; }
+.rksl-coroa { position: absolute; top: -16px; font-size: 1.5rem; }
+.rksl-pod-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+.rksl-pod-avatar-ph {
+  display: flex; align-items: center; justify-content: center;
+  background: #3b6695; color: #fff; font-weight: 700; font-size: 1.1rem;
+}
+.rksl-pod-nome { font-weight: 700; font-size: .92rem; text-align: center; color: #0f172a; }
+.rksl-pod-valor { font-size: .82rem; font-weight: 700; color: #3b6695; }
+.rksl-pod-base {
+  margin-top: .3rem; width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: #eef2f7; color: #3b6695; font-weight: 800; font-size: .85rem;
+}
+.rksl-pod-1 .rksl-pod-base { background: #fde68a; color: #92400e; }
+
+/* Lista */
+.rksl-lista { display: flex; flex-direction: column; gap: .7rem; }
+.rksl-linha {
+  display: flex; align-items: center; gap: 1rem;
+  background: #fff; border: 1px solid #f1f5f9; border-radius: 14px;
+  padding: .85rem 1.1rem; box-shadow: 0 2px 4px rgba(0,0,0,.03);
+}
+.rksl-pos {
+  flex-shrink: 0; width: 28px; text-align: center;
+  font-weight: 800; font-size: .95rem; color: #94a3b8;
+}
+.rksl-pos.top { color: #3b6695; }
+.rksl-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.rksl-avatar-ph {
+  display: flex; align-items: center; justify-content: center;
+  background: #3b6695; color: #fff; font-weight: 700; font-size: .85rem;
+}
+.rksl-info { flex-grow: 1; min-width: 0; }
+.rksl-info-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: .35rem; }
+.rksl-nome { font-weight: 700; color: #0f172a; font-size: .95rem; }
+.rksl-valor { font-weight: 800; color: #3b6695; font-size: .9rem; flex-shrink: 0; }
+.rksl-barra-fundo { height: 8px; background: #f1f5f9; border-radius: 10px; overflow: hidden; }
+.rksl-barra { height: 100%; background: linear-gradient(90deg, #3b6695, #6b9bc7); border-radius: 10px; transition: width .4s ease; }
+.rksl-meta { display: block; margin-top: .35rem; font-size: .78rem; color: #94a3b8; }
+
+@media (max-width: 600px) {
+  .rksl-podio { grid-template-columns: 1fr; }
+  .rksl-pod-1 { transform: none; }
+}

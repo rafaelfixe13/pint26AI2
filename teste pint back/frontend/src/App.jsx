@@ -29,6 +29,7 @@ import ValidacoesSL from "./pages/ValidacoesSL";
 import DashBoardSL from "./pages/sl/DashBoardSL";
 import CatalogoSL from "./pages/sl/CatalogoSL";
 import ConquistasSL from "./pages/sl/ConquistasSL";
+import RankingSL from "./pages/sl/RankingSL";
 import RelatoriosSL from "./pages/sl/RelatoriosSL";
 
 import GestaoUtilizadores from "./pages/admin/GestaoUtilizadores";
@@ -125,6 +126,7 @@ function App() {
         <Route path="/sl/validacoes" element={<RotaSL><ValidacoesSL /></RotaSL>} />
         <Route path="/sl/catalogo" element={<RotaSL><CatalogoSL /></RotaSL>} />
         <Route path="/sl/conquistas" element={<RotaSL><ConquistasSL /></RotaSL>} />
+        <Route path="/sl/ranking" element={<RotaSL><RankingSL /></RotaSL>} />
         <Route path="/sl/relatorios" element={<RotaSL><RelatoriosSL /></RotaSL>} />
 
         <Route path="/admin/utilizadores" element={<RotaAdmin><GestaoUtilizadores /></RotaAdmin>} />

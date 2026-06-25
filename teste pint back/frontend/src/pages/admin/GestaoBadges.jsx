@@ -32,14 +32,15 @@ function ImageUpload({ previewUrl, onFileSelect }) {
   );
 }
 
-// Função utilitária: faz upload de um File para o Cloudinary e devolve a URL
-async function uploadParaCloudinary(file) {
-  const formData = new FormData();
-  formData.append("imagem", file);
-  const res = await fetch(`${API}/upload-imagem`, { method: "POST", body: formData });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Erro no upload da imagem.");
-  return data.url;
+// Função utilitária: converte um File numa data URL base64 (guardada em imagemurl).
+// Substitui o antigo upload para Cloudinary — a imagem fica embebida na própria BD.
+function fileParaBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Erro ao ler a imagem."));
+    reader.readAsDataURL(file);
+  });
 }
 
 // ── Input inline ─────────────────────────────────────────────────
@@ -373,7 +374,7 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
     setUploading(true);
     try {
       // FIX: usa imagemAtual se não há ficheiro novo
-      const imagemurl = pendingFile ? await uploadParaCloudinary(pendingFile) : (imagemAtual || "");
+      const imagemurl = pendingFile ? await fileParaBase64(pendingFile) : (imagemAtual || "");
       onGuardar({ ...form, imagemurl });
     } catch (e) {
       setErro(e.message);
@@ -569,7 +570,7 @@ function ModalCriarBadge({ hierarquia, especiais, onFechar, onGuardar }) {
     setErro("");
     setUploading(true);
     try {
-      const imagemurl = pendingFile ? await uploadParaCloudinary(pendingFile) : "";
+      const imagemurl = pendingFile ? await fileParaBase64(pendingFile) : "";
       onGuardar({ ...form, imagemurl });
     } catch (e) {
       setErro(e.message);

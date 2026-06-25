@@ -170,6 +170,48 @@
 .btn-sendback { padding: .5rem 1.1rem; border: none; border-radius: 8px; background: #7c3aed; color: #fff; font-size: .85rem; font-weight: 700; cursor: pointer; }
 .btn-sendback:hover { background: #6d28d9; }
 
+.val-card-cert { margin-top: .75rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+.btn-certificado {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .5rem 1.1rem; border: 1.5px solid #1d4ed8; border-radius: 8px;
+  background: #eff6ff; color: #1d4ed8; font-size: .85rem; font-weight: 700;
+  cursor: pointer; transition: background .15s ease, opacity .15s ease;
+}
+.btn-certificado:hover:not(:disabled) { background: #dbeafe; }
+.btn-certificado:disabled { opacity: .5; cursor: not-allowed; border-color: #cbd5e1; color: #94a3b8; background: #f8fafc; }
+
+.btn-historico {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .5rem 1.1rem; border: 1.5px solid #cbd5e1; border-radius: 8px;
+  background: #fff; color: #475569; font-size: .85rem; font-weight: 700;
+  cursor: pointer; transition: background .15s ease, border-color .15s ease;
+}
+.btn-historico:hover { background: #f8fafc; border-color: #94a3b8; }
+
+/* Linha-do-tempo do processo de candidatura */
+.val-timeline {
+  margin-top: .9rem; padding: 1rem 1rem .4rem 1rem;
+  background: #f9fafb; border: 1px solid #eef2f7; border-radius: 10px;
+}
+.val-tl-item { position: relative; display: flex; gap: .8rem; padding-bottom: 1rem; }
+.val-tl-item:not(:last-child)::before {
+  content: ""; position: absolute; left: 6px; top: 16px; bottom: 0;
+  width: 2px; background: #e2e8f0;
+}
+.val-tl-dot {
+  width: 14px; height: 14px; border-radius: 50%; margin-top: 2px;
+  flex-shrink: 0; box-shadow: 0 0 0 3px #fff; z-index: 1;
+}
+.val-tl-item.pendente .val-tl-dot { animation: tl-pulse 1.4s ease-in-out infinite; }
+@keyframes tl-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+.val-tl-conteudo { display: flex; flex-direction: column; gap: .15rem; }
+.val-tl-titulo { margin: 0; font-size: .85rem; font-weight: 700; color: #1e293b; }
+.val-tl-data { font-size: .76rem; color: #94a3b8; }
+.val-tl-nota {
+  margin: .25rem 0 0 0; font-size: .8rem; color: #475569;
+  background: #fff; border: 1px solid #eef2f7; border-radius: 6px; padding: .35rem .6rem;
+}
+
 .val-vazio { text-align: center; color: #9ca3af; padding: 3rem 0; font-size: .95rem; }
 
 .val-card-historico {

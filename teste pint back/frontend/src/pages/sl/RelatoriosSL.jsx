@@ -6,18 +6,22 @@ import { API_BASE } from "../../api";
 
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 
 import { GoHome } from "react-icons/go";
-import { MdOutlineVerified } from "react-icons/md";
+import { MdOutlineVerified, MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsTrophy, BsBarChart } from "react-icons/bs";
-import { FiDownload } from "react-icons/fi";
+import { RiAwardLine } from "react-icons/ri";
+import { FiUsers } from "react-icons/fi";
+import { IoCheckmarkCircleOutline } from "react-icons/io5";
 
 const NAV_ITEMS = [
   { label: "Início",     icon: <GoHome size={16} /> },
   { label: "Validações", icon: <MdOutlineVerified size={16} /> },
   { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
   { label: "Conquistas", icon: <BsTrophy size={16} /> },
+  { label: "Ranking",    icon: <MdLeaderboard size={16} /> },
   { label: "Relatórios", icon: <BsBarChart size={16} /> },
 ];
 
@@ -27,12 +31,26 @@ const fmtData = (v) => {
   return Number.isNaN(d.getTime()) ? "-" : d.toLocaleDateString("pt-PT");
 };
 
+function estadoLabel(estado) {
+  const e = (estado || "").toUpperCase();
+  if (e === "APPROVED")     return "Aprovado";
+  if (e === "REJECTED")     return "Rejeitado";
+  if (e === "UNDER_REVIEW") return "Em validação SL";
+  if (e === "OPEN")         return "Devolvida";
+  if (e === "SUBMITTED")    return "Em validação TM";
+  return estado || "-";
+}
+
 export default function RelatoriosSL() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
   const [candidaturas, setCandidaturas] = useState([]);
+  const [consultores, setConsultores] = useState([]);
+  const [badges, setBadges] = useState([]);
+  const [slNome, setSlNome] = useState("");
   const [loading, setLoading] = useState(true);
+
   const [area, setArea] = useState("");
   const [de, setDe] = useState("");
   const [ate, setAte] = useState("");
@@ -41,10 +59,20 @@ export default function RelatoriosSL() {
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
     if (!utilizador.idserviceline) { navigate("/perfil"); return; }
-    fetch(`${API_BASE}/candidaturas/sl/lista?idserviceline=${utilizador.idserviceline}`)
-      .then((r) => r.json())
-      .then((data) => { setCandidaturas(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+    const sl = utilizador.idserviceline;
+
+    Promise.all([
+      fetch(`${API_BASE}/candidaturas/sl/lista?idserviceline=${sl}`).then((r) => r.json()).catch(() => []),
+      fetch(`${API_BASE}/sl/conquistas?idserviceline=${sl}`).then((r) => r.json()).catch(() => []),
+      fetch(`${API_BASE}/badges`).then((r) => r.json()).catch(() => []),
+      fetch(`${API_BASE}/sl/dashboard?idserviceline=${sl}`).then((r) => r.json()).catch(() => ({})),
+    ]).then(([cand, cons, bdg, dash]) => {
+      setCandidaturas(Array.isArray(cand) ? cand : []);
+      setConsultores(Array.isArray(cons) ? cons : []);
+      setBadges(Array.isArray(bdg) ? bdg : []);
+      setSlNome(dash?.serviceline?.nome || utilizador.serviceline || "");
+      setLoading(false);
+    });
   }, []);
 
   const handleTabChange = (label) => {
@@ -52,73 +80,155 @@ export default function RelatoriosSL() {
     if (label === "Validações") navigate("/sl/validacoes");
     if (label === "Catálogo")   navigate("/sl/catalogo");
     if (label === "Conquistas") navigate("/sl/conquistas");
+    if (label === "Ranking")    navigate("/sl/ranking");
     if (label === "Relatórios") navigate("/sl/relatorios");
   };
 
-  // Apenas badges atribuídos (aprovados) da Service Line
-  const atribuidos = useMemo(
-    () => candidaturas.filter((c) => (c.estado || "").toUpperCase() === "APPROVED"),
-    [candidaturas]
+  // Apenas badges da Service Line do utilizador
+  const badgesSL = useMemo(
+    () => badges.filter((b) => !slNome || b.serviceline === slNome),
+    [badges, slNome]
   );
 
-  const areas = useMemo(
-    () => [...new Set(atribuidos.map((c) => c.area_nome).filter(Boolean))].sort(),
-    [atribuidos]
+  // Áreas disponíveis (das várias fontes)
+  const areas = useMemo(() => {
+    const s = new Set();
+    candidaturas.forEach((c) => c.area_nome && s.add(c.area_nome));
+    consultores.forEach((c) => c.area && s.add(c.area));
+    badgesSL.forEach((b) => b.area && s.add(b.area));
+    return [...s].sort();
+  }, [candidaturas, consultores, badgesSL]);
+
+  const dataPedido = (c) => c.dataaprovacao || c.datarejeicao || c.ultimaatualizacao || c.datacriacao;
+
+  const noPeriodo = (v) => {
+    const d = new Date(v);
+    if (de && d < new Date(de + "T00:00:00")) return false;
+    if (ate && d > new Date(ate + "T23:59:59")) return false;
+    return true;
+  };
+
+  // ── Conjuntos filtrados por relatório ──────────────────────────────────────
+  const pedidos = useMemo(
+    () => candidaturas.filter((c) => (!area || c.area_nome === area) && noPeriodo(dataPedido(c))),
+    [candidaturas, area, de, ate]
+  );
+  const aprovacoes = useMemo(
+    () => pedidos.filter((c) => (c.estado || "").toUpperCase() === "APPROVED"),
+    [pedidos]
+  );
+  const badgesFiltrados = useMemo(
+    () => badgesSL.filter((b) => !area || b.area === area),
+    [badgesSL, area]
+  );
+  const consultoresFiltrados = useMemo(
+    () => consultores.filter((c) => !area || c.area === area),
+    [consultores, area]
   );
 
-  const dataAtribuicao = (c) => c.dataaprovacao || c.ultimaatualizacao || c.datacriacao;
+  // ── Definição de cada relatório (colunas + linhas) ─────────────────────────
+  const construir = (tipo) => {
+    switch (tipo) {
+      case "pedidos":
+        return {
+          titulo: "Pedidos de Badges",
+          colunas: ["Consultor", "Email", "Badge", "Área", "Data", "Estado"],
+          linhas: pedidos.map((c) => [
+            c.consultor_nome || "N/A", c.consultor_email || "-", c.badge_nome || "N/A",
+            c.area_nome || "-", fmtData(dataPedido(c)), estadoLabel(c.estado),
+          ]),
+        };
+      case "aprovacoes":
+        return {
+          titulo: "Aprovações (Badges Atribuídos)",
+          colunas: ["Consultor", "Email", "Badge", "Área", "Data de atribuição"],
+          linhas: aprovacoes.map((c) => [
+            c.consultor_nome || "N/A", c.consultor_email || "-", c.badge_nome || "N/A",
+            c.area_nome || "-", fmtData(c.dataaprovacao || dataPedido(c)),
+          ]),
+        };
+      case "badges":
+        return {
+          titulo: "Catálogo de Badges da Service Line",
+          colunas: ["Badge", "Pontos", "Nível", "Área", "Estado"],
+          linhas: badgesFiltrados.map((b) => [
+            b.nome || "N/A", b.pontos != null ? `${b.pontos}` : "Sem pontos",
+            b.nivel || "-", b.area || "-", b.estado || "-",
+          ]),
+        };
+      case "consultores":
+        return {
+          titulo: "Consultores da Service Line",
+          colunas: ["Nome", "Email", "Área", "Badges", "Pontos"],
+          linhas: consultoresFiltrados.map((c) => [
+            c.nome || "N/A", c.email || "-", c.area || "-",
+            `${c.totalbadges ?? 0}`, `${c.totalpontos ?? 0}`,
+          ]),
+        };
+      default:
+        return null;
+    }
+  };
 
-  const filtrados = useMemo(() => {
-    return atribuidos.filter((c) => {
-      if (area && c.area_nome !== area) return false;
-      const d = new Date(dataAtribuicao(c));
-      if (de && d < new Date(de + "T00:00:00")) return false;
-      if (ate && d > new Date(ate + "T23:59:59")) return false;
-      return true;
-    });
-  }, [atribuidos, area, de, ate]);
+  const subtituloFiltros = () => {
+    const partes = [`Service Line: ${slNome || utilizador?.idserviceline}`];
+    partes.push(`Área: ${area || "Todas"}`);
+    partes.push(`Período: ${de ? fmtData(de) : "início"} a ${ate ? fmtData(ate) : "hoje"}`);
+    return partes;
+  };
 
-  const gerarPDF = () => {
-    if (filtrados.length === 0) {
-      setMsg("Não há badges atribuídos para os filtros selecionados.");
+  const exportarPDF = (tipo) => {
+    const rel = construir(tipo);
+    if (!rel || rel.linhas.length === 0) {
+      setMsg("Não há dados para os filtros selecionados.");
       setTimeout(() => setMsg(""), 3500);
       return;
     }
-
     const doc = new jsPDF();
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
+    doc.setFontSize(17);
     doc.setTextColor(43, 55, 72);
-    doc.text("Relatório de Badges Atribuídos", 14, 20);
+    doc.text(rel.titulo, 14, 18);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setTextColor(113, 128, 150);
-    const slNome = utilizador?.serviceline || `Service Line ${utilizador?.idserviceline}`;
-    const periodo = `${de ? fmtData(de) : "início"} a ${ate ? fmtData(ate) : "hoje"}`;
-    doc.text(`Service Line: ${slNome}`, 14, 28);
-    doc.text(`Área: ${area || "Todas"}`, 14, 33);
-    doc.text(`Período: ${periodo}`, 14, 38);
-    doc.text(`Total de badges atribuídos: ${filtrados.length}`, 14, 43);
-    doc.text(`Exportado em: ${new Date().toLocaleString("pt-PT")}`, 14, 48);
+    let y = 25;
+    subtituloFiltros().forEach((linha) => { doc.text(linha, 14, y); y += 5; });
+    doc.text(`Total de registos: ${rel.linhas.length}`, 14, y); y += 5;
+    doc.text(`Exportado em: ${new Date().toLocaleString("pt-PT")}`, 14, y); y += 4;
 
     autoTable(doc, {
-      startY: 54,
-      head: [["Consultor", "Email", "Badge", "Área", "Data de atribuição"]],
-      body: filtrados.map((c) => [
-        c.consultor_nome || "N/A",
-        c.consultor_email || "-",
-        c.badge_nome || "N/A",
-        c.area_nome || "-",
-        fmtData(dataAtribuicao(c)),
-      ]),
+      startY: y + 2,
+      head: [rel.colunas],
+      body: rel.linhas,
       theme: "striped",
       headStyles: { fillColor: [59, 102, 149], textColor: [255, 255, 255] },
       styles: { font: "helvetica", fontSize: 9 },
     });
-
-    doc.save(`Relatorio_Badges_${area || "SL"}_${Date.now()}.pdf`);
+    doc.save(`Relatorio_${tipo}_${Date.now()}.pdf`);
   };
+
+  const exportarExcel = (tipo) => {
+    const rel = construir(tipo);
+    if (!rel || rel.linhas.length === 0) {
+      setMsg("Não há dados para os filtros selecionados.");
+      setTimeout(() => setMsg(""), 3500);
+      return;
+    }
+    const ws = XLSX.utils.aoa_to_sheet([rel.colunas, ...rel.linhas]);
+    ws["!cols"] = rel.colunas.map((c) => ({ wch: Math.max(c.length + 4, 14) }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, rel.titulo.substring(0, 30));
+    XLSX.writeFile(wb, `Relatorio_${tipo}_${Date.now()}.xlsx`);
+  };
+
+  const CARDS = [
+    { tipo: "pedidos",     titulo: "Pedidos",     icon: <MdOutlineAssignment size={22} />, cls: "azul",    total: pedidos.length },
+    { tipo: "badges",      titulo: "Badges",      icon: <RiAwardLine size={22} />,         cls: "amarelo", total: badgesFiltrados.length },
+    { tipo: "consultores", titulo: "Consultores", icon: <FiUsers size={22} />,             cls: "roxo",    total: consultoresFiltrados.length },
+    { tipo: "aprovacoes",  titulo: "Aprovações",  icon: <IoCheckmarkCircleOutline size={22} />, cls: "verde", total: aprovacoes.length },
+  ];
 
   return (
     <div className="page-wrapper">
@@ -127,25 +237,10 @@ export default function RelatoriosSL() {
       <div className="relsl-page">
         <div className="relsl-header">
           <h1>Relatórios da Service Line</h1>
-          <p>Gere um PDF dos badges atribuídos na sua Service Line, por área e período.</p>
+          <p>Exporte os dados da sua Service Line para Excel ou PDF.</p>
         </div>
 
         {msg && <div className="relsl-msg">{msg}</div>}
-
-        <div className="relsl-kpis">
-          <div className="relsl-kpi">
-            <div className="relsl-kpi-valor">{loading ? "..." : atribuidos.length}</div>
-            <div className="relsl-kpi-label">Badges atribuídos (total)</div>
-          </div>
-          <div className="relsl-kpi">
-            <div className="relsl-kpi-valor">{loading ? "..." : areas.length}</div>
-            <div className="relsl-kpi-label">Áreas com atribuições</div>
-          </div>
-          <div className="relsl-kpi destaque">
-            <div className="relsl-kpi-valor">{loading ? "..." : filtrados.length}</div>
-            <div className="relsl-kpi-label">No filtro atual</div>
-          </div>
-        </div>
 
         <div className="relsl-card">
           <h3 className="relsl-card-titulo">Filtros</h3>
@@ -165,44 +260,23 @@ export default function RelatoriosSL() {
               <label>Até</label>
               <input type="date" value={ate} onChange={(e) => setAte(e.target.value)} />
             </div>
-            <button className="relsl-btn-pdf" onClick={gerarPDF} disabled={loading}>
-              <FiDownload size={16} /> Gerar PDF
-            </button>
           </div>
+          <p className="relsl-nota">O período aplica-se a <strong>Pedidos</strong> e <strong>Aprovações</strong>. A área aplica-se a todos os relatórios.</p>
         </div>
 
-        <div className="relsl-card">
-          <h3 className="relsl-card-titulo">
-            Pré-visualização <span className="relsl-contador">{filtrados.length}</span>
-          </h3>
-          <div className="relsl-tabela-wrap">
-            <table className="relsl-tabela">
-              <thead>
-                <tr>
-                  <th>Consultor</th>
-                  <th>Badge</th>
-                  <th>Área</th>
-                  <th>Data de atribuição</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={4} className="relsl-vazio">A carregar...</td></tr>
-                ) : filtrados.length === 0 ? (
-                  <tr><td colSpan={4} className="relsl-vazio">Sem badges atribuídos para os filtros.</td></tr>
-                ) : (
-                  filtrados.map((c) => (
-                    <tr key={c.idcandidatura}>
-                      <td>{c.consultor_nome}</td>
-                      <td className="relsl-badge-nome">{c.badge_nome}</td>
-                      <td>{c.area_nome || "-"}</td>
-                      <td>{fmtData(dataAtribuicao(c))}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+        <h3 className="relsl-card-titulo" style={{ marginBottom: "1.1rem" }}>Exportação de Dados</h3>
+        <div className="relsl-export-grid">
+          {CARDS.map((c) => (
+            <div key={c.tipo} className="relsl-export-card">
+              <div className={`relsl-export-icone ${c.cls}`}>{c.icon}</div>
+              <h4>{c.titulo}</h4>
+              <span className="relsl-export-total">{loading ? "..." : `${c.total} registos`}</span>
+              <div className="relsl-export-btns">
+                <button className="excel" disabled={loading} onClick={() => exportarExcel(c.tipo)}>Excel</button>
+                <button className="pdf" disabled={loading} onClick={() => exportarPDF(c.tipo)}>PDF</button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

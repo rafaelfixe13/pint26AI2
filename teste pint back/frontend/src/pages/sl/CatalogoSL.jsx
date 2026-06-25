@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import BadgesList from "../BadgesList";
 
 import { GoHome } from "react-icons/go";
-import { MdOutlineVerified } from "react-icons/md";
+import { MdOutlineVerified, MdLeaderboard } from "react-icons/md";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsTrophy, BsBarChart } from "react-icons/bs";
 
@@ -11,6 +11,7 @@ const NAV_ITEMS_SL = [
   { label: "Validações", icon: <MdOutlineVerified size={16} /> },
   { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
   { label: "Conquistas", icon: <BsTrophy size={16} /> },
+  { label: "Ranking",    icon: <MdLeaderboard size={16} /> },
   { label: "Relatórios", icon: <BsBarChart size={16} /> },
 ];
 
@@ -24,6 +25,7 @@ export default function CatalogoSL() {
     if (label === "Validações") navigate("/sl/validacoes");
     if (label === "Catálogo")   navigate("/sl/catalogo");
     if (label === "Conquistas") navigate("/sl/conquistas");
+    if (label === "Ranking")    navigate("/sl/ranking");
     if (label === "Relatórios") navigate("/sl/relatorios");
   };
 

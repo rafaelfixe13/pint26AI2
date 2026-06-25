@@ -189,6 +189,83 @@
   font-weight: 700;
 }
 
+/* Nota informativa nos filtros */
+.relsl-nota {
+  margin: 1rem 0 0 0;
+  font-size: .82rem;
+  color: #64748b;
+}
+
+/* Hub de exportação */
+.relsl-export-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
+.relsl-export-card {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1.5rem 1.3rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.relsl-export-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px -4px rgba(0, 0, 0, .08);
+}
+
+.relsl-export-icone {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .9rem;
+}
+.relsl-export-icone.azul    { background: #eff6ff; color: #3b82f6; }
+.relsl-export-icone.amarelo { background: #fef3c7; color: #d97706; }
+.relsl-export-icone.roxo    { background: #f3e8ff; color: #8b5cf6; }
+.relsl-export-icone.verde   { background: #ecfdf5; color: #10b981; }
+
+.relsl-export-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 .3rem 0;
+}
+.relsl-export-total {
+  font-size: .8rem;
+  color: #94a3b8;
+  margin-bottom: 1.1rem;
+}
+
+.relsl-export-btns {
+  display: flex;
+  gap: .6rem;
+  width: 100%;
+}
+.relsl-export-btns button {
+  flex: 1;
+  padding: .55rem 0;
+  border: none;
+  border-radius: 8px;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter .15s ease;
+}
+.relsl-export-btns button:hover:not(:disabled) { filter: brightness(.94); }
+.relsl-export-btns button:disabled { opacity: .55; cursor: not-allowed; }
+.relsl-export-btns .excel { background: #10b981; color: #fff; }
+.relsl-export-btns .pdf   { background: #ef4444; color: #fff; }
+
 @media (max-width: 720px) {
   .relsl-kpis { grid-template-columns: 1fr; }
   .relsl-btn-pdf { margin-left: 0; width: 100%; justify-content: center; }
