@@ -18,7 +18,7 @@ import { FiUsers } from "react-icons/fi";
 import { MdOutlineVerified } from "react-icons/md";
 import { HiOutlineDocumentText } from "react-icons/hi2";
 import { RiAwardLine } from "react-icons/ri";
-import { IoCheckmarkCircleOutline, IoCloseCircleOutline } from "react-icons/io5";
+import { IoCheckmarkCircleOutline, IoCloseCircleOutline, IoRibbonOutline } from "react-icons/io5";
 
 const NAV_ITEMS = [
   { label: "Início", icon: <GoHome size={16} /> },
@@ -42,6 +42,9 @@ function RelatoriosTM() {
   // Estados dos Gráficos Dinâmicos
   const [dadosBarras, setDadosBarras] = useState([]);
   const [dadosDonut, setDadosDonut] = useState({ júnior: 0, intermedio: 0, senior: 0, especialista: 0 });
+
+  // Novo Estado: Guarda a lista de candidaturas aprovadas para emissão de certificados na interface
+  const [listaAprovados, setListaAprovados] = useState([]);
 
   // 1. Carregar Total de Utilizadores
   useEffect(() => {
@@ -87,6 +90,7 @@ function RelatoriosTM() {
         if (Array.isArray(data)) {
           const aprovados = data.filter((c) => c.estado === "APPROVED");
           setTotalCertificados(aprovados.length);
+          setListaAprovados(aprovados); // Guarda a lista para renderizar as opções de certificados
 
           // === LÓGICA DO GRÁFICO DE BARRAS (Agrupado por Mês) ===
           const mesesLabels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -118,7 +122,7 @@ function RelatoriosTM() {
             else esp++;
           });
 
-          setDadosDonut({ júnior: jr, intermedio: int, senior: sr,专especialista: esp });
+          setDadosDonut({ júnior: jr, intermedio: int, senior: sr, especialista: esp });
         } else {
           setTotalCertificados(0);
         }
@@ -129,11 +133,96 @@ function RelatoriosTM() {
       });
   }, []);
 
+  // === REQUISITO RECENTE: GERAR CERTIFICADO INDIVIDUAL PERSONALIZADO (DESIGN PAISAGEM) ===
+  const gerarCertificadoPDF = (dados) => {
+    // Inicializa o documento no formato Horizontal (Paisagem)
+    const doc = new jsPDF({
+      orientation: "l",
+      unit: "pt",
+      format: "a4"
+    });
 
+    const largura = doc.internal.pageSize.getWidth();
+    const altura = doc.internal.pageSize.getHeight();
 
+    // 1. Fundo do Diploma (Tom Creme Suave)
+    doc.setFillColor(254, 254, 251);
+    doc.rect(0, 0, largura, altura, "F");
 
+    // 2. Moldura Decorativa (Duas linhas: Azul e Dourada)
+    doc.setDrawColor(59, 102, 149); // Cor primária azul
+    doc.setLineWidth(4);
+    doc.rect(25, 25, largura - 50, altura - 50);
 
-// === FUNÇÃO PARA GERAR O PDF DIRETAMENTE NO CLIENTE COM BASE NOS MODELOS SEQUELIZE ===
+    doc.setDrawColor(245, 158, 11); // Linha interna Dourada
+    doc.setLineWidth(1.5);
+    doc.rect(33, 33, largura - 66, altura - 66);
+
+    // 3. Título Central
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(28);
+    doc.setTextColor(43, 55, 72);
+    doc.text("CERTIFICADO DE CONQUISTA", largura / 2, 120, { align: "center" });
+
+    // Linha de Destaque por baixo do título
+    doc.setLineWidth(2);
+    doc.setDrawColor(59, 102, 149);
+    doc.line(largura / 2 - 120, 140, largura / 2 + 120, 140);
+
+    // 4. Texto Principal
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(16);
+    doc.setTextColor(113, 128, 150);
+    doc.text("Certifica-se com distinção que o consultor", largura / 2, 210, { align: "center" });
+
+    // Nome do Consultor em Destaque
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(26);
+    doc.setTextColor(59, 102, 149);
+    doc.text(dados?.consultor_nome || "Nome do Consultor", largura / 2, 260, { align: "center" });
+
+    // Texto de Atribuição
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(15);
+    doc.setTextColor(113, 128, 150);
+    doc.text("concluiu com êxito todas as avaliações e obteve as competências associadas ao Badge", largura / 2, 315, { align: "center" });
+
+    // Nome e nível do Badge
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(43, 55, 72);
+    const textoBadge = `${dados?.badge_nome || "Nome do Badge"}${dados?.badge_nivel ? ` (${dados.badge_nivel})` : ""}`;
+    doc.text(`"${textoBadge}"`, largura / 2, 360, { align: "center" });
+
+    // 5. Rodapé: Data e Assinatura
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(11);
+    doc.setTextColor(148, 163, 184);
+    const dataConquista = formatarData(obterDataCandidatura(dados));
+    doc.text(`Concedido oficialmente em: ${dataConquista}`, largura / 2, 420, { align: "center" });
+
+    // Linha da Assinatura
+    doc.setDrawColor(148, 163, 184);
+    doc.setLineWidth(1);
+    doc.line(largura / 2 - 100, 485, largura / 2 + 100, 485);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(74, 85, 104);
+    doc.text("Talent Management Team", largura / 2, 500, { align: "center" });
+
+    // Hash Único de Validação contra falsificações
+    const refId = dados?.idcandidatura || dados?.id || "N/A";
+    doc.setFontSize(8);
+    doc.setTextColor(160, 174, 192);
+    doc.text(`ID DE VERIFICAÇÃO DE AUTENTICIDADE: #CERT-${refId}-${Date.now().toString().slice(-4)}`, 45, altura - 45);
+
+    // Faz o download automático
+    const nomeFicheiro = `Certificado_${(dados?.consultor_nome || "Consultor").replace(/\s+/g, "_")}.pdf`;
+    doc.save(nomeFicheiro);
+  };
+
+  // === FUNÇÃO PARA GERAR O PDF DIRETAMENTE NO CLIENTE COM BASE NOS MODELOS SEQUELIZE ===
   const exportarParaPDF = async (tipo) => {
     const doc = new jsPDF();
     
@@ -179,7 +268,7 @@ function RelatoriosTM() {
       // 3. TABELA: utilizador_badges (Histórico de Conquistas/Certificados)
       case "conquistas":
         tituloReport = "Relatório de Badges Conquistados (Utilizador_Badges)";
-        endpoint = `${API_BASE}/candidaturas/tm/lista`; // Ou a rota que mapeia esta tabela intermédia
+        endpoint = `${API_BASE}/candidaturas/tm/lista`; 
         colunas = ["ID Consultor", "Nome Consultor", "ID Badge", "Nome Badge", "Data de Conquista"];
         mapearLinha = (ub) => [
           ub?.idutilizador || "-",
@@ -193,7 +282,7 @@ function RelatoriosTM() {
       // 4. TABELA: areas (Estrutura de Áreas / Service Lines)
       case "areas":
         tituloReport = "Lista de Áreas e Departamentos Registados";
-        endpoint = `${API_BASE}/admin/areas`; // Ajusta para a tua rota de áreas se necessário
+        endpoint = `${API_BASE}/admin/areas`; 
         colunas = ["ID Área", "ID Service Line", "Nome da Área", "Descrição", "Estado"];
         mapearLinha = (a) => [
           a?.idarea || "-",
@@ -207,7 +296,7 @@ function RelatoriosTM() {
       // 5. TABELA: nivel (Níveis de Proficiência dos Badges)
       case "niveis":
         tituloReport = "Lista de Níveis de Badges (Proficiência)";
-        endpoint = `${API_BASE}/admin/niveis`; // Ajusta para a tua rota de níveis se necessário
+        endpoint = `${API_BASE}/admin/niveis`; 
         colunas = ["ID Nível", "Nome do Nível", "Descrição"];
         mapearLinha = (n) => [
           n?.idnivel || "-",
@@ -216,7 +305,7 @@ function RelatoriosTM() {
         ];
         break;
 
-      // Opções das candidaturas que tinhas anteriormente (Pedidos gerais, aprovados e rejeitados)
+      // Opções das candidaturas (Pedidos gerais, aprovados e rejeitados)
       case "pedidos":
         tituloReport = "Relatório Geral de Pedidos de Candidatura";
         endpoint = `${API_BASE}/candidaturas/tm/lista`;
@@ -282,7 +371,7 @@ function RelatoriosTM() {
         }
 
         const pontosPorUtilizador = ranking.reduce((acc, item) => {
-          if (item?.idutilizador !== undefined) acc[item.idutilizador] = item.pontos ?? 0;
+          if (item?.idutilizador !== undefined) acc[item.idutilizador] = item.points ?? item.pontos ?? 0;
           return acc;
         }, {});
 
@@ -340,19 +429,12 @@ function RelatoriosTM() {
     }
   };
 
-
-
-
-// === FUNÇÃO PARA GERAR O EXCEL DIRETAMENTE NO CLIENTE ===
+  // === FUNÇÃO PARA GERAR O EXCEL DIRETAMENTE NO CLIENTE ===
   const exportarParaExcel = async (tipo) => {
     let tituloReport = "";
     let endpoint = "";
     let colunas = [];
     let mapearObjeto = (item) => ({});
-
-
-
-
 
     // Mapeamento dos dados para o cabeçalho e linhas do Excel
     if (tipo === "pedidos") {
@@ -380,7 +462,6 @@ function RelatoriosTM() {
       });
     } else if (tipo === "consultores") {            
       tituloReport = "Lista Geral de Consultores";
-      // Vamos buscar os utilizadores e o ranking para unir os pontos corretamente
       endpoint = `${API_BASE}/admin/utilizadores`;
       colunas = ["ID", "Nome", "Email", "Estado Conta", "Pontos Acumulados"];
       mapearObjeto = (u) => ({
@@ -428,12 +509,8 @@ function RelatoriosTM() {
         const utilizadores = await utilizadoresRes.json();
         const ranking = await rankingRes.json();
 
-        if (!Array.isArray(utilizadores)) {
-          throw new Error("A API de utilizadores não devolveu uma lista válida.");
-        }
-        if (!Array.isArray(ranking)) {
-          throw new Error("A API de ranking não devolveu uma lista válida.");
-        }
+        if (!Array.isArray(utilizadores)) throw new Error("A API de utilizadores não devolveu uma lista válida.");
+        if (!Array.isArray(ranking)) throw new Error("A API de ranking não devolveu uma lista válida.");
 
         const pontosPorUtilizador = ranking.reduce((acc, item) => {
           if (item?.idutilizador !== undefined) acc[item.idutilizador] = item.pontos ?? 0;
@@ -446,9 +523,7 @@ function RelatoriosTM() {
         }));
       } else {
         const res = await fetch(endpoint);
-
         if (!res.ok) throw new Error(`Erro do servidor: ${res.status}`);
-
         data = await res.json();
       }
 
@@ -465,22 +540,18 @@ function RelatoriosTM() {
       if (tipo === "aprovacoes") data = data.filter(c => c && c.estado === "APPROVED");
       if (tipo === "rejeicoes") data = data.filter(c => c && c.estado === "REJECTED");
 
-      // Transforma o array de objetos da API em linhas estruturadas para a folha
       const linhasExcel = data.map(mapearObjeto);
-
-      // Instancia o SheetJS para montar o workbook na memória do browser
       const worksheet = XLSX.utils.json_to_sheet(linhasExcel);
       const workbook = XLSX.utils.book_new();
       
       XLSX.utils.book_append_sheet(workbook, worksheet, tituloReport.substring(0, 30));
 
-      // Calcula automaticamente larguras de coluna básicas para evitar texto encavalitado
+      // Calcula automaticamente larguras de coluna básicas
       const largurasColunas = colunas.map(col => ({
         wch: Math.max(col.length + 4, 15)
       }));
       worksheet["!cols"] = largurasColunas;
 
-      // Dispara o download nativo do .xlsx
       XLSX.writeFile(workbook, `Relatorio_${tipo}_${Date.now()}.xlsx`);
 
     } catch (err) {
@@ -488,8 +559,6 @@ function RelatoriosTM() {
       alert(`Erro na exportação para Excel: ${err.message}`);
     }
   };
-
-
 
   const handleTabChange = (label) => {
     setActiveTab(label);
@@ -543,7 +612,6 @@ function RelatoriosTM() {
           <div className="chart-box">
             <div className="chart-header">
               <h3>Badges Atribuídos por Mês</h3>
-              
             </div>
             <div className="mock-chart-container">
               <div className="chart-grid-lines">
@@ -586,6 +654,57 @@ function RelatoriosTM() {
           </div>
         </div>
 
+        {/* INCLUSÃO DO NOVO REQUISITO: TABELA / PAINEL DE EMISSÃO DE CERTIFICADOS INDIVIDUAIS */}
+        <h3 className="section-title" style={{ marginTop: "35px" }}>Download de Certificados em PDF Personalizados</h3>
+        <div className="chart-box" style={{ marginBottom: "30px", padding: "20px" }}>
+          <p className="subtitle" style={{ marginBottom: "15px" }}>Selecione um consultor qualificado abaixo para gerar e descarregar o respetivo Diploma Oficial Individual:</p>
+          
+          {listaAprovados.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "250px", overflowY: "auto" }}>
+              {listaAprovados.map((c, index) => (
+                <div key={index} style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "12px 16px",
+                  background: "#f8fafc",
+                  borderRadius: "8px",
+                  border: "1px solid #e2e8f0"
+                }}>
+                  <div>
+                    <strong style={{ color: "#2d3748", fontSize: "14px" }}>{c?.consultor_nome || "Consultor Sem Nome"}</strong>
+                    <span style={{ margin: "0 8px", color: "#cbd5e1" }}>|</span>
+                    <span style={{ color: "#475569", fontSize: "13px" }}>
+                      Conquistou: {c?.badge_nome || "N/A"} {c?.badge_nivel && `(${c.badge_nivel})`}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => gerarCertificadoPDF(c)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      backgroundColor: "#10B981",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "7px 14px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontWeight: "500",
+                      fontSize: "13px",
+                      transition: "background 0.2s"
+                    }}
+                  >
+                    <IoRibbonOutline size={16} /> Descarregar Certificado
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: "#718096", fontSize: "14px" }}>Nenhum consultor com conquistas aprovadas no sistema para emitir certificados personalizados.</p>
+          )}
+        </div>
+
         {/* EXPORTAÇÃO */}
         <h3 className="section-title">Exportação de Dados (Excel / PDF)</h3>
         <div className="export-grid">
@@ -594,9 +713,8 @@ function RelatoriosTM() {
             <div className="card-icon blue-bg"><HiOutlineDocumentText size={22} color="#3B82F6" /></div>
             <h4>Pedidos Submetidos</h4>
             <div className="export-buttons">
-                <button className="excel" onClick={() => exportarParaExcel("pedidos")}>Excel</button>
+              <button className="excel" onClick={() => exportarParaExcel("pedidos")}>Excel</button>
               <button className="pdf" onClick={() => exportarParaPDF("pedidos")}>PDF</button>
-      
             </div>
           </div>
 
