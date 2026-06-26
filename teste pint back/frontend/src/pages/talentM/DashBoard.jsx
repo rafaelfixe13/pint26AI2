@@ -108,7 +108,7 @@ export default function DashBoard() {
         if (label === "Histórico") navigate("/talent/historico");
         if (label === "Catálogo") navigate("/talent/catalogo");
         if (label === "Conquistas") navigate("/talent/conquistas");
-        if (label === "Relatórios") navigate("/talent-manager/relatorios");
+         if (label === "Relatórios") navigate("/talent/relatorios");
         if (label === "Consultores") navigate("/talent/diretorio");
     };
 
