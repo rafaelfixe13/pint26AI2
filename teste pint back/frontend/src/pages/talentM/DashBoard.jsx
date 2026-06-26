@@ -9,6 +9,7 @@ import { MdOutlineVerified } from "react-icons/md";
 import { BsClockHistory, BsTrophy, BsBarChart, BsPeopleFill, BsAwardFill, BsGraphUp } from "react-icons/bs";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
+import { filtrarBadgesProximosExpiracao } from "../../utils/expiracaoTm";
 
 const NAV_ITEMS = [
     { label: "Início", icon: <GoHome size={16} /> },
@@ -30,6 +31,7 @@ export default function DashBoard() {
     const [totalPendentes, setTotalPendentes] = useState("...");
     const [topConsultores, setTopConsultores] = useState([]);
     const [recentActivity, setRecentActivity] = useState([]);
+    const [badgesProximosExpiracao, setBadgesProximosExpiracao] = useState([]);
 
     useEffect(() => {
         fetch(`${API_BASE}/admin/utilizadores`)
@@ -99,6 +101,50 @@ export default function DashBoard() {
             });
     }, []);
 
+    useEffect(() => {
+        Promise.all([
+            fetch(`${API_BASE}/admin/utilizadores`).then((res) => res.json()).catch(() => []),
+            fetch(`${API_BASE}/admin/badges`).then((res) => res.json()).catch(() => []),
+        ])
+            .then(async ([utilizadores, badges]) => {
+                if (!Array.isArray(utilizadores) || !Array.isArray(badges)) {
+                    setBadgesProximosExpiracao([]);
+                    return;
+                }
+
+                const consultores = utilizadores.filter((u) => String(u.idrole) === "1");
+                const meta = Object.fromEntries(badges.map((badge) => [badge.idbadge, badge]));
+
+                const resultados = await Promise.all(
+                    consultores.map(async (consultor) => {
+                        try {
+                            const res = await fetch(`${API_BASE}/candidaturas/minhas?idutilizador=${consultor.idutilizador}`);
+                            const candidaturas = await res.json();
+                            const aprovadas = Array.isArray(candidaturas)
+                                ? candidaturas.filter((c) => c.estado?.toUpperCase() === "APPROVED")
+                                : [];
+
+                            const badgesConsultor = aprovadas
+                                .map((c) => ({
+                                    ...c,
+                                    ...meta[c.idbadge],
+                                    nomeConsultor: consultor.nome,
+                                    dataconquista: c.dataaprovacao || c.datacriacao,
+                                }))
+                                .filter((badge) => badge?.expiremeses && badge?.dataconquista);
+
+                            return filtrarBadgesProximosExpiracao(badgesConsultor, 3);
+                        } catch {
+                            return [];
+                        }
+                    })
+                );
+
+                setBadgesProximosExpiracao(resultados.flat());
+            })
+            .catch(() => setBadgesProximosExpiracao([]));
+    }, []);
+
 
     const handleTabChange = (label) => {
         setActiveTab(label);
@@ -108,7 +154,7 @@ export default function DashBoard() {
         if (label === "Histórico") navigate("/talent/historico");
         if (label === "Catálogo") navigate("/talent/catalogo");
         if (label === "Conquistas") navigate("/talent/conquistas");
-         if (label === "Relatórios") navigate("/talent/relatorios");
+        if (label === "Relatórios") navigate("/talent/relatorios");
         if (label === "Consultores") navigate("/talent/diretorio");
     };
 
@@ -121,6 +167,22 @@ export default function DashBoard() {
                     <h1>Visão Geral</h1>
                     <p>Resumo da sua equipa e atividade recente.</p>
                 </div>
+
+                {badgesProximosExpiracao.length > 0 && (
+                    <div className="tm-expiracao-banner">
+                        <div className="tm-expiracao-banner-icon">⚠️</div>
+                        <div>
+                            <h2>Badges próximos da data de expiração</h2>
+                            <ul>
+                                {badgesProximosExpiracao.slice(0, 5).map((badge) => (
+                                    <li key={`${badge.idutilizador}-${badge.idbadge}`}>
+                                        <strong>{badge.nomeConsultor}</strong> — {badge.nome} ({badge.texto || "próximo da expiração"})
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
 
                 <div className="tm-dashboard-cards">
                     <div className="tm-card">
