@@ -15,6 +15,7 @@ import { FiUsers, FiLock, FiChevronRight, FiClock } from "react-icons/fi";
 import { FaMedal } from "react-icons/fa";
 import { API_BASE } from "../api";
 import { listarCelebrados } from "../utils/marcos";
+import { buildEmailSignatureHtml } from "../utils/signature";
 
 // ─── Nav items por perfil ──────────────────────────────────
 const NAV_CONSULTOR = [
@@ -73,6 +74,7 @@ function Perfil() {
   const [atividade, setAtividade] = useState([]);
   const [areaNome, setAreaNome] = useState(null);
   const [serviceLineNome, setServiceLineNome] = useState(null);
+  const [badgesUtilizador, setBadgesUtilizador] = useState([]);
   const [loading, setLoading] = useState(
     Boolean(JSON.parse(localStorage.getItem("utilizador") || "{}")?.idutilizador)
   );
@@ -89,11 +91,15 @@ function Perfil() {
       : Promise.resolve([]);
 
     const fetchBadges = fetch(`${API_BASE}/badges`).then((r) => r.json()).catch(() => []);
+    const fetchBadgesUtilizador = fetch(`${API_BASE}/admin/utilizadores/${utilizador.idutilizador}/badges`)
+      .then((r) => r.json())
+      .catch(() => []);
 
-    Promise.all([fetchCands, fetchBadges])
-      .then(([cands, badges]) => {
+    Promise.all([fetchCands, fetchBadges, fetchBadgesUtilizador])
+      .then(([cands, badges, badgesUser]) => {
         const listaCands = Array.isArray(cands) ? cands : [];
         const listaBadges = Array.isArray(badges) ? badges : [];
+        const listaBadgesUser = Array.isArray(badgesUser) ? badgesUser : [];
 
         const meta = {};
         listaBadges.forEach((b) => { meta[b.idbadge] = b; });
@@ -109,6 +115,11 @@ function Perfil() {
           nivel: meta[c.idbadge]?.nivel,
           area: meta[c.idbadge]?.area,
         })));
+        setBadgesUtilizador(
+          listaBadgesUser
+            .flatMap((sl) => Object.values(sl.areas || {}).flatMap((area) => Object.values(area.badges || {})))
+            .filter((badge) => badge?.conquistado)
+        );
 
         const ativos = ["OPEN", "SUBMITTED", "UNDER_REVIEW", "EM_VALIDACAO"];
         setEmCurso(listaCands.filter((c) => ativos.includes(c.estado?.toUpperCase())).length);
@@ -232,6 +243,44 @@ function Perfil() {
     { num: totalCand,    label: "Candidaturas",   icon: <MdOutlineAssignment size={16} />, cls: "blue"  },
   ];
 
+  const copiarAssinatura = async (badge) => {
+    const nome = utilizador?.nome || "Nome do Talent Manager";
+    const cargo = "Talent Manager";
+    const email = utilizador?.email || "nome@empresa.pt";
+    const badgeName = badge?.nome || badge?.badge_nome || "Badge";
+    const badgeImage = badge?.imagemurl || badge?.badge_imagem || "";
+
+    const html = buildEmailSignatureHtml({
+      nome,
+      cargo,
+      email,
+      badgeName,
+      badgeImage,
+    });
+    const textoSimples = [nome, cargo, email, `Badge: ${badgeName}`]
+      .filter(Boolean)
+      .join("\n");
+
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        const htmlBlob = new Blob([html], { type: "text/html" });
+        const textBlob = new Blob([textoSimples], { type: "text/plain" });
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": htmlBlob,
+            "text/plain": textBlob,
+          }),
+        ]);
+      } else {
+        await navigator.clipboard.writeText(html);
+      }
+
+      alert("Assinatura copiada. Pode colar diretamente no email.");
+    } catch {
+      alert("Não foi possível copiar a assinatura.");
+    }
+  };
+
   return (
     <div className="page-wrapper">
       <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={navItems} />
@@ -307,6 +356,47 @@ function Perfil() {
 
           {/* Coluna esquerda */}
           <div className="pf-col-main">
+
+            {perfilAtivo === "2" && (
+              <div className="pf-card">
+                <div className="pf-card-head">
+                  <h3>Assinatura de email</h3>
+                </div>
+
+                <p className="pf-signature-subtitle" style={{ marginBottom: 12 }}>
+                  Seleciona um dos teus badges abaixo para copiar a assinatura correspondente.
+                </p>
+
+                {loading ? (
+                  <p className="pf-empty">A carregar badges…</p>
+                ) : badgesUtilizador.length === 0 ? (
+                  <p className="pf-empty">Ainda não tens badges conquistados para usar na assinatura.</p>
+                ) : (
+                  <div className="pf-signature-list">
+                    {badgesUtilizador.map((badge) => (
+                      <div key={badge.idbadge} className="pf-signature-item">
+                        <div className="pf-signature-badge-info">
+                          <div className="pf-signature-badge-icon">
+                            {badge.imagemurl ? (
+                              <img src={badge.imagemurl} alt={badge.nome} />
+                            ) : (
+                              <FaMedal size={18} color="#d97706" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="pf-signature-badge-name">{badge.nome}</div>
+                            {badge.nivel && <div className="pf-signature-badge-meta">{badge.nivel}</div>}
+                          </div>
+                        </div>
+                        <button className="pf-signature-copy-btn" onClick={() => copiarAssinatura(badge)}>
+                          Copiar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {isConsultor && (
               <div className="pf-card">
