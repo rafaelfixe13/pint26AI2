@@ -14,7 +14,7 @@ const PERFIS = {
   4: { nome: "Administrador", descricao: "Acesso total à gestão da plataforma.",                         icone: "⚙️" },
 };
 
-const DESTINOS = { 1: "/consultor/dashboard", 2: "/talent/dashboard", 3: "/sl/dashboard", 4: "/admin/utilizadores" };
+const DESTINOS = { 1: "/consultor/dashboard", 2: "/talent/dashboard", 3: "/sl/dashboard", 4: "/admin/dashboard" };
 
 // Mapeamento de idrole → perfis disponíveis
 const PERFIS_POR_ROLE = {
@@ -23,6 +23,9 @@ const PERFIS_POR_ROLE = {
   3: [3],           // Service Line
   4: [4],           // Administrador
   5: [1, 2, 3, 4],  // Full Access — todos os perfis
+  6: [1, 3],        // Consultor + Service Line
+  7: [1, 2],        // Consultor + Talent Manager
+  8: [1, 4],        // Consultor + Administrador
 };
 
 // ── Popup configuração de perfil ──────────────────────────────────

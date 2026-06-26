@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Navbar.css";
+import "../styles/NotificacaoTipos.css";
+import { estiloNotificacao } from "../utils/notificacaoEstilo";
 import { BsBell, BsSearch, BsInfoCircle, BsQuestionCircle, BsTrash } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
@@ -212,18 +214,22 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                     <div className="notifications-empty">Não tens notificações.</div>
                   ) : (
                     <div className="notifications-list">
-                      {notificacoes.map((n) => (
+                      {notificacoes.map((n) => {
+                        const est = estiloNotificacao(n.tipo);
+                        return (
                         <div
                           key={n.idnotificacao}
-                          className="notification-item"
+                          className={`notification-item notif-item-${est.chave}`}
                           onClick={() => { if (!n.lido) marcarComoLida(n.idnotificacao); }}
                         >
-                          <div className="notification-avatar"><span>🟦</span></div>
+                          <div className={`notif-av notif-av-${est.chave}`}>{est.icon}</div>
                           <div className="notification-content">
                             <div className="notification-title">{n.titulo}</div>
                             <div className="notification-message">{n.mensagem}</div>
                             <div className="notification-meta">
                               {!n.lido && <span className="badge-unread-dot" />}
+                              <span className={`notif-tipo-label ${est.chave}`}>{est.label}</span>
+                              <span>•</span>
                               <span>{n.lido ? "Lida" : "Não lida"}</span>
                               <span>•</span>
                               <span>{formatarDataCurta(n.dataenvio)}</span>
@@ -239,7 +245,8 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                             </button>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>

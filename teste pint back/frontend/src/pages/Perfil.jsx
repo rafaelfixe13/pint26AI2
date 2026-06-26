@@ -312,7 +312,7 @@ function Perfil() {
             </div>
 
             <div className="pf-hero-right">
-              
+
 
               {isConsultor && (
                 <div className="pf-hero-stats">

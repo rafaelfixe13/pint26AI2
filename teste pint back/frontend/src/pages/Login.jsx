@@ -16,6 +16,14 @@ function Login() {
   const [emailPorConfirmar, setEmailPorConfirmar] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Mudança de password obrigatória no primeiro acesso (password temporária)
+  const [mudarPwd, setMudarPwd] = useState(false);
+  const [pendingUser, setPendingUser] = useState(null);
+  const [novaPwd, setNovaPwd] = useState("");
+  const [confirmPwd, setConfirmPwd] = useState("");
+  const [pwdErro, setPwdErro] = useState("");
+  const [pwdLoading, setPwdLoading] = useState(false);
+
   // Sessão guardada: salta o login
   useEffect(() => {
     if (localStorage.getItem("utilizador") && localStorage.getItem("lembrar") === "true") {
@@ -62,6 +70,13 @@ function Login() {
           : [];
       }
 
+      // Password temporária: obrigar a definir nova password antes de entrar
+      if (data.mudarPassword) {
+        setPendingUser(utilizadorParaGuardar);
+        setMudarPwd(true);
+        return;
+      }
+
       localStorage.setItem("utilizador", JSON.stringify(utilizadorParaGuardar));
       localStorage.setItem("lembrar", lembrar ? "true" : "false");
       navigate("/perfil");
@@ -69,6 +84,36 @@ function Login() {
       setErro("Não foi possível ligar ao servidor.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMudarPassword = async (e) => {
+    e.preventDefault();
+    setPwdErro("");
+    if (novaPwd.length < 6) { setPwdErro("A palavra-passe deve ter pelo menos 6 caracteres."); return; }
+    if (novaPwd !== confirmPwd) { setPwdErro("As palavras-passe não coincidem."); return; }
+
+    setPwdLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/alterar-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: pendingUser.idutilizador || pendingUser.id,
+          passwordAtual: password,   // a password temporária usada no login
+          novaPassword: novaPwd,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setPwdErro(data.message || "Erro ao alterar a palavra-passe."); return; }
+
+      localStorage.setItem("utilizador", JSON.stringify({ ...pendingUser, primeirologin: false }));
+      localStorage.setItem("lembrar", lembrar ? "true" : "false");
+      navigate("/perfil");
+    } catch {
+      setPwdErro("Não foi possível ligar ao servidor.");
+    } finally {
+      setPwdLoading(false);
     }
   };
 
@@ -151,6 +196,31 @@ function Login() {
           </Link>
         </p>
       </div>
+
+      {mudarPwd && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "1rem" }}>
+          <div className="auth-card" style={{ maxWidth: "420px", width: "100%", margin: 0 }}>
+            <h2 className="auth-title">Definir nova palavra-passe</h2>
+            <p className="auth-subtitle">É o seu primeiro acesso. Defina uma palavra-passe para continuar.</p>
+            <form onSubmit={handleMudarPassword} noValidate>
+              <div className="auth-field">
+                <label htmlFor="nova-pwd">Nova palavra-passe</label>
+                <input id="nova-pwd" type="password" placeholder="••••••••" value={novaPwd}
+                       onChange={(e) => setNovaPwd(e.target.value)} autoComplete="new-password" />
+              </div>
+              <div className="auth-field">
+                <label htmlFor="conf-pwd">Confirmar palavra-passe</label>
+                <input id="conf-pwd" type="password" placeholder="••••••••" value={confirmPwd}
+                       onChange={(e) => setConfirmPwd(e.target.value)} autoComplete="new-password" />
+              </div>
+              {pwdErro && <p className="auth-erro">{pwdErro}</p>}
+              <button type="submit" className="auth-btn" disabled={pwdLoading}>
+                {pwdLoading ? "A guardar..." : "Guardar e entrar"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
