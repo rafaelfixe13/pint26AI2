@@ -321,6 +321,11 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                     Ajuda
                   </button>
 
+                  <button className="nb-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/avisos"); }}>
+                    <BsBell size={15} />
+                    Avisos
+                  </button>
+
                   <div className="nb-divider" />
 
                   <button

@@ -18,6 +18,12 @@ const TIPOS = [
   { valor: "alerta", label: "Alerta" },
 ];
 
+const CANAIS = [
+  { valor: "app", label: "Apenas na app" },
+  { valor: "email", label: "Apenas email" },
+  { valor: "ambos", label: "App + Email" },
+];
+
 export default function NotificacoesAdmin() {
   const [modo, setModo] = useState("todos"); // todos | perfil | utilizador
   const [idrole, setIdrole] = useState(1);
@@ -25,6 +31,9 @@ export default function NotificacoesAdmin() {
   const [titulo, setTitulo] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [tipo, setTipo] = useState("aviso");
+  const [canal, setCanal] = useState("app");
+  const [pesquisaUtilizador, setPesquisaUtilizador] = useState("");
+  const [comboAberto, setComboAberto] = useState(false);
 
   const [utilizadores, setUtilizadores] = useState([]);
   const [enviando, setEnviando] = useState(false);
@@ -43,6 +52,16 @@ export default function NotificacoesAdmin() {
     return true;
   }, [titulo, mensagem, modo, idutilizador]);
 
+  const utilizadoresFiltrados = useMemo(() => {
+    const termo = pesquisaUtilizador.trim().toLowerCase();
+    if (!termo) return utilizadores;
+    return utilizadores.filter(
+      (u) =>
+        (u.nome || "").toLowerCase().includes(termo) ||
+        (u.email || "").toLowerCase().includes(termo)
+    );
+  }, [utilizadores, pesquisaUtilizador]);
+
   const resumoDestinatario = () => {
     if (modo === "todos") return "Todos os utilizadores";
     if (modo === "perfil") return ROLES.find((r) => r.idrole === Number(idrole))?.nome || "Perfil";
@@ -55,7 +74,7 @@ export default function NotificacoesAdmin() {
     setEnviando(true);
     setFeedback(null);
 
-    const body = { titulo: titulo.trim(), mensagem: mensagem.trim(), tipo };
+    const body = { titulo: titulo.trim(), mensagem: mensagem.trim(), tipo, canal };
     if (modo === "todos") body.paraTodos = true;
     else if (modo === "perfil") body.idrole = Number(idrole);
     else body.idutilizador = Number(idutilizador);
@@ -128,16 +147,44 @@ export default function NotificacoesAdmin() {
           )}
 
           {modo === "utilizador" && (
-            <div className="adm-campo" style={{ marginTop: "1rem", maxWidth: 420 }}>
+            <div className="adm-campo" style={{ marginTop: "1rem", maxWidth: 640 }}>
               <label>Utilizador</label>
-              <select value={idutilizador} onChange={(e) => setIdutilizador(e.target.value)}>
-                <option value="">— Selecionar —</option>
-                {utilizadores.map((u) => (
-                  <option key={u.idutilizador} value={u.idutilizador}>
-                    {u.nome} — {u.email}
-                  </option>
-                ))}
-              </select>
+              <div className="notif-combo">
+                <input
+                  type="text"
+                  placeholder="Pesquisar e selecionar utilizador..."
+                  value={pesquisaUtilizador}
+                  onChange={(e) => {
+                    setPesquisaUtilizador(e.target.value);
+                    setIdutilizador("");
+                    setComboAberto(true);
+                  }}
+                  onFocus={() => setComboAberto(true)}
+                  onBlur={() => setComboAberto(false)}
+                />
+                {comboAberto && utilizadoresFiltrados.length > 0 && (
+                  <ul className="notif-combo-lista">
+                    {utilizadoresFiltrados.map((u) => (
+                      <li
+                        key={u.idutilizador}
+                        className={`notif-combo-item ${Number(idutilizador) === u.idutilizador ? "ativo" : ""}`}
+                        onMouseDown={() => {
+                          setIdutilizador(u.idutilizador);
+                          setPesquisaUtilizador(`${u.nome} - ${u.email}`);
+                          setComboAberto(false);
+                        }}
+                      >
+                        {u.nome} - {u.email}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {comboAberto && utilizadoresFiltrados.length === 0 && (
+                  <ul className="notif-combo-lista">
+                    <li className="notif-combo-vazio">Sem resultados</li>
+                  </ul>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -150,6 +197,14 @@ export default function NotificacoesAdmin() {
               <select value={tipo} onChange={(e) => setTipo(e.target.value)} style={{ maxWidth: 200 }}>
                 {TIPOS.map((t) => (
                   <option key={t.valor} value={t.valor}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="adm-campo">
+              <label>Canal de envio</label>
+              <select value={canal} onChange={(e) => setCanal(e.target.value)} style={{ maxWidth: 200 }}>
+                {CANAIS.map((c) => (
+                  <option key={c.valor} value={c.valor}>{c.label}</option>
                 ))}
               </select>
             </div>

@@ -14,6 +14,8 @@ const NAV_ITEMS = [
   { label: "Badges", path: "/admin/badges" },
   { label: "Pedidos", path: "/admin/pedidos" },
   { label: "Notificações", path: "/admin/notificacoes" },
+  { label: "Informações", path: "/admin/informacoes" },
+  { label: "RGPD", path: "/admin/rgpd" },
   { label: "Relatórios", path: "/admin/relatorios" },
 ];
 
@@ -344,6 +346,11 @@ function AdminNav() {
                   <button className="an-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/ajuda"); }}>
                     <BsQuestionCircle size={15} />
                     Ajuda
+                  </button>
+
+                  <button className="an-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/avisos"); }}>
+                    <BsBell size={15} />
+                    Avisos
                   </button>
 
                   <div className="an-divider" />

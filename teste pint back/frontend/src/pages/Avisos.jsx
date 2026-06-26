@@ -5,16 +5,16 @@ import Navbar from "./NavBar";
 import { getNavItems, navegarTab } from "../utils/navConfig";
 import { API_BASE } from "../api";
 
-function Sobre() {
+function Avisos() {
   const navigate = useNavigate();
   const perfilAtivo = localStorage.getItem("perfilAtivo") || "1";
-  const [extras, setExtras] = useState([]);
+  const [avisos, setAvisos] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_BASE}/informacoes/publicas?tipo=sobre`)
+    fetch(`${API_BASE}/informacoes/publicas?tipo=aviso`)
       .then((r) => r.json())
-      .then((d) => setExtras(Array.isArray(d) ? d : []))
-      .catch(() => setExtras([]));
+      .then((d) => setAvisos(Array.isArray(d) ? d : []))
+      .catch(() => setAvisos([]));
   }, []);
 
   return (
@@ -27,12 +27,12 @@ function Sobre() {
 
       <div className="sobre-wrapper">
         <div className="sobre-intro">
-          <h2 className="sobre-titulo">Sobre</h2>
+          <h2 className="sobre-titulo">Avisos</h2>
         </div>
 
-        {extras.length > 0 ? (
+        {avisos.length > 0 ? (
           <div className="sobre-grelha">
-            {extras.map((info) => (
+            {avisos.map((info) => (
               <div key={info.idinformacao} className="sobre-card">
                 <h3>{info.titulo}</h3>
                 <p style={{ whiteSpace: "pre-line" }}>{info.conteudo}</p>
@@ -40,11 +40,11 @@ function Sobre() {
             ))}
           </div>
         ) : (
-          <p className="sobre-descricao">Ainda não há informação disponível.</p>
+          <p className="sobre-descricao">Não há avisos de momento.</p>
         )}
       </div>
     </div>
   );
 }
 
-export default Sobre;
+export default Avisos;

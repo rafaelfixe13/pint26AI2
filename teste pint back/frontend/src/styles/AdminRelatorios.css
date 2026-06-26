@@ -1,0 +1,82 @@
+/* Estilos partilhados das páginas de Admin (Relatórios, Dashboard, Notificações, Informações, RGPD) */
+
+.adm-rel-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 28px 48px;
+}
+
+.adm-rel-header { margin-bottom: 24px; }
+.adm-rel-header h1 { margin: 0 0 6px; font-size: 1.6rem; color: #1e293b; }
+.adm-rel-header p { margin: 0; color: #64748b; font-size: 0.92rem; }
+
+.adm-rel-msg {
+  padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
+  font-size: 0.9rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
+}
+
+/* Cartões */
+.adm-card {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
+  padding: 20px 22px; margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.adm-card h3 { margin: 0 0 14px; font-size: 1.05rem; color: #1e293b; }
+
+/* Campos de formulário */
+.adm-campo { display: flex; flex-direction: column; gap: 6px; }
+.adm-campo label { font-size: 0.82rem; font-weight: 600; color: #475569; }
+.adm-campo input,
+.adm-campo select,
+.adm-campo textarea {
+  width: 100%; box-sizing: border-box;
+  border: 1px solid #cbd5e1; border-radius: 9px; padding: 9px 12px;
+  font-size: 0.9rem; color: #1e293b; background: #fff; font-family: inherit; outline: none;
+}
+.adm-campo input:focus,
+.adm-campo select:focus,
+.adm-campo textarea:focus { border-color: #4f6ef7; box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.15); }
+.adm-campo textarea { resize: vertical; }
+
+/* Filtros */
+.adm-filtros { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+.adm-btn-aplicar,
+.adm-btn-limpar {
+  border: none; border-radius: 9px; padding: 9px 18px;
+  font-size: 0.88rem; font-weight: 600; cursor: pointer;
+}
+.adm-btn-aplicar { background: #4f6ef7; color: #fff; }
+.adm-btn-limpar { background: #eef2ff; color: #4338ca; }
+
+/* KPIs */
+.adm-kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.adm-kpi {
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+  padding: 16px; display: flex; flex-direction: column; gap: 4px;
+}
+.adm-kpi strong { font-size: 1.5rem; color: #1e293b; }
+.adm-kpi span { font-size: 0.82rem; color: #64748b; }
+
+/* Gráficos */
+.adm-charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+
+.adm-bars { display: flex; align-items: flex-end; gap: 12px; height: 200px; padding-top: 12px; }
+.adm-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 100%; }
+.adm-bar { width: 100%; max-width: 46px; background: #4f6ef7; border-radius: 6px 6px 0 0; min-height: 2px; }
+.adm-bar-val { font-size: 0.78rem; font-weight: 600; color: #334155; }
+.adm-bar-label { font-size: 0.72rem; color: #64748b; text-align: center; }
+
+.adm-dist-row { display: grid; grid-template-columns: 130px 1fr 46px; align-items: center; gap: 10px; margin-bottom: 10px; }
+.adm-dist-label { font-size: 0.82rem; color: #475569; }
+.adm-dist-track { background: #f1f5f9; border-radius: 6px; height: 10px; overflow: hidden; }
+.adm-dist-fill { height: 100%; background: #10b981; border-radius: 6px; }
+.adm-dist-val { font-size: 0.8rem; font-weight: 600; color: #334155; text-align: right; }
+
+/* Exportar */
+.adm-export-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.adm-export-card {
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px;
+}
+.adm-export-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+
+.adm-empty { color: #94a3b8; font-size: 0.9rem; text-align: center; padding: 24px 0; }

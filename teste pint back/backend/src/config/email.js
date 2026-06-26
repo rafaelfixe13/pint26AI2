@@ -230,9 +230,28 @@ const enviarEmailPasswordTemporaria = async (email, nome, passwordTemp) => {
   });
 };
 
+// Notificação genérica enviada pelo Admin (canal email).
+const enviarEmailNotificacao = async (email, titulo, mensagem) => {
+  await transporter.sendMail({
+    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: titulo,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #239292;">${titulo}</h2>
+        <p style="color: #1a1a2e; font-size: 15px; line-height: 1.6;">${mensagem}</p>
+        <p style="color: #6b7280; font-size: 13px; margin-top: 24px;">
+          Plataforma de Gestão de Badges — Softinsa
+        </p>
+      </div>
+    `,
+  });
+};
+
 module.exports = {
   enviarEmailConfirmacao,
   enviarEmailPrimeiroLogin,
+  enviarEmailNotificacao,
   enviarEmailNovaCandidaturaSL,
   enviarEmailCandidaturaConfirmada,
   enviarEmailCandidaturaDevolvida,

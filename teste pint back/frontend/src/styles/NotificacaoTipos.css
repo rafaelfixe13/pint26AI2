@@ -1,0 +1,34 @@
+/* Cores por tipo de notificação (avatar, rótulo e acento do item) */
+
+/* Avatar circular do ícone */
+.notif-av {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 50%;
+  flex-shrink: 0; color: #fff; background: #64748b;
+}
+.notif-av-aviso       { background: #f59e0b; }
+.notif-av-geral       { background: #3b82f6; }
+.notif-av-alerta      { background: #ef4444; }
+.notif-av-candidatura { background: #8b5cf6; }
+.notif-av-aprovacao   { background: #10b981; }
+.notif-av-rejeicao    { background: #ef4444; }
+
+/* Rótulo do tipo */
+.notif-tipo-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.02em; color: #64748b;
+}
+.notif-tipo-label.aviso       { color: #b45309; }
+.notif-tipo-label.geral       { color: #1d4ed8; }
+.notif-tipo-label.alerta      { color: #b91c1c; }
+.notif-tipo-label.candidatura { color: #6d28d9; }
+.notif-tipo-label.aprovacao   { color: #047857; }
+.notif-tipo-label.rejeicao    { color: #b91c1c; }
+
+/* Acento à esquerda do item conforme o tipo */
+.notif-item-aviso       { border-left: 3px solid #f59e0b; }
+.notif-item-geral       { border-left: 3px solid #3b82f6; }
+.notif-item-alerta      { border-left: 3px solid #ef4444; }
+.notif-item-candidatura { border-left: 3px solid #8b5cf6; }
+.notif-item-aprovacao   { border-left: 3px solid #10b981; }
+.notif-item-rejeicao    { border-left: 3px solid #ef4444; }
