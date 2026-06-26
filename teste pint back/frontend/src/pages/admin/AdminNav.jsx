@@ -1,14 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../../styles/AdminNav.css";
+import "../../styles/NotificacaoTipos.css";
+import { estiloNotificacao } from "../../utils/notificacaoEstilo";
 import { BsBell, BsSearch, BsInfoCircle, BsQuestionCircle, BsTrash } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 import { MdSwitchAccount } from "react-icons/md";
 
 const NAV_ITEMS = [
+  { label: "Início", path: "/admin/dashboard" },
   { label: "Utilizadores", path: "/admin/utilizadores" },
   { label: "Badges", path: "/admin/badges" },
+  { label: "Pedidos", path: "/admin/pedidos" },
+  { label: "Notificações", path: "/admin/notificacoes" },
+  { label: "Relatórios", path: "/admin/relatorios" },
 ];
 
 function AdminNav() {
@@ -172,7 +178,7 @@ function AdminNav() {
           {/* Logo */}
           <div
             className="an-logo"
-            onClick={() => navigate("/admin/utilizadores")}
+            onClick={() => navigate("/admin/dashboard")}
             style={{ cursor: "pointer" }}
           >
             <span className="logo-soft">Softinsa</span>
@@ -214,22 +220,24 @@ function AdminNav() {
                     </div>
                   ) : (
                     <div className="an-notif-list">
-                      {notificacoes.map((n) => (
+                      {notificacoes.map((n) => {
+                        const est = estiloNotificacao(n.tipo);
+                        return (
                         <div
                           key={n.idnotificacao}
-                          className="an-notif-item"
+                          className={`an-notif-item notif-item-${est.chave}`}
                           onClick={() => {
                             if (!n.lido) marcarComoLida(n.idnotificacao);
                           }}
                         >
-                          <div className="an-notif-avatar">
-                            <span>🟦</span>
-                          </div>
+                          <div className={`notif-av notif-av-${est.chave}`}>{est.icon}</div>
                           <div className="an-notif-content">
                             <div className="an-notif-title">{n.titulo}</div>
                             <div className="an-notif-message">{n.mensagem}</div>
                             <div className="an-notif-meta">
                               {!n.lido && <span className="an-unread-dot" />}
+                              <span className={`notif-tipo-label ${est.chave}`}>{est.label}</span>
+                              <span>•</span>
                               <span>{n.lido ? "Lida" : "Não lida"}</span>
                               <span>•</span>
                               <span>{formatarDataCurta(n.dataenvio)}</span>
@@ -248,7 +256,8 @@ function AdminNav() {
                             </button>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>

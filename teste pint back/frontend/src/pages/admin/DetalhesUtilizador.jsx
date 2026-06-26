@@ -4,7 +4,10 @@ import AdminNav from "./AdminNav";
 import { API_BASE } from "../../api";
 import "../../styles/DetalhesUtilizador.css";
 
-const ROLE_NOMES = { 1: "Consultor", 2: "Talent Manager", 3: "Service Line", 4: "Administrador" };
+const ROLE_NOMES = {
+  1: "Consultor", 2: "Talent Manager", 3: "Service Line", 4: "Administrador",
+  6: "Consultor + SL", 7: "Consultor + TM", 8: "Consultor + Admin",
+};
 
 const HIST_CFG = {
   badge:   { bg: "#fef9c3", cor: "#ca8a04", simbolo: "🏅" },
@@ -217,7 +220,7 @@ function DetalhesUtilizador() {
             <div className="du-card du-card-info">
               <div className="du-foto-col">
                 {utilizador.fotourl ? (
-                  <img src={utilizador.fotourl} alt={utilizador.nome} className="du-foto" />
+                  <img src={utilizador.fotourl.startsWith("data:") ? utilizador.fotourl : `data:image/jpeg;base64,${utilizador.fotourl}`} alt={utilizador.nome} className="du-foto" />
                 ) : (
                   <div className="du-foto du-foto-iniciais">{getInitials(utilizador.nome)}</div>
                 )}

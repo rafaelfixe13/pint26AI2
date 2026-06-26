@@ -4,12 +4,39 @@ import "../../styles/GestaoUtilizadores.css";
 import AdminNav from "./AdminNav";
 import { API_BASE } from "../../api";
 
-const ROLE_NOMES = { 1: "Consultor", 2: "Talent Manager", 3: "Service Line", 4: "Administrador" };
+const ROLE_NOMES = {
+  1: "Consultor", 2: "Talent Manager", 3: "Service Line", 4: "Administrador",
+  6: "Consultor + SL", 7: "Consultor + TM", 8: "Consultor + Admin",
+};
+
+// Perfis extra que se podem juntar ao Consultor (que é sempre a base)
+const PERFIS_EXTRA = [
+  { id: 2, nome: "Talent Manager" },
+  { id: 3, nome: "Service Line" },
+  { id: 4, nome: "Administrador" },
+];
+
+// Combinação de perfis -> idrole (null = combinação inválida).
+// Regra: Consultor é obrigatório e só admite UM perfil extra.
+function combinarPerfis(perfis) {
+  if (!perfis.includes(1)) return null;            // Consultor obrigatório
+  const extras = perfis.filter((p) => p !== 1);
+  if (extras.length === 0) return 1;               // só Consultor
+  if (extras.length > 1) return null;              // mais do que um extra -> inválido
+  return { 3: 6, 2: 7, 4: 8 }[extras[0]] ?? null;  // SL=6, TM=7, Admin=8
+}
+
+// idrole -> perfis base (inverso de combinarPerfis). Garante o Consultor como base.
+const PERFIS_DO_ROLE = { 1: [1], 2: [2], 3: [3], 4: [4], 5: [1, 2, 3, 4], 6: [1, 3], 7: [1, 2], 8: [1, 4] };
+function perfisDoRole(idrole) {
+  const extras = (PERFIS_DO_ROLE[idrole] ?? [idrole]).filter((p) => p !== 1);
+  return [1, ...extras];
+}
 
 function GestaoUtilizadores() {
   const navigate = useNavigate();
   const [utilizadores, setUtilizadores] = useState([]);
-  const [todasRoles, setTodasRoles] = useState([]);
+  const [perfisEdit, setPerfisEdit] = useState([1]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
   const [expandido, setExpandido] = useState(null);
@@ -17,7 +44,7 @@ function GestaoUtilizadores() {
 
   // Modal criar utilizador
   const [modalAberto, setModalAberto] = useState(false);
-  const [novoUtilizador, setNovoUtilizador] = useState({ nome: "", email: "", idrole: "1" });
+  const [novoUtilizador, setNovoUtilizador] = useState({ nome: "", email: "", perfis: [1] });
   const [erroModal, setErroModal] = useState("");
   const [loadingModal, setLoadingModal] = useState(false);
   const [sucessoModal, setSucessoModal] = useState("");
@@ -29,14 +56,8 @@ function GestaoUtilizadores() {
 
   const carregarDados = async () => {
     try {
-      const [resUsers, resRoles] = await Promise.all([
-        fetch(`${API_BASE}/admin/utilizadores`),
-        fetch(`${API_BASE}/admin/roles`),
-      ]);
-      const users = await resUsers.json();
-      const roles = await resRoles.json();
-      setUtilizadores(users);
-      setTodasRoles(roles);
+      const res = await fetch(`${API_BASE}/admin/utilizadores`);
+      setUtilizadores(await res.json());
     } catch {
       setErro("Erro ao carregar dados.");
     } finally {
@@ -46,36 +67,40 @@ function GestaoUtilizadores() {
 
   useEffect(() => { carregarDados(); }, []);
 
-  const temRole = (utilizador, idrole) =>
-    utilizador.roles?.some((r) => r.idrole === idrole);
+  // Abre o editor de um utilizador, pré-preenchendo os perfis a partir do idrole atual.
+  const abrirEditor = (u) => {
+    if (expandido === u.idutilizador) { setExpandido(null); return; }
+    setExpandido(u.idutilizador);
+    setPerfisEdit(perfisDoRole(u.idrole));
+  };
 
-  const toggleRole = async (utilizador, idrole) => {
-    const jatem = temRole(utilizador, idrole);
-    const endpoint = jatem
-      ? `${API_BASE}/admin/utilizadores/roles/remover`
-      : `${API_BASE}/admin/utilizadores/roles/adicionar`;
+  const togglePerfilEdit = (id) => {
+    setPerfisEdit((prev) => (prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]));
+  };
 
+  // Grava a combinação de perfis (idrole composto) — reusa o endpoint que faz update({ idrole }).
+  const guardarPerfis = async (u) => {
+    const idrole = combinarPerfis(perfisEdit);
+    if (idrole === null) {
+      mostrarFeedback(u.idutilizador, "Combinação inválida — Consultor + no máximo um perfil.", "erro");
+      return;
+    }
+    if (idrole === u.idrole) {
+      mostrarFeedback(u.idutilizador, "Sem alterações nos perfis.", "sucesso");
+      return;
+    }
     try {
-      const res = await fetch(endpoint, {
+      const res = await fetch(`${API_BASE}/admin/utilizadores/roles/adicionar`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idutilizador: utilizador.idutilizador, idrole }),
+        body: JSON.stringify({ idutilizador: u.idutilizador, idrole }),
       });
       const data = await res.json();
-
-      if (!res.ok) {
-        mostrarFeedback(utilizador.idutilizador, data.message, "erro");
-        return;
-      }
-
-      mostrarFeedback(
-        utilizador.idutilizador,
-        jatem ? `Role "${ROLE_NOMES[idrole]}" removida.` : `Role "${ROLE_NOMES[idrole]}" adicionada.`,
-        "sucesso"
-      );
+      if (!res.ok) { mostrarFeedback(u.idutilizador, data.message, "erro"); return; }
+      mostrarFeedback(u.idutilizador, `Perfil atualizado: ${ROLE_NOMES[idrole]}.`, "sucesso");
       carregarDados();
     } catch {
-      mostrarFeedback(utilizador.idutilizador, "Erro de ligação.", "erro");
+      mostrarFeedback(u.idutilizador, "Erro de ligação.", "erro");
     }
   };
 
@@ -100,7 +125,7 @@ function GestaoUtilizadores() {
   };
 
   const abrirModal = () => {
-    setNovoUtilizador({ nome: "", email: "", idrole: "1" });
+    setNovoUtilizador({ nome: "", email: "", perfis: [1] });
     setErroModal("");
     setSucessoModal("");
     setModalAberto(true);
@@ -110,6 +135,14 @@ function GestaoUtilizadores() {
     setModalAberto(false);
     setErroModal("");
     setSucessoModal("");
+  };
+
+  const togglePerfil = (id) => {
+    setErroModal("");
+    setNovoUtilizador((prev) => {
+      const tem = prev.perfis.includes(id);
+      return { ...prev, perfis: tem ? prev.perfis.filter((p) => p !== id) : [...prev.perfis, id] };
+    });
   };
 
   const handleCriarUtilizador = async (e) => {
@@ -122,6 +155,12 @@ function GestaoUtilizadores() {
       return;
     }
 
+    const idrole = combinarPerfis(novoUtilizador.perfis);
+    if (idrole === null) {
+      setErroModal("Combinação de perfis inválida. O Consultor é a base e só pode juntar UM de: Talent Manager, Service Line ou Administrador.");
+      return;
+    }
+
     setLoadingModal(true);
 
     try {
@@ -131,7 +170,7 @@ function GestaoUtilizadores() {
         body: JSON.stringify({
           nome: novoUtilizador.nome,
           email: novoUtilizador.email,
-          idrole: Number(novoUtilizador.idrole),
+          idrole,
         }),
       });
 
@@ -142,9 +181,13 @@ function GestaoUtilizadores() {
         return;
       }
 
-      setSucessoModal("Conta criada. O utilizador receberá o código de ativação no primeiro login.");
+      setSucessoModal(
+        data.passwordTemp
+          ? `${data.message} Palavra-passe temporária: ${data.passwordTemp}`
+          : (data.message || "Conta criada. A palavra-passe temporária foi enviada por email.")
+      );
       carregarDados();
-      setNovoUtilizador({ nome: "", email: "", idrole: "1" });
+      setNovoUtilizador({ nome: "", email: "", perfis: [1] });
     } catch {
       setErroModal("Não foi possível ligar ao servidor.");
     } finally {
@@ -201,7 +244,7 @@ function GestaoUtilizadores() {
                       <div className="gu-roles">
                         {u.roles?.length > 0
                           ? u.roles.map((r) => (
-                              <span key={r.idrole} className="gu-role-tag">{r.nome}</span>
+                              <span key={r.idrole} className="gu-role-tag">{ROLE_NOMES[r.idrole] || r.nome}</span>
                             ))
                           : <span className="gu-sem-role">Sem roles</span>
                         }
@@ -211,7 +254,7 @@ function GestaoUtilizadores() {
                       <div className="gu-acoes">
                         <button
                           className="gu-btn-editar"
-                          onClick={() => setExpandido(expandido === u.idutilizador ? null : u.idutilizador)}
+                          onClick={() => abrirEditor(u)}
                         >
                           {expandido === u.idutilizador ? "Fechar" : "Editar"}
                         </button>
@@ -224,21 +267,40 @@ function GestaoUtilizadores() {
                       <td colSpan={7}>
                         <div className="gu-editor">
                           <div className="gu-editor-secao">
-                            <h4>Roles</h4>
-                            <div className="gu-roles-editor">
-                              {todasRoles.map((role) => {
-                                const ativa = temRole(u, role.idrole);
-                                return (
-                                  <button
-                                    key={role.idrole}
-                                    className={`gu-role-toggle ${ativa ? "gu-role-toggle--ativa" : ""}`}
-                                    onClick={() => toggleRole(u, role.idrole)}
-                                  >
-                                    {ativa ? "✓ " : "+ "}{role.nome}
-                                  </button>
-                                );
-                              })}
+                            <h4>Perfis</h4>
+                            <div className="gu-roles-editor" style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", alignItems: "center" }}>
+                              <label style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", opacity: 0.85 }}>
+                                <input type="checkbox" checked disabled readOnly /> Consultor
+                                <span style={{ fontSize: "0.7rem", color: "#64748b" }}>(base)</span>
+                              </label>
+                              {PERFIS_EXTRA.map((p) => (
+                                <label key={p.id} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", cursor: "pointer" }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={perfisEdit.includes(p.id)}
+                                    onChange={() => togglePerfilEdit(p.id)}
+                                  />
+                                  {p.nome}
+                                </label>
+                              ))}
+                              <button
+                                className="gu-btn-criar"
+                                style={{ marginLeft: "auto" }}
+                                disabled={combinarPerfis(perfisEdit) === null || combinarPerfis(perfisEdit) === u.idrole}
+                                onClick={() => guardarPerfis(u)}
+                              >
+                                Guardar perfis
+                              </button>
                             </div>
+                            {combinarPerfis(perfisEdit) === null ? (
+                              <p className="gu-feedback gu-feedback--erro" style={{ marginTop: "0.5rem" }}>
+                                Combinação inválida — o Consultor só pode juntar UM perfil (TM, Service Line ou Admin).
+                              </p>
+                            ) : (
+                              <p style={{ fontSize: "0.85rem", color: "#475569", marginTop: "0.5rem" }}>
+                                Perfil: <strong>{ROLE_NOMES[combinarPerfis(perfisEdit)]}</strong>
+                              </p>
+                            )}
                           </div>
 
                           <div className="gu-editor-secao">
@@ -306,16 +368,32 @@ function GestaoUtilizadores() {
               </div>
 
               <div className="gu-modal-field">
-                <label htmlFor="novo-role">Role inicial</label>
-                <select
-                  id="novo-role"
-                  value={novoUtilizador.idrole}
-                  onChange={(e) => setNovoUtilizador({ ...novoUtilizador, idrole: e.target.value })}
-                >
-                  {todasRoles.map((r) => (
-                    <option key={r.idrole} value={r.idrole}>{r.nome}</option>
+                <label>Perfis</label>
+                <div className="gu-perfis-check" style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem" }}>
+                  <label className="gu-perfil-item" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", opacity: 0.85 }}>
+                    <input type="checkbox" checked disabled readOnly />
+                    Consultor <span style={{ fontSize: "0.7rem", color: "#64748b" }}>(base)</span>
+                  </label>
+                  {PERFIS_EXTRA.map((p) => (
+                    <label key={p.id} className="gu-perfil-item" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={novoUtilizador.perfis.includes(p.id)}
+                        onChange={() => togglePerfil(p.id)}
+                      />
+                      {p.nome}
+                    </label>
                   ))}
-                </select>
+                </div>
+                {combinarPerfis(novoUtilizador.perfis) === null ? (
+                  <p className="gu-modal-erro">
+                    Combinação inválida — o Consultor só pode juntar UM perfil (TM, Service Line ou Admin).
+                  </p>
+                ) : (
+                  <p style={{ fontSize: "0.85rem", color: "#475569", marginTop: "0.4rem" }}>
+                    Perfil: <strong>{ROLE_NOMES[combinarPerfis(novoUtilizador.perfis)]}</strong>
+                  </p>
+                )}
               </div>
 
               {erroModal && <p className="gu-modal-erro">{erroModal}</p>}
@@ -325,7 +403,11 @@ function GestaoUtilizadores() {
                 <button type="button" className="gu-modal-btn-cancelar" onClick={fecharModal}>
                   Cancelar
                 </button>
-                <button type="submit" className="gu-modal-btn-criar" disabled={loadingModal}>
+                <button
+                  type="submit"
+                  className="gu-modal-btn-criar"
+                  disabled={loadingModal || combinarPerfis(novoUtilizador.perfis) === null}
+                >
                   {loadingModal ? "A criar..." : "Criar conta"}
                 </button>
               </div>

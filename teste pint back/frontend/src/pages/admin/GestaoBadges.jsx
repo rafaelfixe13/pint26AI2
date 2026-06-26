@@ -877,6 +877,7 @@ function GestaoBadges() {
         ispublico: form.ispublico,
         competencias: form.competencias || null,
         idnivel: form.idnivel || null,
+        idarea: form.idarea || null,
         idespecial: form.idespecial || null,
       }),
     });
@@ -903,6 +904,7 @@ function GestaoBadges() {
         ispublico: form.ispublico,
         competencias: form.competencias || null,
         idnivel: form.idnivel || null,
+        idarea: form.idarea || null,
       }),
     });
     const data = await res.json();

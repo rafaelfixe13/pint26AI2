@@ -87,7 +87,7 @@ function BadgesUtilizador() {
         <div className="bu-card-user">
           <div className="bu-user-foto">
             {utilizador.fotourl ? (
-              <img src={utilizador.fotourl} alt={utilizador.nome} className="bu-foto" />
+              <img src={utilizador.fotourl.startsWith("data:") ? utilizador.fotourl : `data:image/jpeg;base64,${utilizador.fotourl}`} alt={utilizador.nome} className="bu-foto" />
             ) : (
               <div className="bu-foto bu-foto-iniciais">{getInitials(utilizador.nome)}</div>
             )}
