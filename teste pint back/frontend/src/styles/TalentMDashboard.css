@@ -26,6 +26,39 @@
     font-size: 1rem;
 }
 
+.tm-expiracao-banner {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    border: 1px solid #fdba74;
+    border-radius: 16px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.09);
+}
+
+.tm-expiracao-banner-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.tm-expiracao-banner h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #9a2c00;
+}
+
+.tm-expiracao-banner ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: #7c2d12;
+}
+
+.tm-expiracao-banner li + li {
+    margin-top: 0.35rem;
+}
+
 .tm-dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
