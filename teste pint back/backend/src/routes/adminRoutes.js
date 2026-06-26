@@ -7,6 +7,8 @@ const {
 
 const { uploadImagem } = require('../controllers/uploadController');
 
+const { getEstatisticas } = require('../controllers/estatisticasController');
+
 const {
   getAllBadges, createBadge, updateBadge, toggleBadge, listarNiveis, listarHierarquia, getBadgesUtilizador, listarBadgesComRequisitos, listarEspeciais,
 } = require('../controllers/badgeController');
@@ -30,6 +32,9 @@ router.put('/utilizadores/estado', atualizarEstadoConta);
 
 // Upload de imagem (Cloudinary)
 router.post('/upload-imagem', ...uploadImagem);
+
+// Estatísticas agregadas (dashboard + relatórios)
+router.get('/estatisticas', getEstatisticas);
 
 // Badges
 router.get('/badges', getAllBadges);
