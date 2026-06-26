@@ -198,6 +198,38 @@ const enviarEmailLembrete = async (email, nome, titulo, descricao, prazo, diasRe
   });
 };
 
+const enviarEmailPasswordTemporaria = async (email, nome, passwordTemp) => {
+  await transporter.sendMail({
+    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'A sua conta PINT — palavra-passe temporária',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2 style="color: #239292;">Olá, ${nome}!</h2>
+        <p>A sua conta foi criada por um administrador. Use a palavra-passe temporária abaixo para entrar pela primeira vez:</p>
+        <div style="
+          display: inline-block;
+          font-size: 1.8rem;
+          font-weight: bold;
+          letter-spacing: 0.15rem;
+          color: #1a1a2e;
+          background-color: #f0f2f5;
+          padding: 16px 32px;
+          border-radius: 10px;
+          margin: 16px 0;
+        ">
+          ${passwordTemp}
+        </div>
+        <p>No primeiro acesso ser-lhe-á pedido para definir uma nova palavra-passe.</p>
+        <p style="color: #6b7280; font-size: 13px; margin-top: 16px;">
+          Por segurança, altere a palavra-passe assim que entrar.<br/>
+          Se não esperava este email, contacte o administrador.
+        </p>
+      </div>
+    `,
+  });
+};
+
 module.exports = {
   enviarEmailConfirmacao,
   enviarEmailPrimeiroLogin,
@@ -209,4 +241,5 @@ module.exports = {
   enviarEmailCandidaturaSendBack,
   enviarEmailBadgeAExpirar,
   enviarEmailLembrete,
+  enviarEmailPasswordTemporaria,
 };
