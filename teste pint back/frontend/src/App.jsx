@@ -29,11 +29,15 @@ import ValidacoesSL from "./pages/ValidacoesSL";
 import DashBoardSL from "./pages/sl/DashBoardSL";
 import CatalogoSL from "./pages/sl/CatalogoSL";
 import ConquistasSL from "./pages/sl/ConquistasSL";
-import RankingSL from "./pages/sl/RankingSL";
 import RelatoriosSL from "./pages/sl/RelatoriosSL";
+import RankingSL from "./pages/sl/RankingSL";
 
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import GestaoUtilizadores from "./pages/admin/GestaoUtilizadores";
 import GestaoBadges from "./pages/admin/GestaoBadges";
+import AdminRelatorios from "./pages/admin/AdminRelatorios";
+import NotificacoesAdmin from "./pages/admin/Notificacoes";
+import GestaoPedidos from "./pages/admin/GestaoPedidos";
 import DetalhesUtilizador from "./pages/admin/DetalhesUtilizador";
 import BadgesUtilizador from "./pages/admin/BadgesUtilizador";
 
@@ -49,6 +53,9 @@ const PERFIS_POR_ROLE = {
   3: [3],
   4: [4],
   5: [1, 2, 3, 4],
+  6: [1, 3], // Consultor + Service Line
+  7: [1, 2], // Consultor + Talent Manager
+  8: [1, 4], // Consultor + Administrador
 };
 
 const temAcesso = (utilizador, idrole) => {
@@ -94,7 +101,7 @@ function App() {
         <Route path="/confirmar-email" element={<ConfirmarEmail />} />
         <Route path="/definir-password" element={<DefinirPassword />} />
         <Route path="/recuperar-password" element={<RecuperarPassword />} />
-        
+
         <Route path="/publico/consultor/:id" element={<PerfilPublico />} />
         <Route path="/verificar/:idcandidatura" element={<VerificarBadge />} />
 
@@ -126,13 +133,17 @@ function App() {
         <Route path="/sl/validacoes" element={<RotaSL><ValidacoesSL /></RotaSL>} />
         <Route path="/sl/catalogo" element={<RotaSL><CatalogoSL /></RotaSL>} />
         <Route path="/sl/conquistas" element={<RotaSL><ConquistasSL /></RotaSL>} />
-        <Route path="/sl/ranking" element={<RotaSL><RankingSL /></RotaSL>} />
         <Route path="/sl/relatorios" element={<RotaSL><RelatoriosSL /></RotaSL>} />
+        <Route path="/sl/ranking" element={<RotaSL><RankingSL /></RotaSL>} />
 
+        <Route path="/admin/dashboard" element={<RotaAdmin><AdminDashboard /></RotaAdmin>} />
+        <Route path="/admin/pedidos" element={<RotaAdmin><GestaoPedidos /></RotaAdmin>} />
         <Route path="/admin/utilizadores" element={<RotaAdmin><GestaoUtilizadores /></RotaAdmin>} />
         <Route path="/admin/utilizadores/:id" element={<RotaAdmin><DetalhesUtilizador /></RotaAdmin>} />
         <Route path="/admin/utilizadores/:id/badges" element={<RotaAdmin><BadgesUtilizador /></RotaAdmin>} />
         <Route path="/admin/badges" element={<RotaAdmin><GestaoBadges /></RotaAdmin>} />
+        <Route path="/admin/relatorios" element={<RotaAdmin><AdminRelatorios /></RotaAdmin>} />
+        <Route path="/admin/notificacoes" element={<RotaAdmin><NotificacoesAdmin /></RotaAdmin>} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
