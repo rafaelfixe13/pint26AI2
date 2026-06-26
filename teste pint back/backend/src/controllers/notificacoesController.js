@@ -1,4 +1,71 @@
 const Notificacao = require("../models/Notificacao");
+const { sequelize } = require("../config/database");
+
+// Um perfil base (1=Consultor, 2=TM, 3=SL, 4=Admin) pode estar em vários idrole
+// compostos. Mapeia cada perfil base para todos os idrole que o incluem.
+const ROLES_COM_PERFIL = {
+  1: [1, 5, 6, 7, 8], // Consultor
+  2: [2, 5, 7],       // Talent Manager
+  3: [3, 5, 6],       // Service Line
+  4: [4, 5, 8],       // Administrador
+};
+
+// Cria/envia notificações usando a tabela existente.
+// Destinatário: { idutilizador } (um só) | { idrole } (todos de um perfil) | { paraTodos: true } (broadcast).
+const criarNotificacao = async (req, res) => {
+  const { idutilizador, idrole, paraTodos, titulo, mensagem, tipo } = req.body;
+
+  if (!titulo || !mensagem) {
+    return res.status(400).json({ message: "Título e mensagem são obrigatórios." });
+  }
+
+  try {
+    // Envio individual
+    if (idutilizador) {
+      const nova = await Notificacao.create({
+        idutilizador, titulo, mensagem, tipo: tipo || "geral",
+      });
+      return res.status(201).json({ message: "Notificação enviada.", total: 1, notificacao: nova });
+    }
+
+    if (!paraTodos && !idrole) {
+      return res.status(400).json({ message: "Indique um destinatário (utilizador, perfil ou todos)." });
+    }
+
+    // Broadcast (todos) ou por perfil (inclui perfis compostos)
+    let where = "";
+    const replacements = {};
+    if (idrole) {
+      const roles = ROLES_COM_PERFIL[idrole] || [idrole];
+      where = "WHERE idrole IN (:roles)";
+      replacements.roles = roles;
+    }
+    const utilizadores = await sequelize.query(
+      `SELECT idutilizador FROM utilizadores ${where}`,
+      { type: sequelize.QueryTypes.SELECT, replacements }
+    );
+
+    if (utilizadores.length === 0) {
+      return res.status(404).json({ message: "Não há utilizadores para o destinatário selecionado." });
+    }
+
+    const registos = utilizadores.map((u) => ({
+      idutilizador: u.idutilizador,
+      titulo,
+      mensagem,
+      tipo: tipo || "aviso",
+    }));
+    await Notificacao.bulkCreate(registos);
+
+    return res.status(201).json({
+      message: `Notificação enviada a ${registos.length} utilizador(es).`,
+      total: registos.length,
+    });
+  } catch (err) {
+    console.error("Erro ao criar notificação:", err);
+    return res.status(500).json({ message: "Erro ao criar notificação." });
+  }
+};
 
 const listarNotificacoesPorUtilizador = async (req, res) => {
   const { id } = req.params; // idutilizador
@@ -37,6 +104,7 @@ const eliminarNotificacao = async (req, res) => {
 };
 
 module.exports = {
+  criarNotificacao,
   listarNotificacoesPorUtilizador,
   marcarComoLida,
   eliminarNotificacao,

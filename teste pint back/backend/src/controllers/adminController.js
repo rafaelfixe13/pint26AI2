@@ -2,8 +2,17 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { sequelize } = require('../config/database');
 const Utilizador = require('../models/Utilizador');
+const { enviarEmailPasswordTemporaria } = require('../config/email');
 
 const ROLE_CONSULTOR = 1;
+
+// Gera uma palavra-passe temporária legível (ex.: "Ak7q-Mn2p").
+const gerarPasswordTemporaria = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  let p = '';
+  for (let i = 0; i < 8; i++) p += chars[crypto.randomInt(chars.length)];
+  return `${p.slice(0, 4)}-${p.slice(4)}`;
+};
 
 const listarUtilizadores = async (req, res) => {
   try {
@@ -123,19 +132,32 @@ const criarUtilizador = async (req, res) => {
       return res.status(409).json({ message: 'Já existe uma conta com este email.' });
     }
 
-    const tempPassword = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+    const passwordTemp = gerarPasswordTemporaria();
+    const passwordHash = await bcrypt.hash(passwordTemp, 10);
     const roleId = idrole || ROLE_CONSULTOR;
 
     await Utilizador.create({
       nome,
       email,
-      passwordhash: tempPassword,
+      passwordhash: passwordHash,
       idrole: roleId,
-      emailconfirmado: false,
-      primeirologin: true,
+      emailconfirmado: true,   // já não precisa do código por email
+      primeirologin: true,     // obriga a mudar a password no 1.º login
     });
 
-    return res.status(201).json({ message: 'Conta criada com sucesso. O utilizador receberá o código de ativação no primeiro login.' });
+    try {
+      await enviarEmailPasswordTemporaria(email, nome, passwordTemp);
+    } catch (e) {
+      console.error('Falha ao enviar email da password temporária:', e.message);
+      // Fallback: devolve a password ao admin para a comunicar manualmente.
+      return res.status(201).json({
+        message: 'Conta criada, mas não foi possível enviar o email (verifique a configuração SMTP). Comunique a palavra-passe temporária ao utilizador.',
+        emailFalhou: true,
+        passwordTemp,
+      });
+    }
+
+    return res.status(201).json({ message: 'Conta criada. A palavra-passe temporária foi enviada para o email do utilizador.' });
   } catch (error) {
     console.error('Erro ao criar utilizador:', error);
     return res.status(500).json({ message: 'Erro interno do servidor.' });

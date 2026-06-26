@@ -127,6 +127,7 @@ const login = async (req, res) => {
 
     return res.json({
       message: 'Login efetuado com sucesso.',
+      mudarPassword: utilizador.primeirologin === true,
       utilizador: {
         id: utilizador.idutilizador,
         idutilizador: utilizador.idutilizador,
@@ -241,7 +242,7 @@ const alterarPassword = async (req, res) => {
     }
 
     const novaHash = await bcrypt.hash(novaPassword, 10);
-    await utilizador.update({ passwordhash: novaHash });
+    await utilizador.update({ passwordhash: novaHash, primeirologin: false });
 
     return res.json({ message: 'Password alterada com sucesso.' });
   } catch (error) {
