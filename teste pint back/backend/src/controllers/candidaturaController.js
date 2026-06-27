@@ -224,10 +224,12 @@ const listarCandidaturasTM = async (req, res) => {
                 ELSE NULL
               END AS resultado,
               b.nome AS badge_nome, b.imagemurl AS badge_imagem,
-              u.nome AS consultor_nome, u.email AS consultor_email
+              u.nome AS consultor_nome, u.email AS consultor_email,
+              a.nome AS area_nome
        FROM candidaturasbadge c
        JOIN badges b ON b.idbadge = c.badge_id
        JOIN utilizadores u ON u.idutilizador = c.user_id
+       LEFT JOIN areas a ON a.idarea = b.idarea
        WHERE UPPER(c.estado) IN ('SUBMITTED', 'UNDER_REVIEW', 'OPEN', 'APPROVED', 'REJECTED')
        ORDER BY c.datacriacao DESC`
     );
