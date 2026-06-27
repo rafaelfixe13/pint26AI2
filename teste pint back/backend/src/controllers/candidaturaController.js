@@ -3,6 +3,7 @@ const CandidaturaBadge = require('../models/CandidaturaBadge');
 const Notificacao = require('../models/Notificacao');
 const {
   enviarEmailNovaCandidaturaSL,
+  enviarEmailNovaCandidaturaTM,
   enviarEmailCandidaturaConfirmada,
   enviarEmailCandidaturaDevolvida,
   enviarEmailCandidaturaAprovada,
@@ -20,7 +21,7 @@ async function getTMsIds() {
   const [rows] = await sequelize.query(
     `SELECT idutilizador, nome, email
      FROM utilizadores
-     WHERE idrole = 2`
+     WHERE idrole IN (2, 5, 7)`
   );
   return rows;
 }
@@ -31,7 +32,7 @@ async function getSLsParaBadge(idbadge) {
      FROM badges b
      JOIN areas a ON a.idarea = b.idarea
      JOIN utilizadores u ON u.idserviceline = a.idserviceline
-     WHERE b.idbadge = :idbadge AND u.idrole = 3`,
+     WHERE b.idbadge = :idbadge AND u.idrole IN (3, 5, 6)`,
     { replacements: { idbadge } }
   );
   return rows;
@@ -159,6 +160,7 @@ const criarCandidatura = async (req, res) => {
         'Nova candidatura a validar',
         `${consultor.nome} candidatou-se ao badge "${badge?.nome}". Valide as evidências.`
       );
+      try { await enviarEmailNovaCandidaturaTM(tm.email, tm.nome, consultor.nome, badge?.nome); } catch (_) {}
     }
     try { await enviarEmailCandidaturaConfirmada(consultor.email, consultor.nome, badge?.nome); } catch (_) {}
 
