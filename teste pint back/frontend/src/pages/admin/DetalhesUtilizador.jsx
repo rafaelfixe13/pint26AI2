@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import AdminNav from "./AdminNav";
 import { API_BASE } from "../../api";
 import "../../styles/DetalhesUtilizador.css";
+import { FaMedal, FaKey } from "react-icons/fa";
+import { BsFolderFill, BsBarChartFill, BsClipboard, BsEnvelopeFill, BsCalendarEvent, BsCheckLg, BsPlusLg } from "react-icons/bs";
 
 const ROLE_NOMES = {
   1: "Consultor", 2: "Talent Manager", 3: "Service Line", 4: "Administrador",
@@ -10,12 +12,12 @@ const ROLE_NOMES = {
 };
 
 const HIST_CFG = {
-  badge:   { bg: "#fef9c3", cor: "#ca8a04", simbolo: "🏅" },
-  area:    { bg: "#dbeafe", cor: "#1d4ed8", simbolo: "📂" },
-  ranking: { bg: "#fce7f3", cor: "#9d174d", simbolo: "📊" },
-  login:   { bg: "#dcfce7", cor: "#16a34a", simbolo: "🔑" },
-  conta:   { bg: "#f3f4f6", cor: "#6b7280", simbolo: "📋" },
-  email:   { bg: "#ede9fe", cor: "#7c3aed", simbolo: "✉️" },
+  badge:   { bg: "#fef9c3", cor: "#ca8a04", simbolo: <FaMedal /> },
+  area:    { bg: "#dbeafe", cor: "#1d4ed8", simbolo: <BsFolderFill /> },
+  ranking: { bg: "#fce7f3", cor: "#9d174d", simbolo: <BsBarChartFill /> },
+  login:   { bg: "#dcfce7", cor: "#16a34a", simbolo: <FaKey /> },
+  conta:   { bg: "#f3f4f6", cor: "#6b7280", simbolo: <BsClipboard /> },
+  email:   { bg: "#ede9fe", cor: "#7c3aed", simbolo: <BsEnvelopeFill /> },
 };
 
 function HistIcone({ tipo }) {
@@ -210,7 +212,7 @@ function DetalhesUtilizador() {
 
         <h1 className="du-titulo">Detalhes de utilizador</h1>
 
-        {/* ── Grid 2 colunas: esq (info + histórico) | dir (estado + service lines) ── */}
+        {/* Grid principal */}
         <div className="du-grid-principal">
 
           {/* Coluna esquerda */}
@@ -302,7 +304,7 @@ function DetalhesUtilizador() {
               <p className="du-secao-label">Data de inscrição</p>
               <div className="du-campo-data-row">
                 <span>{formatarData(utilizador.datacriacao)}</span>
-                <span className="du-cal-icone">📅</span>
+                <span className="du-cal-icone"><BsCalendarEvent /></span>
               </div>
             </div>
 
@@ -339,7 +341,7 @@ function DetalhesUtilizador() {
           </div>
         </div>
 
-        {/* ── Roles ── */}
+        {/* roles */}
         <div className="du-card du-card-roles">
           <h3 className="du-card-titulo">Roles</h3>
           <div className="du-roles-editor">
@@ -351,14 +353,14 @@ function DetalhesUtilizador() {
                   className={`du-role-toggle ${ativa ? "du-role-toggle--ativa" : ""}`}
                   onClick={() => toggleRolePendente(role.idrole)}
                 >
-                  {ativa ? "✓ " : "+ "}{role.nome}
+                  {ativa ? <BsCheckLg /> : <BsPlusLg />} {role.nome}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* ── 4 stats cards ── */}
+        {/* cards de estatistica */}
         <div className="du-stats-row">
           <div className="du-stat-card">
             <span className="du-stat-label">Badges</span>

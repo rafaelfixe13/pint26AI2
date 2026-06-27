@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import "../../styles/GestaoBadges.css";
 import AdminNav from "./AdminNav";
 import { API_BASE } from "../../api";
+import { BsX, BsFileEarmarkText, BsPencil, BsTrash, BsArrowCounterclockwise } from "react-icons/bs";
 
 const API = `${API_BASE}/admin`;
 
-// ── Seletor de imagem (preview local, sem upload imediato) ───────
-// previewUrl: URL a mostrar (Cloudinary URL existente ou blob local)
-// onFileSelect: (File | null) => void  — chamado quando o utilizador escolhe/remove
+// previewUrl: URL a mostrar
+// onFileSelect: (File | null) => void chama quando o utilizador escolhe/remove
 function ImageUpload({ previewUrl, onFileSelect }) {
   const handleFile = (e) => {
     const file = e.target.files[0];
@@ -26,24 +26,23 @@ function ImageUpload({ previewUrl, onFileSelect }) {
         <input type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
       </label>
       {previewUrl && (
-        <button type="button" className="gb-image-upload-remover" onClick={() => onFileSelect(null)} title="Remover imagem">✕</button>
+        <button type="button" className="gb-image-upload-remover" onClick={() => onFileSelect(null)} title="Remover imagem"><BsX /></button>
       )}
     </div>
   );
 }
 
-// Função utilitária: converte um File numa data URL base64 (guardada em imagemurl).
-// Substitui o antigo upload para Cloudinary — a imagem fica embebida na própria BD.
+// converte um ficehrio para base64
 function fileParaBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("Erro ao ler a imagem."));
+    reader.onerror = () => reject(new Error("Erro ao ler o ficheiro."));
     reader.readAsDataURL(file);
   });
 }
 
-// ── Input inline ─────────────────────────────────────────────────
+//Input inline 
 function InlineAdd({ placeholder, btnLabel, onAdd }) {
   const [valor, setValor] = useState("");
   const submit = async () => {
@@ -65,14 +64,14 @@ function InlineAdd({ placeholder, btnLabel, onAdd }) {
   );
 }
 
-// ── Modal genérico ────────────────────────────────────────────────
+//Modal genérico
 function Modal({ titulo, onFechar, children, footer, stacked }) {
   return (
     <div className={`gb-modal-overlay${stacked ? " gb-modal-overlay--stacked" : ""}`} onClick={onFechar}>
       <div className="gb-modal" onClick={(e) => e.stopPropagation()}>
         <div className="gb-modal-header">
           <h2 className="gb-modal-titulo">{titulo}</h2>
-          <button className="gb-modal-fechar" onClick={onFechar}>✕</button>
+          <button className="gb-modal-fechar" onClick={onFechar}><BsX /></button>
         </div>
         <div className="gb-modal-body">{children}</div>
         {footer && <div className="gb-modal-footer">{footer}</div>}
@@ -81,7 +80,7 @@ function Modal({ titulo, onFechar, children, footer, stacked }) {
   );
 }
 
-// ── Modal editar nome simples ─────────────────────────────────────
+//editar nome
 function ModalEditar({ titulo, valorAtual, onFechar, onGuardar, submetendo }) {
   const [nome, setNome] = useState(valorAtual);
   return (
@@ -102,7 +101,7 @@ function ModalEditar({ titulo, valorAtual, onFechar, onGuardar, submetendo }) {
   );
 }
 
-// ── Modal Learning Path ───────────────────────────────────────────
+//LP
 function ModalLP({ lpEditar, submetendo, onFechar, onGuardar }) {
   const [form, setForm] = useState(
     lpEditar
@@ -148,7 +147,24 @@ function ModalLP({ lpEditar, submetendo, onFechar, onGuardar }) {
   );
 }
 
-// ── Modal criar / editar Requisito ────────────────────────────────
+const NIVEIS_FIXOS = [
+  { codigo: "A", nome: "Júnior" },
+  { codigo: "B", nome: "Intermédio" },
+  { codigo: "C", nome: "Sénior" },
+  { codigo: "D", nome: "Especialista" },
+  { codigo: "E", nome: "Líder de Conhecimento" },
+];
+
+const letraDoNivelNome = (nome) => {
+  const c = NIVEIS_FIXOS.find((n) => n.nome === nome)?.codigo;
+  if (c) return c;
+  const f = (nome || "").trim().charAt(0).toUpperCase();
+  return ["A", "B", "C", "D", "E"].includes(f) ? f : "";
+};
+const ordenarNiveis = (lista) =>
+  [...(lista || [])].sort((a, b) => letraDoNivelNome(a.nome).localeCompare(letraDoNivelNome(b.nome)));
+
+//criar/editar Requisito
 function ModalRequisito({ requisitoEditar, submetendo, onFechar, onGuardar, stacked }) {
   const [form, setForm] = useState(
     requisitoEditar
@@ -156,7 +172,31 @@ function ModalRequisito({ requisitoEditar, submetendo, onFechar, onGuardar, stac
       : { codigo: "", titulo: "", descricao: "", imagemurl: "" }
   );
   const [erro, setErro] = useState("");
+  const [convertendo, setConvertendo] = useState(false);
+  const [filename, setFilename] = useState("");
   const f = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+
+  // Ficheiro do requisito em base64
+  const handleFicheiro = async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    setConvertendo(true);
+    try {
+      const base64 = await fileParaBase64(file);
+      setForm((p) => ({ ...p, imagemurl: base64 }));
+      setFilename(file.name);
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setConvertendo(false);
+    }
+  };
+
+  const removerFicheiro = () => { setForm((p) => ({ ...p, imagemurl: "" })); setFilename(""); };
+
+  const ehPdf = form.imagemurl?.startsWith("data:application/pdf");
+  const ehImagem = !!form.imagemurl && !ehPdf;
 
   const submit = () => {
     if (!form.codigo.trim()) { setErro("O código é obrigatório (ex: A1)."); return; }
@@ -196,15 +236,28 @@ function ModalRequisito({ requisitoEditar, submetendo, onFechar, onGuardar, stac
         />
       </div>
       <div className="gb-form-grupo">
-        <label>URL da imagem</label>
-        <input type="text" placeholder="https://... (opcional)" value={form.imagemurl} onChange={f("imagemurl")} />
+        <label>Ficheiro (imagem ou PDF) — opcional</label>
+        <div className="gb-image-upload">
+          {ehImagem && (
+            <img src={form.imagemurl} alt="Preview" className="gb-image-upload-preview" />
+          )}
+          {ehPdf && (
+            <span style={{ fontSize: 13, color: "#374151" }}><BsFileEarmarkText /> {filename || "documento.pdf"}</span>
+          )}
+          <label className="gb-image-upload-btn">
+            {convertendo ? "A processar..." : form.imagemurl ? "Trocar ficheiro" : "Escolher ficheiro"}
+            <input type="file" accept="image/*,application/pdf" onChange={handleFicheiro} style={{ display: "none" }} />
+          </label>
+          {form.imagemurl && (
+            <button type="button" className="gb-image-upload-remover" onClick={removerFicheiro} title="Remover ficheiro"><BsX /></button>
+          )}
+        </div>
       </div>
       {erro && <p className="gb-feedback gb-feedback--erro">{erro}</p>}
     </Modal>
   );
 }
 
-// ── Modal criar / editar Nível (global — tabela `nivel`) ──────────
 function ModalNivel({ nivelEditar, submetendo, onFechar, onGuardar }) {
   const [form, setForm] = useState(
     nivelEditar
@@ -245,7 +298,6 @@ function ModalNivel({ nivelEditar, submetendo, onFechar, onGuardar }) {
   );
 }
 
-// ── Modal apagar Nível ────────────────────────────────────────────
 function ModalApagarNivel({ nivel, badgesAfetados, submetendo, onFechar, onConfirmar }) {
   const bloqueado = badgesAfetados > 0;
   return (
@@ -281,7 +333,7 @@ const CODIGO_NIVEL_LABEL = { A: "Júnior", B: "Intermédio", C: "Sénior", D: "E
 const LP_CORES = ["#3b82f6","#8b5cf6","#10b981","#f59e0b","#ef4444","#06b6d4","#f97316","#6366f1"];
 const lpCor = (idlearningpath) => LP_CORES[(idlearningpath - 1) % LP_CORES.length];
 
-// ── Modal editar Badge ────────────────────────────────────────────
+// editar Badge
 function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
   const [form, setForm] = useState({
     nome: badge.nome || "",
@@ -307,16 +359,17 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  // Cascata SL → Área (a área é só associação); o Nível é global
+  //sl-area-nvl
   const [slSel, setSlSel] = useState(badge.idserviceline ? String(badge.idserviceline) : "");
   const [areaSel, setAreaSel] = useState(badge.idarea ? String(badge.idarea) : "");
   const areasFiltradas = slSel
     ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || [])
     : [];
+  const niveisOrdenados = ordenarNiveis(niveis);
 
   const handleAreaSelect = (idareaStr) => {
     setAreaSel(idareaStr);
-    setForm((p) => ({ ...p, idarea: idareaStr ? Number(idareaStr) : "", idnivel: "" }));
+    setForm((p) => ({ ...p, idarea: idareaStr ? Number(idareaStr) : "" }));
   };
 
   const handleNivelSelect = (idnivelStr) => {
@@ -384,7 +437,7 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
     }
   };
 
-  const nivelSelecionadoNome = niveis.find((n) => n.idnivel == form.idnivel)?.nome || "";
+  const nivelSelecionadoNome = niveisOrdenados.find((n) => n.idnivel == form.idnivel)?.nome || "";
 
   return (
     <>
@@ -469,8 +522,10 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
               <label>Nível</label>
               <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)}>
                 <option value="">-- Selecionar --</option>
-                {niveis.map((n) => (
-                  <option key={n.idnivel} value={n.idnivel}>{n.nome}{n.descricao ? ` — ${n.descricao}` : ""}</option>
+                {niveisOrdenados.map((n) => (
+                  <option key={n.idnivel} value={n.idnivel}>
+                    {letraDoNivelNome(n.nome) ? `${letraDoNivelNome(n.nome)} — ${n.nome}` : n.nome}
+                  </option>
                 ))}
               </select>
             </div>
@@ -497,12 +552,12 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
                 <span className="gb-req-titulo" style={{ flex: 1 }}>{req.titulo}</span>
                 {!req.ativo && <span className="gb-tag-inativo">Inativo</span>}
                 <div className="gb-req-acoes">
-                  <button className="gb-icon-btn" title="Editar requisito" onClick={() => setReqEdit(req)}>✏</button>
+                  <button className="gb-icon-btn" title="Editar requisito" onClick={() => setReqEdit(req)}><BsPencil /></button>
                   <button
                     className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${req.ativo ? "off" : "on"}`}
                     title={req.ativo ? "Desativar" : "Reativar"}
                     onClick={() => handleToggleReq(req.idrequisito, req.ativo)}>
-                    {req.ativo ? "🗑" : "↩"}
+                    {req.ativo ? <BsTrash /> : <BsArrowCounterclockwise />}
                   </button>
                 </div>
               </div>
@@ -528,7 +583,7 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
   );
 }
 
-// ── Modal criar Badge ─────────────────────────────────────────────
+//criar Badge
 function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar }) {
   const [form, setForm] = useState({
     nome: "", descricao: "", pontos: "",
@@ -546,6 +601,8 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
   const areasFiltradas = slSel
     ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || [])
     : [];
+  
+  const niveisOrdenados = ordenarNiveis(niveis);
 
   const handleAreaSelect = (idareaStr) => {
     setAreaSel(idareaStr);
@@ -562,6 +619,20 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
     setPreviewUrl(URL.createObjectURL(file));
   };
 
+  // Requisitos definidos localmente
+  const [reqs, setReqs] = useState([]);
+  const [reqEdit, setReqEdit] = useState(null);
+
+  const guardarReqLocal = (formReq) => {
+    setReqs((prev) =>
+      reqEdit && reqEdit._idx != null
+        ? prev.map((r, i) => (i === reqEdit._idx ? { ...formReq } : r))
+        : [...prev, { ...formReq }]
+    );
+    setReqEdit(null);
+  };
+  const removerReqLocal = (idx) => setReqs((prev) => prev.filter((_, i) => i !== idx));
+
   const submit = async () => {
     if (!form.nome.trim()) { setErro("O nome é obrigatório."); return; }
     if (form.pontos === "") { setErro("Os pontos são obrigatórios."); return; }
@@ -569,7 +640,7 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
     setUploading(true);
     try {
       const imagemurl = pendingFile ? await fileParaBase64(pendingFile) : "";
-      onGuardar({ ...form, imagemurl });
+      onGuardar({ ...form, imagemurl, requisitos: reqs });
     } catch (e) {
       setErro(e.message);
     } finally {
@@ -578,6 +649,7 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
   };
 
   return (
+    <>
     <Modal titulo="Novo Badge" onFechar={onFechar} footer={
       <>
         <button className="gb-btn-confirmar" onClick={submit} disabled={uploading}>
@@ -654,8 +726,10 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
             <label>Nível</label>
             <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)}>
               <option value="">-- Selecionar --</option>
-              {niveis.map((n) => (
-                <option key={n.idnivel} value={n.idnivel}>{n.nome}{n.descricao ? ` — ${n.descricao}` : ""}</option>
+              {niveisOrdenados.map((n) => (
+                <option key={n.idnivel} value={n.idnivel}>
+                  {letraDoNivelNome(n.nome) ? `${letraDoNivelNome(n.nome)} — ${n.nome}` : n.nome}
+                </option>
               ))}
             </select>
           </div>
@@ -682,27 +756,64 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
           )}
         </div>
       </div>
+
+      {/* Requisitos*/}
+      <div className="gb-modal-secao">
+        <div className="gb-modal-secao-titulo">
+          Requisitos
+          <span className="gb-secao-count" style={{ marginLeft: "0.5rem" }}>{reqs.length}</span>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+          {reqs.length === 0 && <p className="gb-vazio-inner">Sem requisitos ainda.</p>}
+          {reqs.map((req, idx) => (
+            <div key={idx} className="gb-req-item">
+              <span className="gb-req-codigo">{req.codigo}</span>
+              <span className="gb-req-titulo" style={{ flex: 1 }}>{req.titulo}</span>
+              <div className="gb-req-acoes">
+                <button className="gb-icon-btn" title="Editar requisito" onClick={() => setReqEdit({ ...req, _idx: idx })}><BsPencil /></button>
+                <button className="gb-btn-toggle-ativo gb-btn-toggle-ativo--off" title="Remover" onClick={() => removerReqLocal(idx)}><BsTrash /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button className="gb-btn-add-req" style={{ marginTop: "0.5rem" }}
+          onClick={() => setReqEdit({ codigo: "", titulo: "", descricao: "", imagemurl: "" })}>
+          + Adicionar Requisito
+        </button>
+      </div>
     </Modal>
+
+    {reqEdit && (
+      <ModalRequisito
+        stacked
+        requisitoEditar={reqEdit.codigo ? reqEdit : null}
+        submetendo={false}
+        onFechar={() => setReqEdit(null)}
+        onGuardar={guardarReqLocal}
+      />
+    )}
+    </>
   );
 }
 
 
-// ── Página principal ──────────────────────────────────────────────
+//Página principal
 function GestaoBadges() {
   const [hierarquia, setHierarquia] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
-  const [niveis, setNiveis] = useState([]);
   const [badges, setBadges] = useState([]);
   const [especiais, setEspeciais] = useState([]);
+  const [niveis, setNiveis] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
   const [lpExp, setLpExp] = useState(true);
   const [nivExp, setNivExp] = useState(true);
   const [slExp, setSlExp] = useState({});
-  const [modalLP, setModalLP] = useState(null);          // { lp? }
-  const [modalNivel, setModalNivel] = useState(null);    // { nivel? }
-  const [modalApagarNivel, setModalApagarNivel] = useState(null); // { nivel, badgesAfetados }
+  const [areaExp, setAreaExp] = useState({});
+  const [modalLP, setModalLP] = useState(null);
+  const [modalNivel, setModalNivel] = useState(null);
+  const [modalApagarNivel, setModalApagarNivel] = useState(null);
   const [modalEditSL, setModalEditSL] = useState(null);
   const [modalEditArea, setModalEditArea] = useState(null);
   const [modalEditBadge, setModalEditBadge] = useState(null);
@@ -738,9 +849,12 @@ function GestaoBadges() {
       setEspeciais(Array.isArray(es) ? es : []);
       setNiveis(Array.isArray(ns) ? ns : []);
 
-      const sl = {};
-      h.forEach((s) => { sl[s.idserviceline] = true; });
-      setSlExp(sl);
+      const sl = {}, ar = {};
+      h.forEach((s) => {
+        sl[s.idserviceline] = true;
+        s.areas.forEach((a) => { ar[a.idarea] = true; });
+      });
+      setSlExp(sl); setAreaExp(ar);
     } catch {
       setErro("Erro ao carregar dados.");
     } finally {
@@ -750,12 +864,13 @@ function GestaoBadges() {
 
   useEffect(() => { carregar(); }, []);
 
-  // ── Toggle ativo (soft delete / reativar) ────────────────────
+  //soft delete
   const handleToggle = async (tipo, id, ativoAtual) => {
     const endpoints = {
       lp: `${API}/learningpaths/${id}/ativo`,
       sl: `${API}/servicelines/${id}/ativo`,
       area: `${API}/areas/${id}/ativo`,
+      nivel: `${API}/niveis/${id}/ativo`,
       requisito: `${API}/requisitos/${id}/ativo`,
       badge: `${API}/badges/${id}/ativo`,
     };
@@ -766,7 +881,7 @@ function GestaoBadges() {
     carregar();
   };
 
-  // ── Learning Paths ────────────────────────────────────────────
+  // lp
   const handleGuardarLP = async (form) => {
     setSubmetendo(true);
     const isEdit = !!modalLP?.lp;
@@ -784,7 +899,7 @@ function GestaoBadges() {
     carregar();
   };
 
-  // ── Service Lines ─────────────────────────────────────────────
+  //sl
   const handleCriarSL = async (nome) => {
     const res = await fetch(`${API}/servicelines`, {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -810,7 +925,7 @@ function GestaoBadges() {
     carregar();
   };
 
-  // ── Áreas ─────────────────────────────────────────────────────
+  //areas
   const handleCriarArea = async (idserviceline, nome) => {
     const res = await fetch(`${API}/areas`, {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -836,7 +951,6 @@ function GestaoBadges() {
     carregar();
   };
 
-  // ── Níveis (globais — tabela `nivel`) ─────────────────────────
   const handleGuardarNivel = async (form) => {
     setSubmetendo(true);
     const isEdit = !!modalNivel.nivel;
@@ -865,32 +979,58 @@ function GestaoBadges() {
     carregar();
   };
 
-  // ── Badges ────────────────────────────────────────────────────
+  //badges
   const handleCriarBadge = async (form) => {
     setSubmetendo(true);
-    const res = await fetch(`${API}/badges`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nome: form.nome,
-        descricao: form.descricao || null,
-        imagemurl: form.imagemurl || null,
-        pontos: Number(form.pontos),
-        expiremeses: form.expiremeses !== "" ? Number(form.expiremeses) : null,
-        linkpublicobase: form.linkpublicobase || null,
-        ispublico: form.ispublico,
-        competencias: form.competencias || null,
-        idnivel: form.idnivel || null,
-        idarea: form.idarea || null,
-        idespecial: form.idespecial || null,
-      }),
-    });
-    const data = await res.json();
-    setSubmetendo(false);
-    if (!res.ok) { toast(data.error, "erro"); return; }
-    toast("Badge criado.");
-    setModalCriarBadge(false);
-    carregar();
+    try {
+      const res = await fetch(`${API}/badges`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: form.nome,
+          descricao: form.descricao || null,
+          imagemurl: form.imagemurl || null,
+          pontos: Number(form.pontos),
+          expiremeses: form.expiremeses !== "" ? Number(form.expiremeses) : null,
+          linkpublicobase: form.linkpublicobase || null,
+          ispublico: form.ispublico,
+          competencias: form.competencias || null,
+          idnivel: form.idnivel || null,
+          idarea: form.idarea || null,
+          idespecial: form.idespecial || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast(data.error, "erro"); return; }
+
+      // Cria os requisitos definidos no modal (precisam do idbadge devolvido)
+      const novoId = data.idbadge;
+      const requisitos = form.requisitos || [];
+      let falhas = 0;
+      for (const r of requisitos) {
+        if (!novoId) break;
+        const rr = await fetch(`${API}/requisitos`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            idbadge: novoId,
+            codigo: r.codigo,
+            titulo: r.titulo,
+            descricao: r.descricao,
+            imagemurl: r.imagemurl || null,
+          }),
+        });
+        if (!rr.ok) falhas++;
+      }
+
+      toast(falhas ? `Badge criado, mas ${falhas} requisito(s) falharam.` : "Badge criado.", falhas ? "erro" : "sucesso");
+      setModalCriarBadge(false);
+      carregar();
+    } catch (e) {
+      toast(e.message, "erro");
+    } finally {
+      setSubmetendo(false);
+    }
   };
 
   const handleEditarBadge = async (form) => {
@@ -932,7 +1072,7 @@ function GestaoBadges() {
 
         {feedback && <div className={`gb-toast gb-toast--${feedbackTipo}`}>{feedback}</div>}
 
-        {/* ── SECÇÃO LEARNING PATHS ── */}
+        {/*Lp*/}
         <div className="gb-secao">
           <div className="gb-secao-header" onClick={() => setLpExp((v) => !v)}>
             <span className="gb-secao-chevron">{lpExp ? "∨" : "›"}</span>
@@ -958,11 +1098,11 @@ function GestaoBadges() {
                     {lp.descricao && <span className="gb-lp-desc">{lp.descricao}</span>}
                   </div>
                   <div className="gb-sl-acoes">
-                    <button className="gb-icon-btn" onClick={() => setModalLP({ lp })}>✏</button>
+                    <button className="gb-icon-btn" onClick={() => setModalLP({ lp })}><BsPencil /></button>
                     <button className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${lp.ativo ? "off" : "on"}`}
                       title={lp.ativo ? "Desativar" : "Reativar"}
                       onClick={() => handleToggle("lp", lp.idlearningpath, lp.ativo)}>
-                      {lp.ativo ? "🗑" : "↩"}
+                      {lp.ativo ? <BsTrash /> : <BsArrowCounterclockwise />}
                     </button>
                   </div>
                 </div>
@@ -971,7 +1111,6 @@ function GestaoBadges() {
           )}
         </div>
 
-        {/* ── SECÇÃO NÍVEIS (globais) ── */}
         <div className="gb-secao">
           <div className="gb-secao-header" onClick={() => setNivExp((v) => !v)}>
             <span className="gb-secao-chevron">{nivExp ? "∨" : "›"}</span>
@@ -997,12 +1136,12 @@ function GestaoBadges() {
                     {nivel.descricao && <span className="gb-lp-desc">{nivel.descricao}</span>}
                   </div>
                   <div className="gb-sl-acoes">
-                    <button className="gb-icon-btn" title="Editar nível" onClick={() => setModalNivel({ nivel })}>✏</button>
+                    <button className="gb-icon-btn" title="Editar nível" onClick={() => setModalNivel({ nivel })}><BsPencil /></button>
                     <button
                       className="gb-icon-btn gb-icon-btn--danger"
                       title="Apagar nível"
                       onClick={() => setModalApagarNivel({ nivel, badgesAfetados: badges.filter((b) => Number(b.idnivel) === Number(nivel.idnivel)).length })}
-                    >🗑</button>
+                    ><BsTrash /></button>
                   </div>
                 </div>
               ))}
@@ -1010,7 +1149,7 @@ function GestaoBadges() {
           )}
         </div>
 
-        {/* ── SECÇÃO SERVICE LINES ── */}
+        {/*SL */}
         <div className="gb-secao">
           <div className="gb-secao-header">
             <h2 className="gb-secao-titulo">Service Lines</h2>
@@ -1033,11 +1172,11 @@ function GestaoBadges() {
                   </span>
                   {!sl.ativo && <span className="gb-tag-inativo">Inativo</span>}
                   <div className="gb-sl-acoes">
-                    <button className="gb-icon-btn" onClick={() => setModalEditSL({ id: sl.idserviceline, nome: sl.nome })}>✏</button>
+                    <button className="gb-icon-btn" onClick={() => setModalEditSL({ id: sl.idserviceline, nome: sl.nome })}><BsPencil /></button>
                     <button className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${sl.ativo ? "off" : "on"}`}
                       title={sl.ativo ? "Desativar" : "Reativar"}
                       onClick={() => handleToggle("sl", sl.idserviceline, sl.ativo)}>
-                      {sl.ativo ? "🗑" : "↩"}
+                      {sl.ativo ? <BsTrash /> : <BsArrowCounterclockwise />}
                     </button>
                   </div>
                 </div>
@@ -1053,14 +1192,16 @@ function GestaoBadges() {
                     {sl.areas.map((area) => (
                       <div key={area.idarea} className={`gb-area-card${area.ativo ? "" : " gb-inativo"}`}>
                         <div className="gb-area-header">
-                          <span className="gb-area-nome">{area.nome}</span>
+                          <span className="gb-area-nome">
+                            {area.nome}
+                          </span>
                           {!area.ativo && <span className="gb-tag-inativo">Inativo</span>}
                           <div className="gb-sl-acoes">
-                            <button className="gb-icon-btn" onClick={() => setModalEditArea({ id: area.idarea, nome: area.nome })}>✏</button>
+                            <button className="gb-icon-btn" onClick={() => setModalEditArea({ id: area.idarea, nome: area.nome })}><BsPencil /></button>
                             <button className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${area.ativo ? "off" : "on"}`}
                               title={area.ativo ? "Desativar" : "Reativar"}
                               onClick={() => handleToggle("area", area.idarea, area.ativo)}>
-                              {area.ativo ? "🗑" : "↩"}
+                              {area.ativo ? <BsTrash /> : <BsArrowCounterclockwise />}
                             </button>
                           </div>
                         </div>
@@ -1073,7 +1214,7 @@ function GestaoBadges() {
           </div>
         </div>
 
-        {/* ── SECÇÃO BADGES ── */}
+        {/* badges */}
         <div className="gb-secao">
           <div className="gb-secao-header">
             <h2 className="gb-secao-titulo">Badges</h2>
@@ -1098,17 +1239,17 @@ function GestaoBadges() {
                   {!badge.ativo && <span className="gb-tag-inativo">Inativo</span>}
                   <div className="gb-sl-acoes">
                     <button className="gb-icon-btn" title="Editar badge"
-                      onClick={() => setModalEditBadge(badge)}>✏</button>
+                      onClick={() => setModalEditBadge(badge)}><BsPencil /></button>
                     <button
                       className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${badge.ativo ? "off" : "on"}`}
                       title={badge.ativo ? "Desativar" : "Reativar"}
                       onClick={() => handleToggle("badge", badge.idbadge, badge.ativo)}>
-                      {badge.ativo ? "🗑" : "↩"}
+                      {badge.ativo ? <BsTrash /> : <BsArrowCounterclockwise />}
                     </button>
                   </div>
                 </div>
                 {badge.descricao && <p style={{ margin: "4px 8px 0", fontSize: 13, color: "#6b7280" }}>{badge.descricao}</p>}
-                {badge.requisitos.length > 0 && (
+                {badge.requisitos?.length > 0 && (
                   <div className="gb-requisitos" style={{ margin: "8px 12px" }}>
                     <p className="gb-requisitos-titulo">Requisitos ({badge.requisitos.length})</p>
                     {badge.requisitos.map((req) => (

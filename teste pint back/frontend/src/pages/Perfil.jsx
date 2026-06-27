@@ -15,33 +15,10 @@ import { FiUsers, FiLock, FiChevronRight, FiClock } from "react-icons/fi";
 import { FaMedal } from "react-icons/fa";
 import { API_BASE } from "../api";
 import { listarCelebrados } from "../utils/marcos";
+import { marcoIcone } from "../utils/marcoIcone";
 import { buildEmailSignatureHtml } from "../utils/signature";
 
-// ─── Nav items por perfil ──────────────────────────────────
-const NAV_CONSULTOR = [
-  { label: "Início",             icon: <GoHome size={16} /> },
-  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Os meus badges",     icon: <BsAward size={16} /> },
-  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  { label: "Lembretes",          icon: <FiClock size={16} /> },
-];
-
-const NAV_TALENT = [
-  { label: "Início",      icon: <GoHome size={16} /> },
-  { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
-  { label: "Histórico",   icon: <BsClockHistory size={16} /> },
-  { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas",  icon: <BsTrophy size={16} /> },
-  { label: "Relatórios",  icon: <BsBarChart size={16} /> },
-  { label: "Consultores", icon: <FiUsers size={16} /> },
-];
-
-const NAV_ADMIN = [
-  { label: "Utilizadores", icon: <FiUsers size={16} /> },
-  { label: "Badges",       icon: <BsAward size={16} /> },
-];
+import { getNavItems } from "../utils/navConfig";
 
 const ROLES = {
   1: "Consultor",
@@ -50,19 +27,12 @@ const ROLES = {
   4: "Administrador",
 };
 
-function getNavItems(perfilAtivo) {
-  if (perfilAtivo === "2") return NAV_TALENT;
-  if (perfilAtivo === "4") return NAV_ADMIN;
-  return NAV_CONSULTOR;
-}
-
 function Perfil() {
   const navigate = useNavigate();
 
   const perfilAtivo = localStorage.getItem("perfilAtivo") || "1";
   const isConsultor = perfilAtivo === "1";
 
-  const [activeTab, setActiveTab] = useState("O meu perfil");
   const [utilizador, setUtilizador] = useState(
     JSON.parse(localStorage.getItem("utilizador") || "{}")
   );
@@ -81,7 +51,7 @@ function Perfil() {
 
   const navItems = getNavItems(perfilAtivo);
 
-  // ── Buscar estatísticas e dados de badges ───────────────
+  //Buscar estatísticas e dados de badges
   useEffect(() => {
     if (!utilizador?.idutilizador) return;
 
@@ -148,31 +118,6 @@ function Perfil() {
     });
   };
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (perfilAtivo === "1") {
-      if (label === "Início")             navigate("/consultor");
-      if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-      if (label === "Os meus badges")     navigate("/consultor/badges");
-      if (label === "Candidaturas")       navigate("/consultor/candidaturas");
-      if (label === "Conquistas")         navigate("/consultor/conquistas");
-      if (label === "Rankings")           navigate("/consultor/rankings");
-      if (label === "Lembretes")          navigate("/consultor/lembretes");
-    }
-    if (perfilAtivo === "2") {
-      if (label === "Início")      navigate("/talent");
-      if (label === "Validações")  navigate("/talent/validacoes");
-      if (label === "Histórico")   navigate("/talent/historico");
-      if (label === "Catálogo")    navigate("/talent/catalogo");
-      if (label === "Conquistas")  navigate("/talent/conquistas");
-      if (label === "Relatórios")  navigate("/talent/relatorios");
-      if (label === "Consultores") navigate("/talent/diretorio");
-    }
-    if (perfilAtivo === "4") {
-      if (label === "Utilizadores") navigate("/admin/utilizadores");
-      if (label === "Badges")       navigate("/admin/badges");
-    }
-  };
 
   const fotoAtual = fotoPreview
     || (utilizador?.fotourl
@@ -210,7 +155,7 @@ function Perfil() {
     reader.readAsDataURL(file);
   };
 
-  // ── Estatísticas derivadas ──────────────────────────────
+  //Estatísticas derivadas
   const totalObtidos = obtidos.length;
   const totalPontos = obtidos.reduce((s, c) => s + (c.badge_pontos || 0), 0);
 
@@ -244,8 +189,8 @@ function Perfil() {
   ];
 
   const copiarAssinatura = async (badge) => {
-    const nome = utilizador?.nome || "Nome do Talent Manager";
-    const cargo = "Talent Manager";
+    const nome = utilizador?.nome || "O seu nome";
+    const cargo = ROLES[perfilAtivo] || "Colaborador";
     const email = utilizador?.email || "nome@empresa.pt";
     const badgeName = badge?.nome || badge?.badge_nome || "Badge";
     const badgeImage = badge?.imagemurl || badge?.badge_imagem || "";
@@ -283,11 +228,10 @@ function Perfil() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={navItems} />
+      <Navbar navItems={navItems} />
 
       <div className="pf-wrap">
 
-        {/* ===== HERO ===== */}
         <section className="pf-hero">
           <div className="pf-hero-body">
             <div className="pf-avatar-wrap">
@@ -336,7 +280,7 @@ function Perfil() {
           </div>
         </section>
 
-        {/* ===== Cartões de resumo ===== */}
+        {/* Cartões de resumo*/}
         {isConsultor && (
           <section className="pf-stats-grid">
             {STATS.map((s) => (
@@ -351,13 +295,13 @@ function Perfil() {
           </section>
         )}
 
-        {/* ===== Conteúdo principal ===== */}
+        {/*Conteúdo principal*/}
         <div className="pf-content">
 
           {/* Coluna esquerda */}
           <div className="pf-col-main">
 
-            {perfilAtivo === "2" && (
+            {["1", "2", "3"].includes(perfilAtivo) && (
               <div className="pf-card">
                 <div className="pf-card-head">
                   <h3>Assinatura de email</h3>
@@ -487,7 +431,7 @@ function Perfil() {
                 <div className="pf-marcos">
                   {marcos.map((m) => (
                     <div key={m.id} className="pf-marco">
-                      <span className="pf-marco-emoji">{m.emoji}</span>
+                      <span className="pf-marco-emoji">{marcoIcone(m.icon)}</span>
                       <span className="pf-marco-titulo">{m.titulo}</span>
                       {m.celebradoEm && (
                         <span className="pf-marco-data">

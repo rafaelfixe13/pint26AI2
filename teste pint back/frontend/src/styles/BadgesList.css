@@ -1,6 +1,4 @@
-/* ─────────────────────────────────────────────────────────
-   Catálogo de Badges — BadgesList
-   ───────────────────────────────────────────────────────── */
+/* Catálogo de Badges — BadgesList */
 
 * {
   box-sizing: border-box;
@@ -14,7 +12,7 @@ body {
   color: #333;
 }
 
-/* ===== Page Wrapper ===== */
+/* Page Wrapper */
 .page-wrapper {
   min-height: 100vh;
   display: flex;
@@ -22,7 +20,7 @@ body {
   background-color: #f1f4f9;
 }
 
-/* ===== CONTENTOR (Bootstrap Container) ===== */
+/* CONTENTOR (Bootstrap Container) */
 .catalog-container {
   max-width: 1320px;
   width: 100%;
@@ -46,7 +44,7 @@ body {
   color: #6b7280;
 }
 
-/* ===== Banner Softinsa ===== */
+/* Banner Softinsa */
 .catalog-softinsa {
   display: flex;
   align-items: center;
@@ -105,7 +103,7 @@ body {
   border-radius: 10px;
 }
 
-/* ===== TOOLBAR ===== */
+/* TOOLBAR */
 .catalog-toolbar {
   display: flex;
   align-items: center;
@@ -172,7 +170,7 @@ body {
 .filters select:hover,
 .filters select:focus { border-color: #1a2e5a; }
 
-/* ===== CARD ===== */
+/* CARD */
 /* O Col tem className="d-flex"; o card preenche a largura e a altura da coluna */
 .badge-card {
   width: 100%;
@@ -316,7 +314,7 @@ body {
 .btn-detalhes:hover  { background: #1e40af; }
 .btn-detalhes:active { background: #1e3a8a; }
 
-/* ===== STATUS (loading / erro / vazio) ===== */
+/* STATUS (loading / erro / vazio) */
 .catalog-status {
   display: flex;
   flex-direction: column;

@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/ConfirmarEmail.css";
 import { API_BASE } from "../api";
+import { BsEnvelopePaperFill } from "react-icons/bs";
 
 function ConfirmarEmail() {
   const navigate = useNavigate();
@@ -81,7 +82,7 @@ function ConfirmarEmail() {
   return (
     <div className="confirmar-wrapper">
       <div className="confirmar-card">
-        <div className="confirmar-icone">📬</div>
+        <div className="confirmar-icone"><BsEnvelopePaperFill /></div>
         <h2 className="confirmar-titulo">Confirme o seu email</h2>
         <p className="confirmar-subtitulo">
           Enviámos um código de 6 dígitos para<br />

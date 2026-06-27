@@ -37,15 +37,11 @@ import GestaoUtilizadores from "./pages/admin/GestaoUtilizadores";
 import GestaoBadges from "./pages/admin/GestaoBadges";
 import AdminRelatorios from "./pages/admin/AdminRelatorios";
 import NotificacoesAdmin from "./pages/admin/Notificacoes";
-import InformacoesAdmin from "./pages/admin/InformacoesAdmin";
-import PoliticaRgpdAdmin from "./pages/admin/PoliticaRgpdAdmin";
 import GestaoPedidos from "./pages/admin/GestaoPedidos";
 import DetalhesUtilizador from "./pages/admin/DetalhesUtilizador";
 import BadgesUtilizador from "./pages/admin/BadgesUtilizador";
 
-import RgpdGate from "./components/RgpdGate";
 import Sobre from "./pages/Sobre";
-import Avisos from "./pages/Avisos";
 import Ajuda from "./pages/Ajuda";
 import Configuracoes from "./pages/Configuracoes";
 import PerfilPublico from "./pages/PerfilPublico";
@@ -99,7 +95,6 @@ function RotaAdmin({ children }) {
 function App() {
   return (
     <BrowserRouter>
-      <RgpdGate />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -117,7 +112,6 @@ function App() {
         <Route path="/badges/:id" element={<RotaProtegida><PagBadge /></RotaProtegida>} />
         <Route path="/sobre" element={<RotaProtegida><Sobre /></RotaProtegida>} />
         <Route path="/ajuda" element={<RotaProtegida><Ajuda /></RotaProtegida>} />
-        <Route path="/avisos" element={<RotaProtegida><Avisos /></RotaProtegida>} />
 
         <Route path="/consultor" element={<RotaConsultor><ConsultorDashboard /></RotaConsultor>} />
         <Route path="/consultor/dashboard" element={<RotaConsultor><ConsultorDashboard /></RotaConsultor>} />
@@ -150,8 +144,6 @@ function App() {
         <Route path="/admin/badges" element={<RotaAdmin><GestaoBadges /></RotaAdmin>} />
         <Route path="/admin/relatorios" element={<RotaAdmin><AdminRelatorios /></RotaAdmin>} />
         <Route path="/admin/notificacoes" element={<RotaAdmin><NotificacoesAdmin /></RotaAdmin>} />
-        <Route path="/admin/informacoes" element={<RotaAdmin><InformacoesAdmin /></RotaAdmin>} />
-        <Route path="/admin/rgpd" element={<RotaAdmin><PoliticaRgpdAdmin /></RotaAdmin>} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

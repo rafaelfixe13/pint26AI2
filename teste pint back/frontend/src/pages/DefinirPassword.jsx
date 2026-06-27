@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 import { API_BASE } from "../api";
+import { FaKey } from "react-icons/fa";
 
 function DefinirPassword() {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ function DefinirPassword() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🔑</div>
+        <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}><FaKey /></div>
         <h2 className="auth-title">Definir palavra-passe</h2>
         <p className="auth-subtitle">
           Escolha a sua palavra-passe para ativar a conta.

@@ -1,4 +1,4 @@
-/* ── Página candidaturas (consultor) ─────────────────────────────── */
+/* Página candidaturas (consultor) */
 .cand-page { padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto; }
 .cand-titulo { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1.5rem; }
 
@@ -39,7 +39,7 @@
 .estado-fechado-aprovado  { background: #d1fae5; color: #065f46; }
 .estado-fechado-rejeitado { background: #fee2e2; color: #991b1b; }
 
-/* ── Modal candidatura ───────────────────────────────────────────── */
+/* Modal candidatura */
 .modal-cand-overlay {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.5);
@@ -108,7 +108,7 @@
 }
 .btn-candidatar:hover { background: #1a7070; }
 
-/* ── Validações TM / SL ─────────────────────────────────────────── */
+/* Validações TM / SL */
 .val-page { padding: 2rem 1.5rem; max-width: 1000px; margin: 0 auto; }
 .val-titulo { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.5rem; }
 .val-sub    { font-size: .9rem; color: #6b7280; margin-bottom: 1.5rem; }

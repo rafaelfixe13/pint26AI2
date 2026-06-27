@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 import { API_BASE } from "../api";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 function RecuperarPassword() {
   const navigate = useNavigate();
@@ -143,7 +144,7 @@ function RecuperarPassword() {
               style={{ background: "none", border: "none", marginTop: "0.75rem", cursor: "pointer" }}
               onClick={() => { setPasso(1); setErro(""); }}
             >
-              ← Usar outro email
+              <IoArrowBackOutline /> Usar outro email
             </button>
           </form>
         )}

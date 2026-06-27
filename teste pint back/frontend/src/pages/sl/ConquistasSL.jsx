@@ -9,15 +9,8 @@ import { MdOutlineVerified, MdLeaderboard } from "react-icons/md";
 import { AiOutlineAppstore, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { BsTrophy, BsBarChart } from "react-icons/bs";
 import { HiOutlineEmojiSad } from "react-icons/hi";
-
-const NAV_ITEMS = [
-  { label: "Início",     icon: <GoHome size={16} /> },
-  { label: "Validações", icon: <MdOutlineVerified size={16} /> },
-  { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas", icon: <BsTrophy size={16} /> },
-  { label: "Ranking",    icon: <MdLeaderboard size={16} /> },
-  { label: "Relatórios", icon: <BsBarChart size={16} /> },
-];
+import { FaMedal, FaRocket, FaFire, FaRunning, FaBolt, FaAward, FaStar } from "react-icons/fa";
+import { NAV_SL } from "../../utils/navConfig";
 
 const getInitials = (nome) =>
   nome ? nome.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase() : "?";
@@ -46,27 +39,27 @@ function maxNoTrimestre(datas) {
   return Object.values(grupos).reduce((m, v) => Math.max(m, v), 0);
 }
 
-// ── Catálogo de conquistas Premium (regras no código) ──────────────────────────
+//Catálogo de conquistas Premium (regras no código)
 const CONQUISTAS = [
-  { id: "primeiros", nome: "Primeiros Passos", icone: "🥉", cor: "#b45309",
+  { id: "primeiros", nome: "Primeiros Passos", icone: <FaMedal />, cor: "#b45309",
     descricao: "Conquistar o 1.º badge", regra: "1 badge aprovado",
     check: (c) => c.totalbadges >= 1 },
-  { id: "ascensao", nome: "Em Ascensão", icone: "🚀", cor: "#2563eb",
+  { id: "ascensao", nome: "Em Ascensão", icone: <FaRocket />, cor: "#2563eb",
     descricao: "Conquistar 3 badges", regra: "3 badges aprovados",
     check: (c) => c.totalbadges >= 3 },
-  { id: "imparavel", nome: "Imparável", icone: "🔥", cor: "#dc2626",
+  { id: "imparavel", nome: "Imparável", icone: <FaFire />, cor: "#dc2626",
     descricao: "Conquistar 10 badges", regra: "10 badges aprovados",
     check: (c) => c.totalbadges >= 10 },
-  { id: "maratonista", nome: "Maratonista", icone: "🏃", cor: "#059669",
+  { id: "maratonista", nome: "Maratonista", icone: <FaRunning />, cor: "#059669",
     descricao: "Ritmo intenso de conquistas", regra: "5 badges em 90 dias",
     check: (c) => maxNumaJanela(c.datasaprovacao, 90) >= 5 },
-  { id: "sprint", nome: "Sprint Trimestral", icone: "⚡", cor: "#d97706",
+  { id: "sprint", nome: "Sprint Trimestral", icone: <FaBolt />, cor: "#d97706",
     descricao: "Forte desempenho num trimestre", regra: "3 badges no mesmo trimestre",
     check: (c) => maxNoTrimestre(c.datasaprovacao) >= 3 },
-  { id: "centuriao", nome: "Centurião", icone: "💯", cor: "#7c3aed",
+  { id: "centuriao", nome: "Centurião", icone: <FaAward />, cor: "#7c3aed",
     descricao: "Atingir 100 pontos", regra: "100 pontos acumulados",
     check: (c) => c.totalpontos >= 100 },
-  { id: "elite", nome: "Elite", icone: "⭐", cor: "#0f766e",
+  { id: "elite", nome: "Elite", icone: <FaStar />, cor: "#0f766e",
     descricao: "Atingir 250 pontos", regra: "250 pontos acumulados",
     check: (c) => c.totalpontos >= 250 },
 ];
@@ -95,14 +88,6 @@ export default function ConquistasSL() {
       .catch(() => setLoading(false));
   }, []);
 
-  const handleTabChange = (label) => {
-    if (label === "Início")     navigate("/sl/dashboard");
-    if (label === "Validações") navigate("/sl/validacoes");
-    if (label === "Catálogo")   navigate("/sl/catalogo");
-    if (label === "Conquistas") navigate("/sl/conquistas");
-    if (label === "Ranking")    navigate("/sl/ranking");
-    if (label === "Relatórios") navigate("/sl/relatorios");
-  };
 
   // Para cada conquista, que consultores a desbloquearam
   const conquistasComUnlocks = useMemo(
@@ -124,7 +109,7 @@ export default function ConquistasSL() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab="Conquistas" onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_SL} />
 
       <div className="cqsl-page">
         <div className="cqsl-header">
@@ -141,7 +126,7 @@ export default function ConquistasSL() {
 
         {!loading && (
           <>
-            {/* ── Grelha de conquistas ── */}
+            {/* Grelha de conquistas*/}
             <h2 className="cqsl-section-titulo">Conquistas Premium</h2>
             <div className="cqsl-grelha">
               {conquistasComUnlocks.map((q) => (
@@ -164,7 +149,7 @@ export default function ConquistasSL() {
               ))}
             </div>
 
-            {/* ── Por consultor ── */}
+            {/*Por consultor*/}
             <h2 className="cqsl-section-titulo" style={{ marginTop: "2.5rem" }}>
               Consultores da Service Line
             </h2>
@@ -180,7 +165,7 @@ export default function ConquistasSL() {
                   <div key={c.idutilizador} className="cqsl-consultor">
                     <div className="cqsl-consultor-topo">
                       {c.fotourl ? (
-                        <img src={c.fotourl} alt={c.nome} className="cqsl-avatar" />
+                        <img src={c.fotourl.startsWith("data:") ? c.fotourl : `data:image/jpeg;base64,${c.fotourl}`} alt={c.nome} className="cqsl-avatar" />
                       ) : (
                         <div className="cqsl-avatar cqsl-avatar-iniciais">{getInitials(c.nome)}</div>
                       )}

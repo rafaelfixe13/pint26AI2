@@ -9,15 +9,8 @@ import { MdOutlineVerified, MdLeaderboard } from "react-icons/md";
 import { AiOutlineAppstore, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { BsTrophy, BsBarChart, BsAwardFill, BsStarFill } from "react-icons/bs";
 import { HiOutlineEmojiSad } from "react-icons/hi";
-
-const NAV_ITEMS = [
-  { label: "Início",     icon: <GoHome size={16} /> },
-  { label: "Validações", icon: <MdOutlineVerified size={16} /> },
-  { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas", icon: <BsTrophy size={16} /> },
-  { label: "Ranking",    icon: <MdLeaderboard size={16} /> },
-  { label: "Relatórios", icon: <BsBarChart size={16} /> },
-];
+import { FaCrown } from "react-icons/fa";
+import { NAV_SL } from "../../utils/navConfig";
 
 const getInitials = (nome) =>
   nome ? nome.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase() : "?";
@@ -40,14 +33,6 @@ export default function RankingSL() {
       .catch(() => setLoading(false));
   }, []);
 
-  const handleTabChange = (label) => {
-    if (label === "Início")     navigate("/sl/dashboard");
-    if (label === "Validações") navigate("/sl/validacoes");
-    if (label === "Catálogo")   navigate("/sl/catalogo");
-    if (label === "Conquistas") navigate("/sl/conquistas");
-    if (label === "Ranking")    navigate("/sl/ranking");
-    if (label === "Relatórios") navigate("/sl/relatorios");
-  };
 
   const areas = useMemo(() => {
     const s = new Set();
@@ -74,7 +59,7 @@ export default function RankingSL() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab="Ranking" onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_SL} />
 
       <div className="rksl-page">
         <div className="rksl-header">
@@ -121,7 +106,7 @@ export default function RankingSL() {
                 const pos = idx + 1;
                 return (
                   <div key={c.idutilizador} className={`rksl-pod rksl-pod-${pos}`}>
-                    {pos === 1 && <span className="rksl-coroa">👑</span>}
+                    {pos === 1 && <span className="rksl-coroa"><FaCrown /></span>}
                     {c.fotourl ? (
                       <img src={c.fotourl.startsWith("data:") ? c.fotourl : `data:image/jpeg;base64,${c.fotourl}`} alt={c.nome} className="rksl-pod-avatar" />
                     ) : (

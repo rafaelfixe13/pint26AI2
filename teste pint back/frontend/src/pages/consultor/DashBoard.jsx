@@ -6,22 +6,14 @@ import "../../styles/ConsultorDashboard.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
-import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy, BsCheckLg } from "react-icons/bs";
-import { FaMedal } from "react-icons/fa";
+import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy, BsCheckLg, BsGraphUpArrow, BsClipboard } from "react-icons/bs";
+import { FaMedal, FaRegSmile } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
 import { verificarMarcos } from "../../utils/marcos";
 import CelebracaoModal from "../../components/CelebracaoModal";
 
-const NAV_ITEMS = [
-  { label: "Início",             icon: <GoHome size={16} /> },
-  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Os meus badges",     icon: <BsAward size={16} /> },
-  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  { label: "Lembretes",          icon: <FiClock size={16} /> },
-];
+import { NAV_CONSULTOR } from "../../utils/navConfig";
 
 const ESTADOS_ATIVOS = ["OPEN", "SUBMITTED", "UNDER_REVIEW", "EM_VALIDACAO"];
 
@@ -36,10 +28,10 @@ function estadoInfo(estado) {
   return { texto: estado, cls: "" };
 }
 
-// ── Níveis (visualização estilo app mobile) ───────────────
+// ── Níveis
 const NOMES_NIVEL = { A: "Júnior", B: "Interm.", C: "Sénior", D: "Expert", E: "Líder" };
 
-// Letra do nível (A-E) a partir do nome ("A - Nível Júnior" -> "A")
+// Letra do nível (A-E)
 function letraNivel(badge) {
   const m = (badge?.nivel || "").trim().match(/^([A-E])/i);
   return m ? m[1].toUpperCase() : "?";
@@ -64,7 +56,7 @@ function estadoNivel(badge, estadoPorBadge) {
 }
 
 // Estado agregado de um nível de dificuldade (pode ter mais de um badge):
-// aprovado tem prioridade, depois em validação, depois aberto. (Lógica do mobile.)
+// aprovado tem prioridade, depois em validação, depois aberto.
 function estadoNivelAgrupado(badges, estadoPorBadge) {
   const estados = badges.map((b) => estadoNivel(b, estadoPorBadge));
   if (estados.includes("APPROVED")) return "APPROVED";
@@ -80,7 +72,7 @@ function classeEstado(estado) {
   return "nao-iniciado";
 }
 
-// Bolinha de um nível (A-E)
+// Bola de um nível (A-E)
 function NivelDot({ letra, estado }) {
   const cls = classeEstado(estado);
   return (
@@ -144,7 +136,6 @@ export default function DashBoard() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
-  const [activeTab, setActiveTab] = useState("Início");
   const [candidaturas, setCandidaturas] = useState([]);
   const [recomendados, setRecomendados] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
@@ -227,7 +218,7 @@ export default function DashBoard() {
 
         setRecomendados(reco);
 
-        // Celebração de marcos (req. 16) — alinhado com a app mobile
+        // Celebração de marcos
         const novosMarcos = verificarMarcos(utilizador.idutilizador, listaCands);
         if (novosMarcos.length > 0) setMarcos(novosMarcos);
 
@@ -236,7 +227,7 @@ export default function DashBoard() {
       .catch(() => setLoading(false));
   }, []);
 
-  // ── Estatísticas ──────────────────────────────────────
+  //Estatísticas
   const obtidos = candidaturas.filter((c) => c.estado?.toUpperCase() === "APPROVED");
   const totalObtidos = obtidos.length;
   const totalPontos = obtidos.reduce((s, c) => s + (c.badge_pontos || 0), 0);
@@ -247,22 +238,11 @@ export default function DashBoard() {
     .sort((a, b) => new Date(b.datacriacao) - new Date(a.datacriacao))
     .slice(0, 5);
 
-  // Progresso global do Learning Path (usado no cabeçalho)
+  // Progresso global do lp
   const allHierBadges = learningPaths.flatMap((sl) => (sl.areas || []).flatMap((a) => a.badges || []));
   const totalBadgesLP = allHierBadges.length;
   const conquistadosLP = allHierBadges.filter((b) => b.conquistado).length;
   const pctBadges = totalBadgesLP ? Math.round((conquistadosLP / totalBadgesLP) * 100) : 0;
-
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")             navigate("/consultor");
-    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges")     navigate("/consultor/badges");
-    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
-    if (label === "Conquistas")         navigate("/consultor/conquistas");
-    if (label === "Rankings")           navigate("/consultor/rankings");
-    if (label === "Lembretes")          navigate("/consultor/lembretes");
-  };
 
   return (
     <div className="page-wrapper">
@@ -273,11 +253,11 @@ export default function DashBoard() {
         />
       )}
 
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_CONSULTOR} />
 
       <main className="cons-dashboard-content">
         <div className="cons-dashboard-header">
-          <h1>Olá, {utilizador?.nome?.split(" ")[0] || "Consultor"} 👋</h1>
+          <h1>Olá, {utilizador?.nome?.split(" ")[0] || "Consultor"} <FaRegSmile /></h1>
           <p>Aqui está o resumo do seu progresso e dos próximos passos.</p>
         </div>
 
@@ -316,10 +296,10 @@ export default function DashBoard() {
           </div>
         </div>
 
-        {/* Progresso nas Áreas — níveis A-E ligados (estilo app mobile) */}
+        {/* Progresso nas Áreas*/}
         <div className="cons-section cons-lp-section">
           <div className="cons-section-head">
-            <h2>📈 Progresso nos Learning Paths</h2>
+            <h2><BsGraphUpArrow /> Progresso nos Learning Paths</h2>
             <button className="cons-section-link" onClick={() => navigate("/consultor/badges")}>
               Os meus badges
             </button>
@@ -329,7 +309,7 @@ export default function DashBoard() {
             <p className="cons-empty">A carregar...</p>
           ) : (
             <>
-              {/* Cabeçalho com o progresso geral do Learning Path (estilo dashboard mobile) */}
+              {/*progresso geral lp */}
               <div className="cons-lp-banner">
                 <span className="cons-lp-kicker">Learning Path</span>
                 <h3 className="cons-lp-banner-title">Jornada Técnica</h3>
@@ -350,10 +330,7 @@ export default function DashBoard() {
               if (e) estadoPorBadge[c.idbadge] = e;
             });
 
-            // Lista plana de áreas; cada card mostra a sua Service Line.
-            // Os badges são agrupados por NÍVEL de dificuldade (idnivel) — um ponto
-            // por nível — e numerados A-E por posição, tal como o mobile
-            // (nivel_grupo = CHR(64 + ROW_NUMBER()) sobre níveis distintos).
+      
             const areas = [];
             learningPaths.forEach((sl) => {
               (sl.areas || []).forEach((a) => {
@@ -400,7 +377,7 @@ export default function DashBoard() {
           {/* Badges recomendados */}
           <div className="cons-section">
             <div className="cons-section-head">
-              <h2>⭐ Próximos níveis recomendados</h2>
+              <h2><BsStarFill /> Próximos níveis recomendados</h2>
               <button className="cons-section-link" onClick={() => navigate("/consultor/catalogo")}>
                 Ver catálogo
               </button>
@@ -435,7 +412,7 @@ export default function DashBoard() {
           {/* Candidaturas submetidas */}
           <div className="cons-section">
             <div className="cons-section-head">
-              <h2>📋 Candidaturas Recentes</h2>
+              <h2><BsClipboard /> Candidaturas Recentes</h2>
               <button className="cons-section-link" onClick={() => navigate("/consultor/candidaturas")}>
                 Ver todas
               </button>

@@ -7,17 +7,9 @@ import { AiOutlineAppstore } from "react-icons/ai";
 import { BsTrophy, BsTrophyFill, BsAward, BsStarFill } from "react-icons/bs";
 import { MdLeaderboard, MdOutlineAssignment } from "react-icons/md";
 import { FiClock } from "react-icons/fi";
+import { FaCrown } from "react-icons/fa";
 import { API_BASE } from "../../api";
-
-const NAV_ITEMS = [
-  { label: "Início",             icon: <GoHome size={16} /> },
-  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Os meus badges",     icon: <BsAward size={16} /> },
-  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  { label: "Lembretes",          icon: <FiClock size={16} /> },
-];
+import { NAV_CONSULTOR } from "../../utils/navConfig";
 
 function Avatar({ foto, nome, className, phClassName }) {
   if (foto) {
@@ -35,7 +27,7 @@ function PodioCard({ user, posicao }) {
   return (
     <div className={`rk-pod rk-pod-${posicao}`}>
       <div className="rk-pod-info">
-        {posicao === 1 && <span className="rk-crown">👑</span>}
+        {posicao === 1 && <span className="rk-crown"><FaCrown /></span>}
         <Avatar
           foto={user.fotourl}
           nome={user.nome}
@@ -56,7 +48,6 @@ function Rankings() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
-  const [activeTab, setActiveTab] = useState("Rankings");
   const [ranking, setRanking] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,16 +59,6 @@ function Rankings() {
       .catch(() => setLoading(false));
   }, []);
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")             navigate("/consultor");
-    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges")     navigate("/consultor/badges");
-    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
-    if (label === "Conquistas")         navigate("/consultor/conquistas");
-    if (label === "Rankings")           navigate("/consultor/rankings");
-    if (label === "Lembretes")          navigate("/consultor/lembretes");
-  };
 
   const [primeiro, segundo, terceiro] = ranking;
   const restante = ranking.slice(3);
@@ -85,7 +66,7 @@ function Rankings() {
 
   return (
     <div className="rk-container">
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_CONSULTOR} />
 
       <main className="rk-wrap">
         {/* Hero */}

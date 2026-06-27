@@ -13,7 +13,7 @@
   margin-left: 0px;
 }
 
-/* ─── Tile ─────────────────────────────────────────────────────────────────── */
+/* Tile */
 
 .ajuda-tile {
   width: 100%;
@@ -69,7 +69,7 @@
   transform: rotate(180deg);
 }
 
-/* ─── Body ──────────────────────────────────────────────────────────────────── */
+/* Body */
 
 .ajuda-tile-body {
   padding: 0 1.75rem 1.6rem;
@@ -90,7 +90,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Text ──────────────────────────────────────────────────────────────────── */
+/* Text */
 
 .ajuda-text {
   font-size: 0.95rem;
@@ -99,7 +99,7 @@
   margin: 0;
 }
 
-/* ─── Steps ─────────────────────────────────────────────────────────────────── */
+/* Steps */
 
 .ajuda-steps {
   display: flex;
@@ -141,7 +141,7 @@
   flex-shrink: 0;
 }
 
-/* ─── Bullets ───────────────────────────────────────────────────────────────── */
+/* Bullets */
 
 .ajuda-bullets {
   display: flex;
@@ -171,7 +171,7 @@
   margin-top: 0.45rem;
 }
 
-/* ─── Note ──────────────────────────────────────────────────────────────────── */
+/* Note */
 
 .ajuda-note {
   display: flex;
@@ -196,7 +196,7 @@
   margin-top: 0.15rem;
 }
 
-/* ─── Responsivo ──────────────────────────────────────────── */
+/* Responsivo */
 @media (max-width: 640px) {
   .ajuda-wrapper {
     padding: 0 1rem;

@@ -1,6 +1,4 @@
-/* ─────────────────────────────────────────────────────────
-   Os meus badges — página do consultor
-   ───────────────────────────────────────────────────────── */
+/* Os meus badges — página do consultor */
 
 .mb-container {
     min-height: 100vh;
@@ -21,7 +19,7 @@
     width: 100%;
 }
 
-/* ── Cabeçalho ────────────────────────────────────────── */
+/* Cabeçalho */
 .mb-header {
     margin-bottom: 28px;
 }
@@ -39,7 +37,7 @@
     margin: 0;
 }
 
-/* ── Resumo (cartões de estatísticas) ─────────────────── */
+/* Resumo (cartões de estatísticas) */
 .mb-resumo {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -94,7 +92,7 @@
     margin: 0;
 }
 
-/* ── Toolbar ──────────────────────────────────────────── */
+/* Toolbar */
 .mb-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -142,7 +140,7 @@
 .mb-select:hover,
 .mb-select:focus { border-color: #1a2e5a; }
 
-/* ── Galeria pública: pesquisa de consultores ─────────── */
+/* Galeria pública: pesquisa de consultores */
 .mb-galeria {
     background: #ffffff;
     border: 1px solid #eef1f6;
@@ -273,7 +271,7 @@
 
 .mb-cons-chevron { color: #cbd5e1; flex-shrink: 0; }
 
-/* ── Interruptor público/privado no card ──────────────── */
+/* Interruptor público/privado no card */
 .mb-toggle-publico {
     position: absolute;
     top: 12px;
@@ -305,7 +303,7 @@
 
 .mb-toggle-publico:hover { filter: brightness(0.97); }
 
-/* ── Grelha de badges (3 colunas) ─────────────────────── */
+/* Grelha de badges (3 colunas) */
 .mb-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -316,7 +314,7 @@
 @media (max-width: 900px) { .mb-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .mb-grid { grid-template-columns: 1fr; } }
 
-/* ── Card ─────────────────────────────────────────────── */
+/* Card */
 .mb-card {
     width: 100%;
     background: #ffffff;
@@ -481,7 +479,7 @@
 
 .mb-btn-cert:hover { background: #059669; }
 
-/* ── Estados (loading / vazio) ────────────────────────── */
+/* Estados (loading / vazio) */
 .mb-status {
     display: flex;
     flex-direction: column;

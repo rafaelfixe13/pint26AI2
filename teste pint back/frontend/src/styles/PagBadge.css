@@ -144,7 +144,7 @@
   border-radius: 999px;
 }
 
-/* ── Requisitos ─────────────────────────────────────────────────────────── */
+/* Requisitos */
 .badge-requisitos-section {
   margin-top: 22px;
 }
@@ -246,7 +246,7 @@
   border-color: #93c5fd;
 }
 
-/* ── Modal de visualização de PDF ──────────────────────────── */
+/* Modal de visualização de PDF */
 .pdf-modal-overlay {
   position: fixed;
   inset: 0;
@@ -344,7 +344,7 @@
   font-size: 14px;
 }
 
-/* ── Competências ───────────────────────────────────────────────────────── */
+/* Competências */
 .badge-competencias {
   margin-top: 18px;
 }
@@ -372,7 +372,7 @@
   padding: 4px 12px;
 }
 
-/* ── Candidatura section ────────────────────────────────────────────────── */
+/* Candidatura section */
 .badge-cand-section {
   margin-top: 20px;
   display: flex;

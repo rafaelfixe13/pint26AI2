@@ -10,6 +10,7 @@ import { FiUsers, FiDownload } from "react-icons/fi";
 import { FaMedal, FaAward } from "react-icons/fa";
 import { BsClockHistory, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { gerarCertificadoPDF } from "../utils/certificado";
+import { NAV_SL } from "../utils/navConfig";
 
 const fmtDataHora = (v) => {
   if (!v) return null;
@@ -63,15 +64,6 @@ function ValidacoesSL() {
   const toggleHistorico = (id) =>
     setHistoricoAberto((p) => ({ ...p, [id]: !p[id] }));
 
-  const navItems = [
-    { label: "Início",      icon: <GoHome size={16} /> },
-    { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
-    { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
-    { label: "Conquistas",  icon: <FaMedal size={14} /> },
-    { label: "Ranking",     icon: <MdLeaderboard size={16} /> },
-    { label: "Relatórios",  icon: <BsBarChart size={16} /> },
-  ];
-
   const carregar = (silencioso = false) => {
     if (!utilizador?.idserviceline) return;
     if (!silencioso) setLoading(true);
@@ -92,14 +84,6 @@ function ValidacoesSL() {
     return () => clearInterval(intervalo);
   }, []);
 
-  const handleTabChange = (label) => {
-    if (label === "Início")      navigate("/sl/dashboard");
-    if (label === "Validações")  navigate("/sl/validacoes");
-    if (label === "Catálogo")    navigate("/sl/catalogo");
-    if (label === "Conquistas")  navigate("/sl/conquistas");
-    if (label === "Ranking")     navigate("/sl/ranking");
-    if (label === "Relatórios")  navigate("/sl/relatorios");
-  };
 
   // Gera o certificado em PDF do badge atribuído ao consultor (novo separador)
   const baixarCertificado = (c) => {
@@ -150,7 +134,7 @@ function ValidacoesSL() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab="Validações" onTabChange={handleTabChange} navItems={navItems} />
+      <Navbar navItems={NAV_SL} />
 
       <div className="val-page">
         <h1 className="val-titulo">Validações — Service Line Leader</h1>

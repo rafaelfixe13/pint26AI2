@@ -23,7 +23,7 @@ function estadoInfo(estado) {
   return { texto: estado, cls: "" };
 }
 
-// Gestão (consulta) de todos os pedidos de badges da plataforma — req. 9 Admin.
+//consulta de todos os pedidos
 export default function GestaoPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -4,7 +4,8 @@ import Navbar from "../NavBar";
 import "../../styles/Lembretes.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
-import { BsAward, BsTrophy } from "react-icons/bs";
+import { BsAward, BsTrophy, BsExclamationTriangleFill } from "react-icons/bs";
+import { FaMedal } from "react-icons/fa";
 import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
 import { FiClock, FiTrash2, FiCheck, FiPlus, FiX, FiChevronLeft, FiChevronRight, FiList, FiCalendar } from "react-icons/fi";
 import { API_BASE } from "../../api";
@@ -23,15 +24,7 @@ function fmtHora(d) {
   return new Date(d).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
 }
 
-const NAV_ITEMS = [
-  { label: "Início",             icon: <GoHome size={16} /> },
-  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Os meus badges",     icon: <BsAward size={16} /> },
-  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  { label: "Lembretes",          icon: <FiClock size={16} /> },
-];
+import { NAV_CONSULTOR } from "../../utils/navConfig";
 
 // Estado visual de um lembrete a partir do prazo + concluído
 function estadoLembrete(l) {
@@ -177,7 +170,6 @@ function Lembretes() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
-  const [activeTab, setActiveTab] = useState("Lembretes");
   const [lembretes, setLembretes] = useState([]);
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -196,7 +188,7 @@ function Lembretes() {
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
     carregar();
-    // Badges associáveis = badges em que o consultor está inscrito/candidatado
+    // Badges associáveis
     fetch(`${API_BASE}/candidaturas/minhas?idutilizador=${utilizador.idutilizador}`)
       .then((r) => r.json())
       .then((data) => {
@@ -212,16 +204,6 @@ function Lembretes() {
       .catch(() => {});
   }, []);
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")             navigate("/consultor");
-    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges")     navigate("/consultor/badges");
-    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
-    if (label === "Conquistas")         navigate("/consultor/conquistas");
-    if (label === "Rankings")           navigate("/consultor/rankings");
-    if (label === "Lembretes")          navigate("/consultor/lembretes");
-  };
 
   const criarLembrete = async (dados) => {
     setSubmetendo(true);
@@ -253,7 +235,7 @@ function Lembretes() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_CONSULTOR} />
 
       {modalAberto && (
         <ModalNovoLembrete
@@ -302,12 +284,12 @@ function Lembretes() {
                       <span className={`lemb-estado ${est.cls}`}>{est.texto}</span>
                     </div>
                     {est.expirado && (
-                      <div className="lemb-card-aviso">⚠️ Este lembrete já passou do prazo ({fmtData(l.prazo)}).</div>
+                      <div className="lemb-card-aviso"><BsExclamationTriangleFill /> Este lembrete já passou do prazo ({fmtData(l.prazo)}).</div>
                     )}
                     {l.descricao && <p className="lemb-card-desc">{l.descricao}</p>}
                     <div className="lemb-card-meta">
                       <span><FiClock size={13} /> {fmtData(l.prazo)}</span>
-                      {l.badge_nome && <span className="lemb-card-badge">🏅 {l.badge_nome}</span>}
+                      {l.badge_nome && <span className="lemb-card-badge"><FaMedal /> {l.badge_nome}</span>}
                     </div>
                   </div>
                   <div className="lemb-card-acoes">

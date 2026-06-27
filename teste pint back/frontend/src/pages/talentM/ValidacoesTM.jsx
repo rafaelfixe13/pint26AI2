@@ -9,6 +9,7 @@ import { MdOutlineVerified } from "react-icons/md";
 import { FiUsers, FiDownload } from "react-icons/fi";
 import { FaMedal } from "react-icons/fa";
 import { API_BASE } from "../../api";
+import { NAV_TALENT } from "../../utils/navConfig";
 
 const toDownloadUrl = (url) => url
   ? url.replace('/image/upload/', '/image/upload/fl_attachment/')
@@ -37,16 +38,6 @@ function ValidacoesTM() {
   const [processando, setProcessando] = useState(null);
   const [msg, setMsg] = useState("");
 
-  const navItems = [
-    { label: "Início",      icon: <GoHome size={16} /> },
-    { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
-    { label: "Histórico",   icon: <BsClockHistory size={16} /> },
-    { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
-    { label: "Conquistas",  icon: <BsTrophy size={16} /> },
-    { label: "Relatórios",  icon: <BsBarChart size={16} /> },
-    { label: "Consultores", icon: <FiUsers size={16} /> },
-  ];
-
   const carregar = () => {
     setLoading(true);
     fetch(`${API_BASE}/candidaturas/tm/lista`)
@@ -63,12 +54,6 @@ function ValidacoesTM() {
     carregar();
   }, []);
 
-  const handleTabChange = (label) => {
-    if (label === "Início")      navigate("/talent/dashboard");
-    if (label === "Catálogo")    navigate("/talent/catalogo");
-    if (label === "Consultores") navigate("/talent/diretorio");
-    if (label === "Conquistas")  navigate("/talent/conquistas");
-  };
 
   const agir = async (idcandidatura, acao) => {
     const comentario = comentarios[idcandidatura] || "";
@@ -103,7 +88,7 @@ function ValidacoesTM() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab="Validações" onTabChange={handleTabChange} navItems={navItems} />
+      <Navbar navItems={NAV_TALENT} />
 
       <div className="val-page">
         <h1 className="val-titulo">Validações — Talent Manager</h1>

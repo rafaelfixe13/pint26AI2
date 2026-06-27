@@ -3,21 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../../styles/AdminNav.css";
 import "../../styles/NotificacaoTipos.css";
 import { estiloNotificacao } from "../../utils/notificacaoEstilo";
+import { NAV_ADMIN } from "../../utils/navConfig";
 import { BsBell, BsSearch, BsInfoCircle, BsQuestionCircle, BsTrash } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 import { MdSwitchAccount } from "react-icons/md";
 
-const NAV_ITEMS = [
-  { label: "Início", path: "/admin/dashboard" },
-  { label: "Utilizadores", path: "/admin/utilizadores" },
-  { label: "Badges", path: "/admin/badges" },
-  { label: "Pedidos", path: "/admin/pedidos" },
-  { label: "Notificações", path: "/admin/notificacoes" },
-  { label: "Informações", path: "/admin/informacoes" },
-  { label: "RGPD", path: "/admin/rgpd" },
-  { label: "Relatórios", path: "/admin/relatorios" },
-];
+const NAV_ITEMS = NAV_ADMIN;
 
 function AdminNav() {
   const navigate = useNavigate();
@@ -94,7 +86,7 @@ function AdminNav() {
         `http://localhost:3000/api/notificacoes/utilizador/${utilizador.idutilizador}`
       );
       const data = await res.json();
-      setNotificacoes(data);
+      setNotificacoes(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Erro ao carregar notificações:", err);
     } finally {
@@ -348,11 +340,6 @@ function AdminNav() {
                     Ajuda
                   </button>
 
-                  <button className="an-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/avisos"); }}>
-                    <BsBell size={15} />
-                    Avisos
-                  </button>
-
                   <div className="an-divider" />
 
                   <button
@@ -379,6 +366,7 @@ function AdminNav() {
               className={`an-nav-item ${location.pathname === item.path ? "active" : ""}`}
               onClick={() => navigate(item.path)}
             >
+              {item.icon}
               {item.label}
             </button>
           ))}

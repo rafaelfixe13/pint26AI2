@@ -1,47 +1,67 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Sobre.css";
 import Navbar from "./NavBar";
-import { getNavItems, navegarTab } from "../utils/navConfig";
-import { API_BASE } from "../api";
+import { getNavItems } from "../utils/navConfig";
+import { FaMedal } from "react-icons/fa";
+import { FiUsers, FiSettings } from "react-icons/fi";
 
 function Sobre() {
   const navigate = useNavigate();
   const perfilAtivo = localStorage.getItem("perfilAtivo") || "1";
-  const [extras, setExtras] = useState([]);
-
-  useEffect(() => {
-    fetch(`${API_BASE}/informacoes/publicas?tipo=sobre`)
-      .then((r) => r.json())
-      .then((d) => setExtras(Array.isArray(d) ? d : []))
-      .catch(() => setExtras([]));
-  }, []);
 
   return (
     <div className="page-wrapper">
-      <Navbar
-        activeTab=""
-        navItems={getNavItems(perfilAtivo)}
-        onTabChange={(l) => navegarTab(navigate, perfilAtivo, l)}
-      />
+      <Navbar navItems={getNavItems(perfilAtivo)} />
 
       <div className="sobre-wrapper">
         <div className="sobre-intro">
-          <h2 className="sobre-titulo">Sobre</h2>
+          <h2 className="sobre-titulo">Sistema de Gestão de Competências e Badges – Softinsa</h2>
+          <p className="sobre-descricao">
+            Esta plataforma foi desenvolvida para apoiar a gestão, validação e evolução das
+            competências dos consultores da Softinsa, através de um sistema estruturado de badges
+            técnicos e comportamentais. O objetivo é promover transparência, reconhecimento e
+            crescimento profissional alinhado com as Service Lines da organização.
+          </p>
         </div>
 
-        {extras.length > 0 ? (
-          <div className="sobre-grelha">
-            {extras.map((info) => (
-              <div key={info.idinformacao} className="sobre-card">
-                <h3>{info.titulo}</h3>
-                <p style={{ whiteSpace: "pre-line" }}>{info.conteudo}</p>
+        <div className="sobre-grelha">
+          <div className="sobre-card">
+            <h3><FaMedal /> Sistema de Badges</h3>
+            <p>
+              Badges representam competências certificadas, associadas a áreas técnicas e
+              comportamentais, com níveis de senioridade de Júnior a Líder de Conhecimento.
+            </p>
+
+            <h3><FiUsers /> Perfis</h3>
+            <div className="sobre-perfis">
+              <div>
+                <strong>Consultor</strong>
+                <span>Submete pedidos, faz upload de evidências e acompanha progresso</span>
               </div>
-            ))}
+              <div>
+                <strong>Talent Manager</strong>
+                <span>Valida evidências e assegura cumprimento de SLA</span>
+              </div>
+              <div>
+                <strong>Service Line Leader</strong>
+                <span>Realiza validação final e aprova pedidos</span>
+              </div>
+            </div>
           </div>
-        ) : (
-          <p className="sobre-descricao">Ainda não há informação disponível.</p>
-        )}
+
+          <div className="sobre-card">
+            <h3><FiSettings /> Como Funciona</h3>
+            <ol className="sobre-steps">
+              <li><span>1</span> Consultor submete pedido com evidências</li>
+              <li><span>2</span> Talent Manager valida evidências</li>
+              <li><span>3</span> Service Line Leader faz validação final</li>
+              <li><span>4</span> Badge é aprovado ou devolvido com feedback</li>
+            </ol>
+            <p className="sobre-privacidade">
+              <strong>Privacidade:</strong> Cumprimento de RGPD. Partilha de badges apenas com consentimento.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

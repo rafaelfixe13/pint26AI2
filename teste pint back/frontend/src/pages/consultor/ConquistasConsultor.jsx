@@ -1,30 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../NavBar";
 import "../../styles/ConquistasTM.css";
 import { API_BASE } from "../../api";
 import { Container, Row, Col } from "react-bootstrap";
+import { NAV_CONSULTOR } from "../../utils/navConfig";
 
-import { GoHome } from "react-icons/go";
-import { AiOutlineAppstore, AiOutlineLoading3Quarters } from "react-icons/ai";
-import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
-import { BsAward, BsTrophy } from "react-icons/bs";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { BsTrophy } from "react-icons/bs";
 import { HiOutlineEmojiSad } from "react-icons/hi";
-import { FiClock } from "react-icons/fi";
-
-const NAV_ITEMS = [
-  { label: "Início",             icon: <GoHome size={16} /> },
-  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Os meus badges",     icon: <BsAward size={16} /> },
-  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  { label: "Lembretes",          icon: <FiClock size={16} /> },
-];
 
 function ConquistasConsultor() {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Conquistas");
   const [conquistas, setConquistas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,20 +23,9 @@ function ConquistasConsultor() {
       .catch(() => setLoading(false));
   }, []);
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")             navigate("/consultor");
-    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges")     navigate("/consultor/badges");
-    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
-    if (label === "Conquistas")         navigate("/consultor/conquistas");
-    if (label === "Rankings")           navigate("/consultor/rankings");
-    if (label === "Lembretes")          navigate("/consultor/lembretes");
-  };
-
   return (
     <div className="page-wrapper">
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_CONSULTOR} />
 
       <div className="conquistas-container">
 

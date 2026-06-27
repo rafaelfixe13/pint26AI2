@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../NavBar";
-import "../../styles/Relatorios.css";
+import "../../styles/relatoriosTM.css";
 import { API_BASE } from "../../api";
 
 // Importações do jsPDF para gerar o PDF no cliente
@@ -19,20 +19,9 @@ import { MdOutlineVerified } from "react-icons/md";
 import { HiOutlineDocumentText } from "react-icons/hi2";
 import { RiAwardLine } from "react-icons/ri";
 import { IoCheckmarkCircleOutline, IoCloseCircleOutline, IoRibbonOutline } from "react-icons/io5";
-
-const NAV_ITEMS = [
-  { label: "Início", icon: <GoHome size={16} /> },
-  { label: "Validações", icon: <MdOutlineVerified size={16} /> },
-  { label: "Histórico", icon: <BsClockHistory size={16} /> },
-  { label: "Catálogo", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas", icon: <BsTrophy size={16} /> },
-  { label: "Relatórios", icon: <BsBarChart size={16} /> },
-  { label: "Consultores", icon: <FiUsers size={16} /> },
-];
+import { NAV_TALENT } from "../../utils/navConfig";
 
 function RelatoriosTM() {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Relatórios");
 
   // Estados dos KPIs
   const [totalUtilizadores, setTotalUtilizadores] = useState("...");
@@ -92,7 +81,7 @@ function RelatoriosTM() {
           setTotalCertificados(aprovados.length);
           setListaAprovados(aprovados); // Guarda a lista para renderizar as opções de certificados
 
-          // === LÓGICA DO GRÁFICO DE BARRAS (Agrupado por Mês) ===
+          //grafico de barras (por mês)
           const mesesLabels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
           const contagemMeses = Array(12).fill(0);
 
@@ -111,7 +100,7 @@ function RelatoriosTM() {
           }));
           setDadosBarras(barrasCalculadas);
 
-          // === LÓGICA DO GRÁFICO DONUT (Por Nível de Badge) ===
+          //grafico donut
           let jr = 0, int = 0, sr = 0, esp = 0;
 
           aprovados.forEach((c) => {
@@ -133,7 +122,6 @@ function RelatoriosTM() {
       });
   }, []);
 
-  // === REQUISITO RECENTE: GERAR CERTIFICADO INDIVIDUAL PERSONALIZADO (DESIGN PAISAGEM) ===
   const gerarCertificadoPDF = (dados) => {
     // Inicializa o documento no formato Horizontal (Paisagem)
     const doc = new jsPDF({
@@ -222,10 +210,10 @@ function RelatoriosTM() {
     doc.save(nomeFicheiro);
   };
 
-  // === FUNÇÃO PARA GERAR O PDF DIRETAMENTE NO CLIENTE COM BASE NOS MODELOS SEQUELIZE ===
+  //gerar o pdf
   const exportarParaPDF = async (tipo) => {
     const doc = new jsPDF();
-    
+
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
     doc.setTextColor(43, 55, 72); // Cor #2D3748
@@ -242,10 +230,10 @@ function RelatoriosTM() {
         endpoint = `${API_BASE}/admin/utilizadores`;
         colunas = ["ID", "Nome", "Email", "Estado Conta", "Pontos Acumulados"];
         mapearLinha = (u) => [
-          u?.idutilizador || "-", 
-          u?.nome || "N/A", 
-          u?.email || "N/A", 
-          u?.estadoconta || "ATIVA", 
+          u?.idutilizador || "-",
+          u?.nome || "N/A",
+          u?.email || "N/A",
+          u?.estadoconta || "ATIVA",
           `${u?.pontos ?? u?.pontuacao ?? u?.totalpontos ?? 0} pts`
         ];
         break;
@@ -256,8 +244,8 @@ function RelatoriosTM() {
         endpoint = `${API_BASE}/admin/badges`;
         colunas = ["ID", "Nome do Badge", "Pontos Atribuídos", "ID Nível", "ID Área", "Estado"];
         mapearLinha = (b) => [
-          b?.idbadge || "-", 
-          b?.nome || "N/A", 
+          b?.idbadge || "-",
+          b?.nome || "N/A",
           `${b?.pontos ?? 0} pts`,
           b?.Nivel?.nome || b?.nivel || b?.idnivel || "Geral",
           b?.Area?.nome || b?.area || b?.nomearea || b?.idarea || "Geral",
@@ -268,7 +256,7 @@ function RelatoriosTM() {
       // 3. TABELA: utilizador_badges (Histórico de Conquistas/Certificados)
       case "conquistas":
         tituloReport = "Relatório de Badges Conquistados (Utilizador_Badges)";
-        endpoint = `${API_BASE}/candidaturas/tm/lista`; 
+        endpoint = `${API_BASE}/candidaturas/tm/lista`;
         colunas = ["ID Consultor", "Nome Consultor", "ID Badge", "Nome Badge", "Data de Conquista"];
         mapearLinha = (ub) => [
           ub?.idutilizador || "-",
@@ -282,7 +270,7 @@ function RelatoriosTM() {
       // 4. TABELA: areas (Estrutura de Áreas / Service Lines)
       case "areas":
         tituloReport = "Lista de Áreas e Departamentos Registados";
-        endpoint = `${API_BASE}/admin/areas`; 
+        endpoint = `${API_BASE}/admin/areas`;
         colunas = ["ID Área", "ID Service Line", "Nome da Área", "Descrição", "Estado"];
         mapearLinha = (a) => [
           a?.idarea || "-",
@@ -296,7 +284,7 @@ function RelatoriosTM() {
       // 5. TABELA: nivel (Níveis de Proficiência dos Badges)
       case "niveis":
         tituloReport = "Lista de Níveis de Badges (Proficiência)";
-        endpoint = `${API_BASE}/admin/niveis`; 
+        endpoint = `${API_BASE}/admin/niveis`;
         colunas = ["ID Nível", "Nome do Nível", "Descrição"];
         mapearLinha = (n) => [
           n?.idnivel || "-",
@@ -429,7 +417,7 @@ function RelatoriosTM() {
     }
   };
 
-  // === FUNÇÃO PARA GERAR O EXCEL DIRETAMENTE NO CLIENTE ===
+  //gerar o excel
   const exportarParaExcel = async (tipo) => {
     let tituloReport = "";
     let endpoint = "";
@@ -460,7 +448,7 @@ function RelatoriosTM() {
         "ID Área": b?.Area?.nome || b?.area || b?.nomearea || b?.idarea || "Geral",
         "Estado": b?.ativo ? "Ativo" : "Inativo"
       });
-    } else if (tipo === "consultores") {            
+    } else if (tipo === "consultores") {
       tituloReport = "Lista Geral de Consultores";
       endpoint = `${API_BASE}/admin/utilizadores`;
       colunas = ["ID", "Nome", "Email", "Estado Conta", "Pontos Acumulados"];
@@ -543,7 +531,7 @@ function RelatoriosTM() {
       const linhasExcel = data.map(mapearObjeto);
       const worksheet = XLSX.utils.json_to_sheet(linhasExcel);
       const workbook = XLSX.utils.book_new();
-      
+
       XLSX.utils.book_append_sheet(workbook, worksheet, tituloReport.substring(0, 30));
 
       // Calcula automaticamente larguras de coluna básicas
@@ -560,17 +548,6 @@ function RelatoriosTM() {
     }
   };
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início") navigate("/talent/dashboard");
-    if (label === "Validações") navigate("/talent/validacoes");
-    if (label === "Histórico") navigate("/talent/historico");
-    if (label === "Catálogo") navigate("/talent/catalogo");
-    if (label === "Conquistas") navigate("/talent/conquistas");
-    if (label === "Relatórios") navigate("/talent/relatorios");
-    if (label === "Consultores") navigate("/talent/diretorio");
-  };
-
   // Cálculo das fatias do conic-gradient para o Donut
   const totalNiveis = dadosDonut.júnior + dadosDonut.intermedio + dadosDonut.senior + dadosDonut.especialista || 1;
   const pctJr = (dadosDonut.júnior / totalNiveis) * 100;
@@ -579,16 +556,16 @@ function RelatoriosTM() {
 
   const donutGradient = {
     background: `conic-gradient(
-      #3B82F6 0% ${pctJr}%, 
-      #10B981 ${pctJr}% ${pctJr + pctInt}%, 
-      #F59E0B ${pctJr + pctInt}% ${pctJr + pctInt + pctSr}%, 
+      #3B82F6 0% ${pctJr}%,
+      #10B981 ${pctJr}% ${pctJr + pctInt}%,
+      #F59E0B ${pctJr + pctInt}% ${pctJr + pctInt + pctSr}%,
       #8B5CF6 ${pctJr + pctInt + pctSr}% 100%
     )`
   };
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_TALENT} />
 
       <div className="relatorios-container">
         {/* HEADER */}
@@ -654,11 +631,10 @@ function RelatoriosTM() {
           </div>
         </div>
 
-        {/* INCLUSÃO DO NOVO REQUISITO: TABELA / PAINEL DE EMISSÃO DE CERTIFICADOS INDIVIDUAIS */}
         <h3 className="section-title" style={{ marginTop: "35px" }}>Download de Certificados em PDF Personalizados</h3>
         <div className="chart-box" style={{ marginBottom: "30px", padding: "20px" }}>
           <p className="subtitle" style={{ marginBottom: "15px" }}>Selecione um consultor qualificado abaixo para gerar e descarregar o respetivo Diploma Oficial Individual:</p>
-          
+
           {listaAprovados.length > 0 ? (
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "250px", overflowY: "auto" }}>
               {listaAprovados.map((c, index) => (
@@ -708,7 +684,7 @@ function RelatoriosTM() {
         {/* EXPORTAÇÃO */}
         <h3 className="section-title">Exportação de Dados (Excel / PDF)</h3>
         <div className="export-grid">
-          
+
           <div className="export-card">
             <div className="card-icon blue-bg"><HiOutlineDocumentText size={22} color="#3B82F6" /></div>
             <h4>Pedidos Submetidos</h4>

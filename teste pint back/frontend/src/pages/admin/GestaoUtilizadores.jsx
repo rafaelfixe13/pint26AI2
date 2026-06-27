@@ -3,21 +3,21 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/GestaoUtilizadores.css";
 import AdminNav from "./AdminNav";
 import { API_BASE } from "../../api";
+import { BsCheckCircleFill, BsHourglassSplit, BsX } from "react-icons/bs";
 
 const ROLE_NOMES = {
   1: "Consultor", 2: "Talent Manager", 3: "Service Line", 4: "Administrador",
   6: "Consultor + SL", 7: "Consultor + TM", 8: "Consultor + Admin",
 };
 
-// Perfis extra que se podem juntar ao Consultor (que é sempre a base)
+// Perfis extra que se podem juntar ao Consultor
 const PERFIS_EXTRA = [
   { id: 2, nome: "Talent Manager" },
   { id: 3, nome: "Service Line" },
   { id: 4, nome: "Administrador" },
 ];
 
-// Combinação de perfis -> idrole (null = combinação inválida).
-// Regra: Consultor é obrigatório e só admite UM perfil extra.
+// Combinação de perfis
 function combinarPerfis(perfis) {
   if (!perfis.includes(1)) return null;            // Consultor obrigatório
   const extras = perfis.filter((p) => p !== 1);
@@ -26,7 +26,7 @@ function combinarPerfis(perfis) {
   return { 3: 6, 2: 7, 4: 8 }[extras[0]] ?? null;  // SL=6, TM=7, Admin=8
 }
 
-// idrole -> perfis base (inverso de combinarPerfis). Garante o Consultor como base.
+//perfis base
 const PERFIS_DO_ROLE = { 1: [1], 2: [2], 3: [3], 4: [4], 5: [1, 2, 3, 4], 6: [1, 3], 7: [1, 2], 8: [1, 4] };
 function perfisDoRole(idrole) {
   const extras = (PERFIS_DO_ROLE[idrole] ?? [idrole]).filter((p) => p !== 1);
@@ -42,7 +42,7 @@ function GestaoUtilizadores() {
   const [expandido, setExpandido] = useState(null);
   const [feedback, setFeedback] = useState({ id: null, msg: "", tipo: "" });
 
-  // Modal criar utilizador
+  //criar utilizador
   const [modalAberto, setModalAberto] = useState(false);
   const [novoUtilizador, setNovoUtilizador] = useState({ nome: "", email: "", perfis: [1] });
   const [erroModal, setErroModal] = useState("");
@@ -67,7 +67,7 @@ function GestaoUtilizadores() {
 
   useEffect(() => { carregarDados(); }, []);
 
-  // Abre o editor de um utilizador, pré-preenchendo os perfis a partir do idrole atual.
+  // Abre o editor de um utilizador
   const abrirEditor = (u) => {
     if (expandido === u.idutilizador) { setExpandido(null); return; }
     setExpandido(u.idutilizador);
@@ -78,7 +78,7 @@ function GestaoUtilizadores() {
     setPerfisEdit((prev) => (prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]));
   };
 
-  // Grava a combinação de perfis (idrole composto) — reusa o endpoint que faz update({ idrole }).
+  // Grava a combinação de perfis
   const guardarPerfis = async (u) => {
     const idrole = combinarPerfis(perfisEdit);
     if (idrole === null) {
@@ -238,7 +238,7 @@ function GestaoUtilizadores() {
                       </span>
                     </td>
                     <td className="gu-center">
-                      {u.emailconfirmado ? "✅" : "⏳"}
+                      {u.emailconfirmado ? <BsCheckCircleFill color="#16a34a" /> : <BsHourglassSplit color="#ca8a04" />}
                     </td>
                     <td>
                       <div className="gu-roles">
@@ -335,7 +335,7 @@ function GestaoUtilizadores() {
           <div className="gu-modal" onClick={(e) => e.stopPropagation()}>
             <div className="gu-modal-header">
               <h2>Criar utilizador</h2>
-              <button className="gu-modal-fechar" onClick={fecharModal}>✕</button>
+              <button className="gu-modal-fechar" onClick={fecharModal}><BsX /></button>
             </div>
 
             <p className="gu-modal-desc">

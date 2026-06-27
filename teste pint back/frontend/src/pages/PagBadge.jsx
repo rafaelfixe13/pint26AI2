@@ -5,17 +5,17 @@ import "../styles/PagBadge.css";
 import "../styles/Candidaturas.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
-import { BsAward, BsTrophy } from "react-icons/bs";
+import { BsAward, BsTrophy, BsCheckLg, BsStarFill } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
 import { FiPaperclip, FiX, FiFileText, FiExternalLink, FiClock } from "react-icons/fi";
 import { API_BASE } from "../api";
 import { MdLeaderboard } from "react-icons/md";
+import { getNavItems } from "../utils/navConfig";
 
 
-// ── Helpers para ficheiros base64 ──────────────────────────
-// É uma imagem? (data:image ou URL terminada em extensão de imagem)
+// Helpers para ficheiros base64
 function isImagem(src) {
   if (!src) return false;
   if (src.startsWith("data:image")) return true;
@@ -34,7 +34,7 @@ function toBlobUrl(src) {
 }
 
 
-// ── Modal de visualização de PDF ───────────────────────────
+//Modal de visualização de PDF
 function PdfModal({ src, titulo, onFechar }) {
   const url = useMemo(() => {
     try { return ehHttpUrl(src) ? src : toBlobUrl(src); } catch { return null; }
@@ -94,7 +94,7 @@ function lerFicheiroBase64(file) {
 }
 
 
-// upload por requisito ─────────────────
+// upload por requisito
 function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
   // ficheirosReqs: { [idrequisito]: File | null }
   const [ficheirosReqs, setFicheirosReqs] = useState(() =>
@@ -290,28 +290,11 @@ function BadgeDetalhe() {
   const [badge, setBadge] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("Catálogo de Badges");
   const [candidatura, setCandidatura] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [pdfView, setPdfView] = useState(null);
 
-  const navItems = isSL
-    ? [
-        { label: "Início",     icon: <GoHome size={16} /> },
-        { label: "Validações", icon: <MdOutlineAssignment size={16} /> },
-        { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
-        { label: "Conquistas", icon: <BsTrophy size={16} /> },
-        { label: "Relatórios", icon: <MdLeaderboard size={16} /> },
-      ]
-    : [
-        { label: "Início",             icon: <GoHome size={16} /> },
-        { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-        { label: "Os meus badges",     icon: <BsAward size={16} /> },
-        { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-        { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-        { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-        { label: "Lembretes",          icon: <FiClock size={16} /> },
-      ];
+  const navItems = getNavItems(String(perfilAtivo));
 
   useEffect(() => {
     fetch(`${API_BASE}/badges/${id}`)
@@ -334,26 +317,6 @@ function BadgeDetalhe() {
     else if (perfilAtivo === 3) navigate("/sl/catalogo");
     else if (perfilAtivo === 4) navigate("/admin/utilizadores");
     else navigate("/perfil");
-  };
-
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-
-    if (isSL) {
-      if (label === "Início")     navigate("/sl/dashboard");
-      if (label === "Validações") navigate("/sl/validacoes");
-      if (label === "Catálogo")   navigate("/sl/catalogo");
-      if (label === "Conquistas") navigate("/sl/conquistas");
-      if (label === "Relatórios") navigate("/sl/relatorios");
-      return;
-    }
-
-    if (label === "Início" || label === "Catálogo de Badges") voltarParaCatalogo();
-    if (label === "Candidaturas")   navigate("/consultor/candidaturas");
-    if (label === "Os meus badges") navigate("/consultor/badges");
-    if (label === "Conquistas")     navigate("/consultor/conquistas");
-    if (label === "Rankings")       navigate("/consultor/rankings");
-    if (label === "Lembretes")      navigate("/consultor/lembretes");
   };
 
   const handleSubmetido = () => {
@@ -397,7 +360,7 @@ function BadgeDetalhe() {
         />
       )}
 
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={navItems} />
+      <Navbar navItems={navItems} />
 
       <div className="badge-detail-page">
         <button className="back-link" onClick={voltarParaCatalogo}>
@@ -506,7 +469,7 @@ function BadgeDetalhe() {
                   )}
                   {jaConquistado && (
                     <p style={{ fontSize: ".9rem", color: "#047857", fontWeight: 600 }}>
-                      ✓ Já conquistou este badge.
+                      <BsCheckLg /> Já conquistou este badge.
                     </p>
                   )}
                   {candidatura && !podeCandidar && !jaConquistado && (
@@ -520,7 +483,7 @@ function BadgeDetalhe() {
 
             <div className="badge-detail-right">
               {badge.idespecial != null && (
-                <span className="badge-tag-special">⭐ {badge.especial_nome || "Badge Especial"}</span>
+                <span className="badge-tag-special"><BsStarFill /> {badge.especial_nome || "Badge Especial"}</span>
               )}
               <div className="badge-detail-points" style={{ backgroundColor: badge.pontos ? getPointsColor(badge.pontos) : "#9ca3af" }}>
                 {badge.pontos ? `${badge.pontos} Pontos` : "Sem pontos"}

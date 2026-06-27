@@ -46,7 +46,7 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { animation: spin 0.9s linear infinite; }
 
-/* ── Card vertical ── */
+/* Card vertical */
 .conquista-card {
   display: flex;
   flex-direction: column;
@@ -153,7 +153,7 @@
   font-size: 0.9rem;
 }
 
-/* ── Ranking ── */
+/* Ranking */
 .ranking-header-row {
   display: flex;
   align-items: center;

@@ -6,26 +6,16 @@ import Navbar from "../NavBar"
 import { GoHome } from "react-icons/go";
 import { API_BASE } from "../../api";
 import { MdOutlineVerified } from "react-icons/md";
-import { BsClockHistory, BsTrophy, BsBarChart, BsPeopleFill, BsAwardFill, BsGraphUp } from "react-icons/bs";
+import { BsClockHistory, BsTrophy, BsBarChart, BsPeopleFill, BsAwardFill, BsGraphUp, BsExclamationTriangleFill } from "react-icons/bs";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
 import { filtrarBadgesProximosExpiracao } from "../../utils/expiracaoTm";
-
-const NAV_ITEMS = [
-    { label: "Início", icon: <GoHome size={16} /> },
-    { label: "Validações", icon: <MdOutlineVerified size={16} /> },
-    { label: "Histórico", icon: <BsClockHistory size={16} /> },
-    { label: "Catálogo", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Conquistas", icon: <BsTrophy size={16} /> },
-    { label: "Relatórios", icon: <BsBarChart size={16} /> },
-    { label: "Consultores", icon: <FiUsers size={16} /> },
-];
+import { NAV_TALENT } from "../../utils/navConfig";
 
 
 
 export default function DashBoard() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState("Início");
     const [totalConsultores, setTotalConsultores] = useState("...");
     const [totalBadges, setTotalBadges] = useState("...");
     const [totalPendentes, setTotalPendentes] = useState("...");
@@ -72,7 +62,7 @@ export default function DashBoard() {
                 if (Array.isArray(data)) {
                     const pendentes = data.filter(c => c.estado === 'SUBMITTED');
                     setTotalPendentes(pendentes.length);
-                    // Histórico Recente (candidaturas já tratadas: APPROVED, REJECTED, etc.)
+                    // Histórico Recente
                     const resolvidas = data.filter(c => c.estado !== 'SUBMITTED').slice(0, 4);
                     setRecentActivity(resolvidas);
                 } else {
@@ -146,21 +136,9 @@ export default function DashBoard() {
     }, []);
 
 
-    const handleTabChange = (label) => {
-        setActiveTab(label);
-        // Exemplo de rotas - altere para os URLs que tem criados no seu App.jsx
-        if (label === "Início") navigate("/talent/dashboard");
-        if (label === "Validações") navigate("/talent/validacoes");
-        if (label === "Histórico") navigate("/talent/historico");
-        if (label === "Catálogo") navigate("/talent/catalogo");
-        if (label === "Conquistas") navigate("/talent/conquistas");
-        if (label === "Relatórios") navigate("/talent/relatorios");
-        if (label === "Consultores") navigate("/talent/diretorio");
-    };
-
     return (
         <div className="tm-dashboard-container">
-            <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+            <Navbar navItems={NAV_TALENT} />
 
             <main className="tm-dashboard-content">
                 <div className="tm-dashboard-header">
@@ -170,7 +148,7 @@ export default function DashBoard() {
 
                 {badgesProximosExpiracao.length > 0 && (
                     <div className="tm-expiracao-banner">
-                        <div className="tm-expiracao-banner-icon">⚠️</div>
+                        <div className="tm-expiracao-banner-icon"><BsExclamationTriangleFill /></div>
                         <div>
                             <h2>Badges próximos da data de expiração</h2>
                             <ul>
@@ -205,7 +183,7 @@ export default function DashBoard() {
                         </div>
                     </div>
 
-                    <div className="tm-card" onClick={() => handleTabChange("Validações")} style={{ cursor: 'pointer' }}>
+                    <div className="tm-card" onClick={() => navigate("/talent/validacoes")} style={{ cursor: 'pointer' }}>
                         <div className="tm-card-icon bg-purple">
                             <BsClockHistory size={24} />
                         </div>
@@ -221,7 +199,7 @@ export default function DashBoard() {
                     {/* Secção de Ranking */}
                     <div className="tm-dashboard-sections">
                         <div className="tm-section">
-                            <h2>🏆 Top Consultores (Destaques)</h2>
+                            <h2><BsTrophy /> Top Consultores (Destaques)</h2>
                             <div className="tm-ranking-list">
                                 {topConsultores.length > 0 ? (
                                     topConsultores.map((cons, index) => {
@@ -232,7 +210,7 @@ export default function DashBoard() {
                                                     {index + 1}
                                                 </span>
                                                 {cons.fotourl ? (
-                                                    <img src={cons.fotourl} alt={cons.nome} className="tm-rank-avatar" />
+                                                    <img src={cons.fotourl.startsWith("data:") ? cons.fotourl : `data:image/jpeg;base64,${cons.fotourl}`} alt={cons.nome} className="tm-rank-avatar" />
                                                 ) : (
                                                     <div className="tm-rank-avatar-placeholder" style={{ backgroundColor: index === 0 ? '#fbbf24' : index === 1 ? '#94a3b8' : index === 2 ? '#d97706' : '#3b82f6' }}>
                                                         {initials}
@@ -259,7 +237,7 @@ export default function DashBoard() {
                     {/* Secção de Atividade Recente */}
                     <div className="tm-dashboard-sections">
                         <div className="tm-section">
-                            <h2>🕒 Atividade e Validações Recentes</h2>
+                            <h2><BsClockHistory /> Atividade e Validações Recentes</h2>
                             <div className="tm-activity-list">
                                 {recentActivity.length > 0 ? (
                                     recentActivity.map((act) => {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 import { API_BASE } from "../api";
+import { FaLock } from "react-icons/fa";
 
 function AlterarPassword() {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ function AlterarPassword() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🔒</div>
+        <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}><FaLock /></div>
         <h2 className="auth-title">Alterar password</h2>
         <p className="auth-subtitle">
           É obrigatório definir uma nova password na primeira entrada.

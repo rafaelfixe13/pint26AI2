@@ -16,15 +16,7 @@ import { gerarCertificadoPDF } from "../../utils/certificado";
 import { definirRgpd } from "../../utils/rgpd";
 import RgpdModal from "../../components/RgpdModal";
 
-const NAV_ITEMS = [
-  { label: "Início",             icon: <GoHome size={16} /> },
-  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Os meus badges",     icon: <BsAward size={16} /> },
-  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  { label: "Lembretes",          icon: <FiClock size={16} /> },
-];
+import { NAV_CONSULTOR } from "../../utils/navConfig";
 
 // Calcula estado de expiração a partir da data de conquista + meses
 function expiryInfo(dataConquista, expiremeses) {
@@ -49,7 +41,6 @@ function OsMeusBadges() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
-  const [activeTab, setActiveTab] = useState("Os meus badges");
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -122,7 +113,7 @@ function OsMeusBadges() {
     return () => clearTimeout(t);
   }, [consultorQuery]);
 
-  // ── RGPD ───────────────────────────────────────────────
+  //RGPD
   const [rgpd, setRgpd] = useState(utilizador?.rgpd === true);
   const [pendingAccao, setPendingAccao] = useState(null);
   const [rgpdLoading, setRgpdLoading] = useState(false);
@@ -182,7 +173,6 @@ function OsMeusBadges() {
   };
 
   // Adiciona o badge à secção "Licenças e Certificados" do perfil do LinkedIn
-  // (fluxo "Add to profile" — pré-preenche nome, organização, datas e URL de verificação)
   const doAddToProfile = (b) => {
     const url = b.idcandidatura
       ? `${window.location.origin}/verificar/${b.idcandidatura}`
@@ -222,18 +212,8 @@ function OsMeusBadges() {
     doAddToProfile(b);
   };
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")             navigate("/consultor");
-    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges")     navigate("/consultor/badges");
-    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
-    if (label === "Conquistas")         navigate("/consultor/conquistas");
-    if (label === "Rankings")           navigate("/consultor/rankings");
-    if (label === "Lembretes")          navigate("/consultor/lembretes");
-  };
 
-  // ── Filtros ─────────────────────────────────────────
+  //Filtros
   const serviceLines = [...new Set(badges.map((b) => b.serviceline).filter(Boolean))];
 
   const filtrados = badges.filter((b) => {
@@ -243,7 +223,7 @@ function OsMeusBadges() {
     return matchSearch && matchSL;
   });
 
-  // ── Estatísticas ─────────────────────────────────────
+  //Estatísticas
   const totalPontos = badges.reduce((s, b) => s + (b.pontos || 0), 0);
   const totalAreas = new Set(badges.map((b) => b.area).filter(Boolean)).size;
 
@@ -257,7 +237,7 @@ function OsMeusBadges() {
         />
       )}
 
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_CONSULTOR} />
 
       <main className="mb-content">
         <div className="mb-header">
@@ -265,7 +245,7 @@ function OsMeusBadges() {
           <p>Todos os badges que conquistou na plataforma.</p>
         </div>
 
-        {/* Galeria pública — pesquisar consultores */}
+        {/* Galeria pública */}
         <div className="mb-galeria">
           <div className="mb-galeria-head">
             <FiUsers size={18} />

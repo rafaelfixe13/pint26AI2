@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
 import "../styles/NotificacaoTipos.css";
 import { estiloNotificacao } from "../utils/notificacaoEstilo";
+import { getHomePath } from "../utils/navConfig";
 import { BsBell, BsSearch, BsInfoCircle, BsQuestionCircle, BsTrash } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 import { MdSwitchAccount } from "react-icons/md";
 
-function Navbar({ activeTab, onTabChange, navItems }) {
+function Navbar({ navItems = [] }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const dropdownRef = useRef(null);
   const notifRef = useRef(null);
 
@@ -62,11 +64,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
   : null;
 
   const navegarParaHome = () => {
-    const perfilAtivo = localStorage.getItem("perfilAtivo");
-    if (perfilAtivo === "1") navigate("/consultor");
-    else if (perfilAtivo === "2") navigate("/talent");
-    else if (perfilAtivo === "4") navigate("/admin/utilizadores");
-    else navigate("/perfil");
+    navigate(getHomePath(localStorage.getItem("perfilAtivo")));
   };
 
   useEffect(() => {
@@ -299,7 +297,7 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                     className="nb-dropdown-item"
                     onClick={() => {
                       setMenuAberto(false);
-                      navigate("/perfil");  // mesma rota do AdminNav
+                      navigate("/perfil");
                     }}
                   >
                     <MdSwitchAccount size={15} />
@@ -321,11 +319,6 @@ function Navbar({ activeTab, onTabChange, navItems }) {
                     Ajuda
                   </button>
 
-                  <button className="nb-dropdown-item" onClick={() => { setMenuAberto(false); navigate("/avisos"); }}>
-                    <BsBell size={15} />
-                    Avisos
-                  </button>
-
                   <div className="nb-divider" />
 
                   <button
@@ -345,9 +338,9 @@ function Navbar({ activeTab, onTabChange, navItems }) {
         <nav className="nb-nav">
           {navItems.map((item) => (
             <button
-              key={item.label}
-              className={`nb-nav-item ${activeTab === item.label ? "active" : ""}`}
-              onClick={() => onTabChange(item.label)}
+              key={item.path ?? item.label}
+              className={`nb-nav-item ${location.pathname === item.path ? "active" : ""}`}
+              onClick={() => item.path && navigate(item.path)}
             >
               {item.icon && <span>{item.icon}</span>}
               {item.label}

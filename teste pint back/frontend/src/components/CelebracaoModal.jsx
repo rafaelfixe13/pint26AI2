@@ -1,4 +1,6 @@
 import "../styles/Celebracao.css";
+import { BsStarFill } from "react-icons/bs";
+import { marcoIcone } from "../utils/marcoIcone";
 
 const CORES = ["#f59e0b", "#3b82f6", "#10b981", "#ef4444", "#8b5cf6", "#ec4899"];
 
@@ -21,13 +23,13 @@ export default function CelebracaoModal({ marco, onClose }) {
       </div>
 
       <div className="cel-card" onClick={(e) => e.stopPropagation()}>
-        <div className="cel-emoji">{marco.emoji || "🎉"}</div>
+        <div className="cel-emoji">{marcoIcone(marco.icon)}</div>
         <span className="cel-kicker">Marco Alcançado!</span>
         <h2 className="cel-titulo">{marco.titulo}</h2>
         <p className="cel-sub">{marco.descricao}</p>
         <div className="cel-stars" aria-hidden="true">
           {Array.from({ length: 5 }).map((_, i) => (
-            <span key={i}>★</span>
+            <span key={i}><BsStarFill /></span>
           ))}
         </div>
         <button className="cel-btn" onClick={onClose}>Continuar</button>

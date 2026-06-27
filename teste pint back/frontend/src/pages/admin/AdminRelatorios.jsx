@@ -46,7 +46,7 @@ export default function AdminRelatorios() {
 
   const aviso = (texto) => { setMsg(texto); setTimeout(() => setMsg(""), 3500); };
 
-  // ----- dados derivados para os gráficos -----
+  //dados dos graficos
   const totalAtribuidos = stats?.totais?.badgesAtribuidos || 0;
   const maxMes = useMemo(
     () => Math.max(1, ...(stats?.badgesPorMes || []).map((m) => m.total)),
@@ -61,7 +61,7 @@ export default function AdminRelatorios() {
     [stats]
   );
 
-  // ----- exportação genérica -----
+  //exportar
   const buscar = async (endpoint) => {
     const res = await fetch(`${API_BASE}${endpoint}`);
     if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
@@ -72,7 +72,7 @@ export default function AdminRelatorios() {
   const filtrarAprovados = (lista) =>
     lista.filter((c) => (c.estado || "").toUpperCase() === "APPROVED");
 
-  // Configuração de cada relatório exportável
+  // Configuração de cada relatório
   const RELATORIOS = {
     utilizadores: {
       titulo: "Lista de Utilizadores",

@@ -3,7 +3,7 @@ import "../App.css";
 import { API_BASE } from "../api";
 
 function Badges() {
-  const [badges, setBadges] = useState([]); // aqui guardamos os dados
+  const [badges, setBadges] = useState([]); 
 
   useEffect(() => {
     fetch(`${API_BASE}/badges`)

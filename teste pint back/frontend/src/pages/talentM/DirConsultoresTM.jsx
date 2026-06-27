@@ -10,16 +10,7 @@ import { AiOutlineAppstore, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdFilterList, MdOutlineVerified } from "react-icons/md";
 import { FiUsers } from "react-icons/fi";
 import { HiOutlineEmojiSad } from "react-icons/hi";
-
-const NAV_ITEMS = [
-  { label: "Início",      icon: <GoHome size={16} /> },
-  { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
-  { label: "Histórico",   icon: <BsClockHistory size={16} /> },
-  { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas",  icon: <BsTrophy size={16} /> },
-  { label: "Relatórios",  icon: <BsBarChart size={16} /> },
-  { label: "Consultores", icon: <FiUsers size={16} /> },
-];
+import { NAV_TALENT } from "../../utils/navConfig";
 
 const getInitials = (nome) => {
   if (!nome) return "?";
@@ -28,7 +19,6 @@ const getInitials = (nome) => {
 
 function DiretorioConsultores() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Consultores");
   const [consultores, setConsultores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,15 +44,6 @@ function DiretorioConsultores() {
       });
   }, []);
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")      navigate("/talent/dashboard");
-    if (label === "Validações")  navigate("/talent/validacoes");
-    if (label === "Histórico")   navigate("/talent/historico");
-    if (label === "Catálogo")    navigate("/talent/catalogo");
-    if (label === "Conquistas")  navigate("/talent/conquistas");
-    if (label === "Catálogo")    navigate("/talent/catalogo");
-  };
 
   const uniqueSL   = [...new Set(consultores.map((c) => c.serviceline).filter(Boolean))];
   const uniqueArea = [...new Set(consultores.map((c) => c.area).filter(Boolean))];
@@ -76,11 +57,7 @@ function DiretorioConsultores() {
 
   return (
     <div className="page-wrapper">
-      <Navbar
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        navItems={NAV_ITEMS}
-      />
+      <Navbar navItems={NAV_TALENT} />
 
       <div className="diretorio-container">
         <div className="diretorio-header">
@@ -140,7 +117,7 @@ function DiretorioConsultores() {
                     <div className="consultor-foto-wrap">
                       {c.fotourl ? (
                         <img
-                          src={c.fotourl}
+                          src={c.fotourl.startsWith("data:") ? c.fotourl : `data:image/jpeg;base64,${c.fotourl}`}
                           alt={c.nome}
                           className="consultor-foto"
                           onError={(e) => {

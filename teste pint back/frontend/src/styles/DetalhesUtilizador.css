@@ -1,4 +1,4 @@
-/* ── Wrapper ── */
+/* Wrapper */
 .du-wrapper {
   padding: 2rem 2.5rem;
   min-height: 100vh;
@@ -18,7 +18,7 @@
   margin: 0;
 }
 
-/* ── Grid principal 2 colunas ── */
+/* Grid principal 2 colunas */
 .du-grid-principal {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -32,7 +32,7 @@
   gap: 1.25rem;
 }
 
-/* ── Cards base ── */
+/* Cards base */
 .du-card {
   background: #fff;
   border-radius: 14px;
@@ -50,7 +50,7 @@
   color: #6b7280;
 }
 
-/* ── Card info (coluna esq, topo) ── */
+/* Card info (coluna esq, topo) */
 .du-card-info {
   display: flex;
   gap: 1.75rem;
@@ -135,7 +135,7 @@
   align-items: center;
 }
 
-/* ── Card estado (coluna dir, topo) ── */
+/* Card estado (coluna dir, topo) */
 .du-card-estado {
   display: flex;
   flex-direction: column;
@@ -217,7 +217,7 @@
 
 .du-cal-icone { font-size: 0.95rem; color: #9ca3af; }
 
-/* ── Card histórico (coluna esq, meio) ── */
+/* Card histórico (coluna esq, meio) */
 .du-hist-lista {
   display: flex;
   flex-direction: column;
@@ -257,7 +257,7 @@
   white-space: nowrap;
 }
 
-/* ── Card Service Lines (coluna dir, meio) ── */
+/* Card Service Lines (coluna dir, meio) */
 .du-sl-lista {
   display: flex;
   flex-direction: column;
@@ -315,7 +315,7 @@
   font-weight: 700;
 }
 
-/* ── Linha de baixo: stats (4 cards) ── */
+/* Linha de baixo: stats (4 cards) */
 .du-stats-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -372,7 +372,7 @@
 
 .du-btn-inspecionar:hover { background: #1e40af; }
 
-/* ── Card Roles (linha separada) ── */
+/* Card Roles (linha separada) */
 .du-card-roles .du-roles-editor {
   display: flex;
   flex-wrap: wrap;
@@ -408,7 +408,7 @@
   color: #fff;
 }
 
-/* ── Feedback ── */
+/* Feedback */
 .du-feedback {
   padding: 0.65rem 1rem;
   border-radius: 8px;
@@ -419,7 +419,7 @@
 .du-feedback--sucesso { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 .du-feedback--erro    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
-/* ── Botões de ação ── */
+/* Botões de ação */
 .du-acoes-bar {
   display: flex;
   justify-content: flex-end;
@@ -458,7 +458,7 @@
 .du-btn-cancelar:hover:not(:disabled) { background: #b91c1c; }
 .du-btn-cancelar:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── Utilitários ── */
+/* Utilitários */
 .du-vazio {
   color: #9ca3af;
   font-size: 0.875rem;
@@ -475,7 +475,7 @@
   color: #6b7280;
 }
 
-/* ── Responsive ── */
+/* Responsive */
 @media (max-width: 900px) {
   .du-grid-principal { grid-template-columns: 1fr; }
   .du-stats-row      { grid-template-columns: repeat(2, 1fr); }

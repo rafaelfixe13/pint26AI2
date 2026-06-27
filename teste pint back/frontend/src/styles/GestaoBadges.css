@@ -1,4 +1,4 @@
-/* ── Layout ─────────────────────────────────────────────────── */
+/* Layout */
 .gb-wrapper {
   padding: 2rem;
   min-height: 100vh;
@@ -21,7 +21,7 @@
   margin: 0;
 }
 
-/* ── Toast ──────────────────────────────────────────────────── */
+/* Toast */
 .gb-toast {
   padding: 0.7rem 1.2rem;
   border-radius: 8px;
@@ -32,7 +32,7 @@
 .gb-toast--sucesso { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 .gb-toast--erro    { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
-/* ── Service Line card ──────────────────────────────────────── */
+/* Service Line card */
 .gb-sl-card {
   background: white;
   border-radius: 12px;
@@ -71,7 +71,7 @@
   gap: 0.75rem;
 }
 
-/* ── Área card ──────────────────────────────────────────────── */
+/* Área card */
 .gb-area-card {
   border: 1.5px solid #e5e7eb;
   border-radius: 10px;
@@ -106,7 +106,7 @@
   gap: 0.5rem;
 }
 
-/* ── Nível card ─────────────────────────────────────────────── */
+/* Nível card */
 .gb-nivel-card {
   background: white;
   border: 1.5px solid #dbeafe;
@@ -149,7 +149,7 @@
   gap: 0.4rem;
 }
 
-/* ── Chevron e acções ───────────────────────────────────────── */
+/* Chevron e acções */
 .gb-chevron-btn {
   background: none;
   border: none;
@@ -181,7 +181,7 @@
 .gb-icon-btn:hover { background-color: #f3f4f6; color: #374151; }
 .gb-icon-btn--danger:hover { background-color: #fef2f2; color: #dc2626; }
 
-/* ── Inline Add ─────────────────────────────────────────────── */
+/* Inline Add */
 .gb-inline-add {
   display: flex;
   gap: 0.5rem;
@@ -220,7 +220,7 @@
 .gb-btn-add-inline:hover:not(:disabled) { background-color: #1e40af; }
 .gb-btn-add-inline:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ── Badge info ─────────────────────────────────────────────── */
+/* Badge info */
 .gb-badge-icon { font-size: 1.3rem; line-height: 1; }
 .gb-badge-icon--vazio { filter: grayscale(1) opacity(0.35); }
 
@@ -245,7 +245,7 @@
 .gb-badge-publico--sim { background-color: #dcfce7; color: #16a34a; }
 .gb-badge-publico--nao { background-color: #f3f4f6; color: #6b7280; }
 
-/* ── Requisitos ─────────────────────────────────────────────── */
+/* Requisitos */
 .gb-requisitos {
   padding: 0.5rem 1rem 0.75rem;
   display: flex;
@@ -264,7 +264,7 @@
 .gb-req-codigo { font-size: 0.73rem; font-weight: 700; color: #6b7280; min-width: 28px; }
 .gb-req-titulo { font-size: 0.83rem; color: #374151; }
 
-/* ── Botões de badge ─────────────────────────────────────────── */
+/* Botões de badge */
 .gb-btn-novo {
   padding: 0.55rem 1.25rem;
   background-color: #1d4ed8;
@@ -316,7 +316,7 @@
 }
 .gb-btn-toggle:hover { border-color: #1d4ed8; color: #1d4ed8; }
 
-/* ── Modal ──────────────────────────────────────────────────── */
+/* Modal */
 .gb-modal-overlay {
   position: fixed;
   inset: 0;
@@ -361,7 +361,7 @@
   border-radius: 0 0 14px 14px;
 }
 
-/* ── Form inputs ────────────────────────────────────────────── */
+/* Form inputs */
 .gb-form-linha {
   display: flex;
   gap: 0.75rem;
@@ -450,7 +450,7 @@
 .gb-btn-apagar:hover:not(:disabled) { background-color: #b91c1c; }
 .gb-btn-apagar:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ── Formulário inline de badge ─────────────────────────────── */
+/* Formulário inline de badge */
 .gb-badge-form {
   padding: 1rem 1.25rem 1.25rem;
   border-top: 2px solid #dbeafe;
@@ -472,12 +472,12 @@
   gap: 0.5rem;
 }
 
-/* ── Feedback inline ────────────────────────────────────────── */
+/* Feedback inline */
 .gb-feedback { font-size: 0.82rem; padding: 0.4rem 0.75rem; border-radius: 6px; margin: 0; }
 .gb-feedback--sucesso { background-color: #f0fdf4; color: #16a34a; }
 .gb-feedback--erro    { background-color: #fef2f2; color: #dc2626; }
 
-/* ── Botão adicionar nível ───────────────────────────────────── */
+/* Botão adicionar nível */
 .gb-btn-add-nivel {
   display: inline-block;
   padding: 0.35rem 0.85rem;
@@ -493,8 +493,7 @@
 }
 .gb-btn-add-nivel:hover { background-color: #eff6ff; }
 
-
-/* ── Secções (LP / SL) ──────────────────────────────────────── */
+/* Secções (LP / SL) */
 .gb-secao {
   background: white;
   border-radius: 12px;
@@ -539,7 +538,7 @@
   gap: 0.5rem;
 }
 
-/* ── Learning Path item ─────────────────────────────────────── */
+/* Learning Path item */
 .gb-lp-item {
   display: flex;
   align-items: center;
@@ -577,7 +576,7 @@
 .gb-lp-status--ativo   { background-color: #dcfce7; color: #16a34a; }
 .gb-lp-status--inativo { background-color: #f3f4f6; color: #9ca3af; }
 
-/* ── Nível — LP tag e detail ────────────────────────────────── */
+/* Nível — LP tag e detail */
 .gb-nivel-lp {
   font-size: 0.7rem;
   font-weight: 600;
@@ -591,7 +590,7 @@
   border-top: 1px solid #f3f4f6;
 }
 
-/* ── Requisitos (com acções) ────────────────────────────────── */
+/* Requisitos (com acções) */
 .gb-requisitos-titulo {
   font-size: 0.72rem;
   font-weight: 700;
@@ -616,7 +615,7 @@
   margin-left: auto;
 }
 
-/* ── Botão adicionar requisito ──────────────────────────────── */
+/* Botão adicionar requisito */
 .gb-btn-add-req {
   padding: 0.28rem 0.65rem;
   background: none;
@@ -630,7 +629,7 @@
 }
 .gb-btn-add-req:hover { background-color: #ede9fe; }
 
-/* ── Soft delete — inativo ──────────────────────────────────── */
+/* Soft delete — inativo */
 .gb-inativo {
   opacity: 0.55;
   background-color: #fafafa !important;
@@ -658,7 +657,7 @@
 .gb-btn-toggle-ativo--off:hover { background-color: #fef2f2; }
 .gb-btn-toggle-ativo--on:hover  { background-color: #f0fdf4; }
 
-/* ── Secções dentro do modal ────────────────────────────────────── */
+/* Secções dentro do modal */
 .gb-modal-secao {
   border-top: 1.5px solid #f3f4f6;
   padding-top: 1rem;
@@ -678,8 +677,7 @@
   margin-bottom: 0.25rem;
 }
 
-
-/* ── Agrupamento de níveis por LP ───────────────────────────── */
+/* Agrupamento de níveis por LP */
 .gb-lp-grupo {
   display: flex;
   flex-direction: column;
@@ -718,7 +716,7 @@
   text-align: center;
 }
 
-/* ── Upload de imagem ───────────────────────────────────────── */
+/* Upload de imagem */
 .gb-image-upload {
   display: flex;
   align-items: center;
@@ -763,7 +761,7 @@
 }
 .gb-image-upload-remover:hover { color: #ef4444; }
 
-/* ── Utilitários ────────────────────────────────────────────── */
+/* Utilitários */
 .gb-vazio { text-align: center; padding: 2.5rem; color: #9ca3af; font-size: 0.9rem; }
 .gb-vazio-inner { color: #9ca3af; font-size: 0.82rem; font-style: italic; padding: 0.5rem 0; margin: 0; }
 .gb-loading, .gb-erro {

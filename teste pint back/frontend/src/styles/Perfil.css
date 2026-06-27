@@ -8,7 +8,7 @@
 
 .pf-wrap * { box-sizing: border-box; }
 
-/* ===== HERO ===== */
+/* HERO */
 .pf-hero {
   position: relative;
   background: #ffffff;
@@ -184,7 +184,7 @@
   background: #e2e8f0;
 }
 
-/* ===== Cartões de resumo ===== */
+/* Cartões de resumo */
 .pf-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -243,7 +243,7 @@
   color: #64748b;
 }
 
-/* ===== Conteúdo ===== */
+/* Conteúdo */
 .pf-content {
   display: grid;
   grid-template-columns: 1.7fr 1fr;
@@ -581,8 +581,7 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
-
-/* ===== Assinatura no perfil ===== */
+/* Assinatura no perfil */
 .pf-signature-subtitle {
   margin: 0;
   font-size: 13px;
@@ -659,4 +658,3 @@
 .pf-signature-copy-btn:hover {
   background: #1e40af;
 }
-

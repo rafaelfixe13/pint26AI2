@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import AdminNav from "./AdminNav";
 import { API_BASE } from "../../api";
 import "../../styles/BadgesUtilizador.css";
+import { IoArrowBackOutline } from "react-icons/io5";
+import { BsCheckCircleFill, BsCircle } from "react-icons/bs";
 
 function BadgesUtilizador() {
   const { id } = useParams();
@@ -79,7 +81,7 @@ function BadgesUtilizador() {
         <div className="bu-topo">
           <h1 className="bu-titulo">Badges do utilizador</h1>
           <button className="bu-voltar" onClick={() => navigate(`/admin/utilizadores/${id}`)}>
-            ← Voltar
+            <IoArrowBackOutline /> Voltar
           </button>
         </div>
 
@@ -194,7 +196,7 @@ function BadgesUtilizador() {
                                     {badge.requisitos.map((req) => (
                                       <div key={req.idrequisito} className="bu-req-item">
                                         <span className={`bu-req-icone ${req.concluido ? "bu-req-icone--ok" : ""}`}>
-                                          {req.concluido ? "✓" : "○"}
+                                          {req.concluido ? <BsCheckCircleFill /> : <BsCircle />}
                                         </span>
                                         <span className={`bu-req-texto ${req.concluido ? "bu-req-texto--ok" : ""}`}>
                                           {req.codigo}: {req.titulo}

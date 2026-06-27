@@ -11,7 +11,7 @@
   background-color: #f1f4f9;
 }
 
-/* ─── Container ───────────────────────────────────────── */
+/* Container */
 
 .diretorio-container {
   max-width: 1200px;
@@ -20,7 +20,7 @@
   width: 100%;
 }
 
-/* ─── Header ──────────────────────────────────────────── */
+/* Header */
 
 .diretorio-header {
   margin-bottom: 1.5rem;
@@ -40,7 +40,7 @@
   color: #6b7280;
 }
 
-/* ─── Toolbar ─────────────────────────────────────────── */
+/* Toolbar */
 
 .diretorio-toolbar {
   display: flex;
@@ -105,7 +105,7 @@
   border-color: #1a3c8f;
 }
 
-/* ─── Status ──────────────────────────────────────────── */
+/* Status */
 
 .diretorio-status {
   display: flex;
@@ -131,7 +131,7 @@
   to   { transform: rotate(360deg); }
 }
 
-/* ─── Card ────────────────────────────────────────────── */
+/* Card */
 
 .consultor-card {
   background: #fff;
@@ -172,7 +172,7 @@
   margin-top: 0.875rem;
 }
 
-/* ─── Foto ────────────────────────────────────────────── */
+/* Foto */
 
 .consultor-foto-wrap {
   width: 72px;
@@ -203,7 +203,7 @@
   border-radius: 50%;
 }
 
-/* ─── Nome e nível ────────────────────────────────────── */
+/* Nome e nível */
 
 .consultor-nome {
   font-size: 0.9375rem;
@@ -218,7 +218,7 @@
   margin: 0;
 }
 
-/* ─── Info ────────────────────────────────────────────── */
+/* Info */
 
 .consultor-info {
   width: 100%;
@@ -240,7 +240,7 @@
   font-weight: 600;
 }
 
-/* ─── Stats ───────────────────────────────────────────── */
+/* Stats */
 
 .consultor-stats {
   display: flex;
@@ -264,7 +264,7 @@
   color: #1a1a1a;
 }
 
-/* ─── Botão ───────────────────────────────────────────── */
+/* Botão */
 
 .consultor-btn {
   width: 100%;
@@ -283,7 +283,7 @@
   background: #142f70;
 }
 
-/* ─── Responsive ──────────────────────────────────────── */
+/* Responsive */
 
 @media (max-width: 640px) {
   .diretorio-container {

@@ -4,7 +4,7 @@ import AdminNav from "./AdminNav";
 import "../../styles/TalentMDashboard.css";
 import "../../styles/AdminRelatorios.css";
 import { API_BASE } from "../../api";
-import { BsPeopleFill, BsAwardFill, BsClockHistory, BsPatchCheckFill } from "react-icons/bs";
+import { BsPeopleFill, BsAwardFill, BsClockHistory, BsPatchCheckFill, BsTrophy } from "react-icons/bs";
 
 const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
             {/* Top consultores */}
             <div className="tm-dashboard-sections">
               <div className="tm-section">
-                <h2>🏆 Top Consultores</h2>
+                <h2><BsTrophy /> Top Consultores</h2>
                 <div className="tm-ranking-list">
                   {topConsultores.length > 0 ? (
                     topConsultores.map((c, i) => (
@@ -178,7 +178,7 @@ export default function AdminDashboard() {
             {/* Atividade recente */}
             <div className="tm-dashboard-sections">
               <div className="tm-section">
-                <h2>🕒 Pedidos recentes</h2>
+                <h2><BsClockHistory /> Pedidos recentes</h2>
                 <div className="tm-activity-list">
                   {recente.length > 0 ? (
                     recente.map((act) => {

@@ -1,4 +1,4 @@
-/* ===== Wrapper ===== */
+/* Wrapper */
 .nb-wrapper {
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
@@ -155,7 +155,7 @@
   color: #1a2e5a;
 }
 
-/* ===== Dropdown ===== */
+/* Dropdown */
 .nb-dropdown {
   position: absolute;
   top: calc(100% + 10px);
@@ -255,7 +255,7 @@
 .nb-dropdown-item-sair svg { color: #dc2626; }
 .nb-dropdown-item-sair:hover { background: #fef2f2; }
 
-/* ===== Nav tabs ===== */
+/* Nav tabs */
 .nb-nav {
   display: flex;
   gap: 0;
@@ -292,7 +292,7 @@
   background: none;
 }
 
-/* ===== Notificações Popup ===== */
+/* Notificações Popup */
 .notifications-wrapper { position: relative; }
 
 .notifications-popup {
@@ -399,7 +399,7 @@
   font-size: 14px;
 }
 
-/* ===== Modal Logout ===== */
+/* Modal Logout */
 .logout-overlay {
   position: fixed;
   inset: 0;
@@ -494,7 +494,7 @@
   text-align: center;
 }
 
-/* ===== Responsivo ===== */
+/* Responsivo */
 @media (max-width: 640px) {
   .nb-top { padding: 10px 14px; gap: 10px; }
   .nb-search { max-width: none; }

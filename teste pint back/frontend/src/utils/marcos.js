@@ -2,16 +2,16 @@
 // Critérios: candidaturas submetidas (total), badges aprovados e ritmo (3 em 30 dias).
 const MARCOS = [
   // Candidaturas submetidas (total)
-  { id: "cand_1",  emoji: "🚀", titulo: "Primeira Candidatura!", descricao: "Submeteste a tua primeira candidatura. O teu percurso começa agora!" },
-  { id: "cand_3",  emoji: "🎯", titulo: "3 Candidaturas!",        descricao: "Já tens 3 candidaturas submetidas. Continua a crescer!" },
-  { id: "cand_5",  emoji: "⭐", titulo: "5 Candidaturas!",         descricao: "Estás a meio caminho das 10 candidaturas. Não pares!" },
-  { id: "cand_10", emoji: "🔥", titulo: "10 Candidaturas!",        descricao: "Incrível! 10 candidaturas submetidas. És um exemplo de dedicação!" },
+  { id: "cand_1",  icon: "rocket", titulo: "Primeira Candidatura!", descricao: "Submeteste a tua primeira candidatura. O teu percurso começa agora!" },
+  { id: "cand_3",  icon: "target", titulo: "3 Candidaturas!",        descricao: "Já tens 3 candidaturas submetidas. Continua a crescer!" },
+  { id: "cand_5",  icon: "star",   titulo: "5 Candidaturas!",         descricao: "Estás a meio caminho das 10 candidaturas. Não pares!" },
+  { id: "cand_10", icon: "fire",   titulo: "10 Candidaturas!",        descricao: "Incrível! 10 candidaturas submetidas. És um exemplo de dedicação!" },
   // Badges aprovados
-  { id: "apr_1",   emoji: "🥇", titulo: "Primeiro Badge Aprovado!", descricao: "O teu primeiro badge foi aprovado. Parabéns pelo esforço!" },
-  { id: "apr_3",   emoji: "🏅", titulo: "3 Badges Aprovados!",      descricao: "Já tens 3 badges aprovados. O teu perfil está a crescer!" },
-  { id: "apr_5",   emoji: "💎", titulo: "5 Badges Aprovados!",      descricao: "5 badges aprovados! Estás a tornar-te num especialista!" },
+  { id: "apr_1",   icon: "gold",   titulo: "Primeiro Badge Aprovado!", descricao: "O teu primeiro badge foi aprovado. Parabéns pelo esforço!" },
+  { id: "apr_3",   icon: "medal",  titulo: "3 Badges Aprovados!",      descricao: "Já tens 3 badges aprovados. O teu perfil está a crescer!" },
+  { id: "apr_5",   icon: "gem",    titulo: "5 Badges Aprovados!",      descricao: "5 badges aprovados! Estás a tornar-te num especialista!" },
   // Período: 3 candidaturas nos últimos 30 dias
-  { id: "period_3_30d", emoji: "⚡", titulo: "3 em 30 dias!", descricao: "Submeteste 3 candidaturas no último mês. Que ritmo incrível!" },
+  { id: "period_3_30d", icon: "bolt", titulo: "3 em 30 dias!", descricao: "Submeteste 3 candidaturas no último mês. Que ritmo incrível!" },
 ];
 
 const MARCOS_POR_ID = Object.fromEntries(MARCOS.map((m) => [m.id, m]));

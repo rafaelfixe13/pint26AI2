@@ -4,27 +4,16 @@ import { Container, Row, Col } from "react-bootstrap";
 import Navbar from "./NavBar";
 import "../styles/BadgesList.css";
 import { API_BASE } from "../api";
-import { BsSearch, BsStarFill, BsAward, BsTrophy } from "react-icons/bs";
+import { NAV_CONSULTOR } from "../utils/navConfig";
+import { BsSearch, BsStarFill } from "react-icons/bs";
 import { FaMedal } from "react-icons/fa";
-import { MdFilterList, MdOutlineAssignment } from "react-icons/md";
-import { AiOutlineLoading3Quarters, AiOutlineAppstore } from "react-icons/ai";
+import { MdFilterList } from "react-icons/md";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { HiOutlineEmojiSad } from "react-icons/hi";
 import { IoEyeOutline } from "react-icons/io5";
-import { GoHome } from "react-icons/go";
-import { MdLeaderboard } from "react-icons/md";
-import { FiExternalLink, FiClock } from "react-icons/fi";
+import { FiExternalLink } from "react-icons/fi";
 
-const NAV_ITEMS_CONSULTOR = [
-  { label: "Início",             icon: <GoHome size={16} /> },
-  { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-  { label: "Os meus badges",     icon: <BsAward size={16} /> },
-  { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-  { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-  { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-  { label: "Lembretes",          icon: <FiClock size={16} /> },
-];
-
-function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInicial }) {
+function BadgesList({ navItems = NAV_CONSULTOR }) {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
   const perfilAtivo = Number(localStorage.getItem("perfilAtivo") || "0");
@@ -36,11 +25,6 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
 
-  const [activeTab, setActiveTab] = useState(
-    activeTabInicial ||
-    navItems.find(i => i.label.includes("Catálogo"))?.label ||
-    "Catálogo de Badges"
-  );
   const [filters, setFilters] = useState({
     serviceline: "",
     area: "",
@@ -75,25 +59,6 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
       });
   }, []);
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-
-    if (onTabExtra) { onTabExtra(label); return; }
-
-    const p = localStorage.getItem("perfilAtivo");
-    if (label === "Início") {
-      if (p === "1") navigate("/consultor");
-      else if (p === "2") navigate("/talent/catalogo");
-      else if (p === "4") navigate("/admin/utilizadores");
-      else navigate("/perfil");
-    }
-    if (label === "Candidaturas")   navigate("/consultor/candidaturas");
-    if (label === "Os meus badges") navigate("/consultor/badges");
-    if (label === "Conquistas")     navigate("/consultor/conquistas");
-    if (label === "Rankings")       navigate("/consultor/rankings");
-    if (label === "Lembretes")      navigate("/consultor/lembretes");
-  };
-
   const uniqueValues = (key) => [...new Set(badges.map((b) => b[key]).filter(Boolean))];
 
   const filtered = badges.filter((b) => {
@@ -117,11 +82,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
 
   return (
     <div className="page-wrapper">
-      <Navbar
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        navItems={navItems}
-      />
+      <Navbar navItems={navItems} />
 
       <Container className="catalog-container">
         {/* Cabeçalho */}
@@ -130,7 +91,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
           <p>Consulte todos os badges disponíveis, descrições, pontos e requisitos.</p>
         </div>
 
-        {/* Integração com softinsa.pt — info sobre competências da Softinsa */}
+        {/* Integração com softinsa.pt */}
         <a
           className="catalog-softinsa"
           href="https://www.softinsa.pt"
@@ -199,7 +160,7 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
           </div>
         )}
 
-        {/* Grelha de badges — 3 colunas (Bootstrap) */}
+        {/* Grelha de badges */}
         {!loading && !error && filtered.length > 0 && (
           <Row xs={1} sm={2} lg={3} className="g-4">
             {filtered.map((badge) => (
@@ -259,9 +220,9 @@ function BadgesList({ navItems = NAV_ITEMS_CONSULTOR, onTabExtra, activeTabInici
                   <div className="badge-card-footer">
                     <span
                       className="badge-points"
-                      style={{ backgroundColor: badge.pontos ? getPointsColor(badge.pontos) : "#9ca3af" }}
+                      style={{ backgroundColor: getPointsColor(badge.pontos) }}
                     >
-                      {badge.pontos ? `${badge.pontos} Pontos` : "Sem pontos"}
+                      {badge.pontos} Pontos
                     </span>
                     <button
                       className="btn-detalhes"

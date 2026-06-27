@@ -9,15 +9,7 @@ import { MdOutlineVerified, MdLeaderboard } from "react-icons/md";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsPeopleFill, BsAwardFill, BsClockHistory, BsHourglassSplit, BsStarFill, BsGraphUp, BsTrophy, BsBarChart } from "react-icons/bs";
 import { FaMedal } from "react-icons/fa";
-
-const NAV_ITEMS = [
-  { label: "Início",     icon: <GoHome size={16} /> },
-  { label: "Validações", icon: <MdOutlineVerified size={16} /> },
-  { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas", icon: <BsTrophy size={16} /> },
-  { label: "Ranking",    icon: <MdLeaderboard size={16} /> },
-  { label: "Relatórios", icon: <BsBarChart size={16} /> },
-];
+import { NAV_SL } from "../../utils/navConfig";
 
 const getInitials = (nome) =>
   nome ? nome.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase() : "C";
@@ -55,21 +47,13 @@ export default function DashBoardSL() {
     return () => clearInterval(intervalo);
   }, []);
 
-  const handleTabChange = (label) => {
-    if (label === "Início")     navigate("/sl/dashboard");
-    if (label === "Validações") navigate("/sl/validacoes");
-    if (label === "Catálogo")   navigate("/sl/catalogo");
-    if (label === "Conquistas") navigate("/sl/conquistas");
-    if (label === "Ranking")    navigate("/sl/ranking");
-    if (label === "Relatórios") navigate("/sl/relatorios");
-  };
 
   const kpis = data?.kpis ?? {};
   const maxArea = Math.max(1, ...(data?.porArea ?? []).map((a) => (a.atribuidos || 0) + (a.emprocesso || 0)));
 
   return (
     <div className="tm-dashboard-container">
-      <Navbar activeTab="Início" onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_SL} />
 
       <main className="tm-dashboard-content">
         <div className="tm-dashboard-header">
@@ -146,7 +130,7 @@ export default function DashBoardSL() {
               <div className="tm-dashboard-sections">
                 {/* Badges mais obtidos */}
                 <div className="tm-section" style={{ marginBottom: "2rem" }}>
-                  <h2>🏅 Badges mais obtidos</h2>
+                  <h2><FaMedal /> Badges mais obtidos</h2>
                   <div className="tm-ranking-list">
                     {data?.topBadges?.length > 0 ? (
                       data.topBadges.map((b, i) => (
@@ -174,7 +158,7 @@ export default function DashBoardSL() {
 
                 {/* Distribuição por área */}
                 <div className="tm-section">
-                  <h2>📊 Badges por área</h2>
+                  <h2><BsBarChart /> Badges por área</h2>
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     {data?.porArea?.length > 0 ? (
                       data.porArea.map((a) => {
@@ -207,14 +191,14 @@ export default function DashBoardSL() {
               <div className="tm-dashboard-sections">
                 {/* Top consultores */}
                 <div className="tm-section" style={{ marginBottom: "2rem" }}>
-                  <h2>🏆 Top consultores</h2>
+                  <h2><BsTrophy /> Top consultores</h2>
                   <div className="tm-ranking-list">
                     {data?.topConsultores?.length > 0 ? (
                       data.topConsultores.map((c, i) => (
                         <div key={c.idutilizador} className="tm-ranking-row">
                           <span className={`tm-rank-badge rank-${i + 1}`}>{i + 1}</span>
                           {c.fotourl ? (
-                            <img src={c.fotourl} alt={c.nome} className="tm-rank-avatar" />
+                            <img src={c.fotourl.startsWith("data:") ? c.fotourl : `data:image/jpeg;base64,${c.fotourl}`} alt={c.nome} className="tm-rank-avatar" />
                           ) : (
                             <div className="tm-rank-avatar-placeholder">{getInitials(c.nome)}</div>
                           )}
@@ -233,7 +217,7 @@ export default function DashBoardSL() {
 
                 {/* Atividade / histórico recente */}
                 <div className="tm-section">
-                  <h2>🕒 Atividade recente</h2>
+                  <h2><BsClockHistory /> Atividade recente</h2>
                   <div className="tm-activity-list">
                     {data?.atividade?.length > 0 ? (
                       data.atividade.map((act) => {

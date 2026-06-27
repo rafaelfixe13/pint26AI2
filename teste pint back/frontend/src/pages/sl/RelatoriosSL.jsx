@@ -15,15 +15,7 @@ import { BsTrophy, BsBarChart } from "react-icons/bs";
 import { RiAwardLine } from "react-icons/ri";
 import { FiUsers } from "react-icons/fi";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
-
-const NAV_ITEMS = [
-  { label: "Início",     icon: <GoHome size={16} /> },
-  { label: "Validações", icon: <MdOutlineVerified size={16} /> },
-  { label: "Catálogo",   icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas", icon: <BsTrophy size={16} /> },
-  { label: "Ranking",    icon: <MdLeaderboard size={16} /> },
-  { label: "Relatórios", icon: <BsBarChart size={16} /> },
-];
+import { NAV_SL } from "../../utils/navConfig";
 
 const fmtData = (v) => {
   if (!v) return "-";
@@ -75,14 +67,6 @@ export default function RelatoriosSL() {
     });
   }, []);
 
-  const handleTabChange = (label) => {
-    if (label === "Início")     navigate("/sl/dashboard");
-    if (label === "Validações") navigate("/sl/validacoes");
-    if (label === "Catálogo")   navigate("/sl/catalogo");
-    if (label === "Conquistas") navigate("/sl/conquistas");
-    if (label === "Ranking")    navigate("/sl/ranking");
-    if (label === "Relatórios") navigate("/sl/relatorios");
-  };
 
   // Apenas badges da Service Line do utilizador
   const badgesSL = useMemo(
@@ -108,7 +92,7 @@ export default function RelatoriosSL() {
     return true;
   };
 
-  // ── Conjuntos filtrados por relatório ──────────────────────────────────────
+  //Conjuntos filtrados por relatório
   const pedidos = useMemo(
     () => candidaturas.filter((c) => (!area || c.area_nome === area) && noPeriodo(dataPedido(c))),
     [candidaturas, area, de, ate]
@@ -126,7 +110,7 @@ export default function RelatoriosSL() {
     [consultores, area]
   );
 
-  // ── Definição de cada relatório (colunas + linhas) ─────────────────────────
+  //Definição de cada relatório (colunas + linhas)
   const construir = (tipo) => {
     switch (tipo) {
       case "pedidos":
@@ -232,7 +216,7 @@ export default function RelatoriosSL() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab="Relatórios" onTabChange={handleTabChange} navItems={NAV_ITEMS} />
+      <Navbar navItems={NAV_SL} />
 
       <div className="relsl-page">
         <div className="relsl-header">

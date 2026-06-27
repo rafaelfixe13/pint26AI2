@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/SelecionarPerfil.css";
 import { API_BASE } from "../api";
+import { FaUser, FaBullseye, FaBuilding, FaCog } from "react-icons/fa";
 
 const ROLE_ADMIN = 4;
 const ROLE_CONSULTOR = 1;
 const ROLE_SL = 3;
 
 const PERFIS = {
-  1: { nome: "Consultor",     descricao: "Aceda às suas badges, projetos e atividades.",                 icone: "👤" },
-  2: { nome: "Talent Manager",descricao: "Gira colaboradores, avaliações e desenvolvimento de talento.", icone: "🎯" },
-  3: { nome: "Service Line",  descricao: "Supervisione a sua linha de serviço e equipas associadas.",     icone: "🏢" },
-  4: { nome: "Administrador", descricao: "Acesso total à gestão da plataforma.",                         icone: "⚙️" },
+  1: { nome: "Consultor",     descricao: "Aceda às suas badges, projetos e atividades.",                 icone: <FaUser /> },
+  2: { nome: "Talent Manager",descricao: "Gira colaboradores, avaliações e desenvolvimento de talento.", icone: <FaBullseye /> },
+  3: { nome: "Service Line",  descricao: "Supervisione a sua linha de serviço e equipas associadas.",     icone: <FaBuilding /> },
+  4: { nome: "Administrador", descricao: "Acesso total à gestão da plataforma.",                         icone: <FaCog /> },
 };
 
 const DESTINOS = { 1: "/consultor/dashboard", 2: "/talent/dashboard", 3: "/sl/dashboard", 4: "/admin/dashboard" };
@@ -28,7 +29,7 @@ const PERFIS_POR_ROLE = {
   8: [1, 4],        // Consultor + Administrador
 };
 
-// ── Popup configuração de perfil ──────────────────────────────────
+//Popup configuração de perfil
 function PopupConfigurarPerfil({ utilizador, roleAtiva, onConcluido }) {
   const isSL = roleAtiva === ROLE_SL;
   const isConsultor = roleAtiva === ROLE_CONSULTOR;
@@ -91,7 +92,7 @@ function PopupConfigurarPerfil({ utilizador, roleAtiva, onConcluido }) {
   return (
     <div className="popup-perfil-overlay">
       <div className="popup-perfil-card">
-        <div className="popup-perfil-icone">{isSL ? "🏢" : "👤"}</div>
+        <div className="popup-perfil-icone">{isSL ? <FaBuilding /> : <FaUser />}</div>
         <h2 className="popup-perfil-titulo">
           {isSL ? "Qual é a sua Service Line?" : "Qual é a sua área?"}
         </h2>
@@ -139,7 +140,7 @@ function PopupConfigurarPerfil({ utilizador, roleAtiva, onConcluido }) {
   );
 }
 
-// ── Página principal ──────────────────────────────────────────────
+//Página principal
 function SelecionarPerfil() {
   const navigate = useNavigate();
   const [utilizador, setUtilizador] = useState(

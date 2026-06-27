@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../styles/PerfilPublico.css";
 import { API_BASE } from "../api";
 import Navbar from "./NavBar";
-import { getNavItems, navegarTab } from "../utils/navConfig";
+import { getNavItems } from "../utils/navConfig";
 import { BsAward, BsStarFill, BsPatchCheckFill } from "react-icons/bs";
 import { FaMedal } from "react-icons/fa";
 import { IoArrowBackOutline } from "react-icons/io5";
@@ -45,11 +45,7 @@ function PerfilPublico() {
   return (
     <div className="pp-container">
       {temSessao ? (
-        <Navbar
-          activeTab=""
-          navItems={getNavItems(perfilAtivo)}
-          onTabChange={(l) => navegarTab(navigate, perfilAtivo, l)}
-        />
+        <Navbar navItems={getNavItems(perfilAtivo)} />
       ) : (
         /* Topo simples para visitantes sem sessão */
         <header className="pp-topbar">

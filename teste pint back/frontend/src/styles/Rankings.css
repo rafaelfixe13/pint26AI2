@@ -1,6 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   Ranking — design moderno / clean
-   ═══════════════════════════════════════════════════════════ */
+/* Ranking — design moderno / clean */
 
 .rk-container {
   min-height: 100vh;
@@ -17,7 +15,7 @@
 
 .rk-wrap * { box-sizing: border-box; }
 
-/* ===== Hero ===== */
+/* Hero */
 .rk-hero {
   position: relative;
   border-radius: 22px;
@@ -107,7 +105,7 @@
   line-height: 1.1;
 }
 
-/* ===== Pódio ===== */
+/* Pódio */
 .rk-podium {
   display: flex;
   align-items: flex-end;
@@ -207,7 +205,7 @@
 .rk-pod-2 .rk-pod-base { height: 72px; background: linear-gradient(180deg, #cbd5e1, #94a3b8); }
 .rk-pod-3 .rk-pod-base { height: 56px; background: linear-gradient(180deg, #fcd9a8, #d97706); }
 
-/* ===== Lista ===== */
+/* Lista */
 .rk-list {
   display: flex;
   flex-direction: column;
@@ -298,7 +296,7 @@
 
 .rk-row.you .rk-row-pts { background: #dbeafe; color: #1d4ed8; }
 
-/* ===== Estados ===== */
+/* Estados */
 .rk-status {
   text-align: center;
   padding: 48px 0;
@@ -306,7 +304,7 @@
   font-size: 15px;
 }
 
-/* ===== Responsivo ===== */
+/* Responsivo */
 @media (max-width: 520px) {
   .rk-podium { gap: 8px; }
   .rk-pod-avatar { width: 54px; height: 54px; }

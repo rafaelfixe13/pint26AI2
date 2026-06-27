@@ -10,6 +10,7 @@ import { FaMedal } from "react-icons/fa";
 import { FiDownload, FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
 import { MdLeaderboard } from "react-icons/md";
+import { NAV_CONSULTOR } from "../../utils/navConfig";
 
 const toDownloadUrl = (url) => url
   ? url.replace('/image/upload/', '/image/upload/fl_attachment/')
@@ -30,20 +31,9 @@ function CandidaturasBadge() {
   const navigate = useNavigate();
   const utilizador = JSON.parse(localStorage.getItem("utilizador") || "null");
 
-  const [activeTab, setActiveTab] = useState("Candidaturas");
   const [candidaturas, setCandidaturas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState("todos");
-
-  const navItems = [
-    { label: "Início",             icon: <GoHome size={16} /> },
-    { label: "Catálogo de Badges", icon: <AiOutlineAppstore size={16} /> },
-    { label: "Os meus badges",     icon: <BsAward size={16} /> },
-    { label: "Candidaturas",       icon: <MdOutlineAssignment size={16} /> },
-    { label: "Conquistas",         icon: <BsTrophy size={16} /> },
-    { label: "Rankings",           icon: <MdLeaderboard size={16} /> },
-    { label: "Lembretes",          icon: <FiClock size={16} /> },
-  ];
 
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
@@ -52,17 +42,6 @@ function CandidaturasBadge() {
       .then((data) => { setCandidaturas(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
-
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")             navigate("/consultor");
-    if (label === "Catálogo de Badges") navigate("/consultor/catalogo");
-    if (label === "Os meus badges")     navigate("/consultor/badges");
-    if (label === "Candidaturas")       navigate("/consultor/candidaturas");
-    if (label === "Conquistas")         navigate("/consultor/conquistas");
-    if (label === "Rankings")           navigate("/consultor/rankings");
-    if (label === "Lembretes")          navigate("/consultor/lembretes");
-  };
 
   const filtradas = candidaturas.filter((c) => {
     const e = c.estado?.toUpperCase();
@@ -74,7 +53,7 @@ function CandidaturasBadge() {
 
   return (
     <div className="page-wrapper">
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} navItems={navItems} />
+      <Navbar navItems={NAV_CONSULTOR} />
 
       <div className="cand-page">
         <h1 className="cand-titulo">As minhas candidaturas</h1>

@@ -10,16 +10,7 @@ import { MdOutlineVerified } from "react-icons/md";
 import { FiUsers } from "react-icons/fi";
 import { BsTrophy, BsClockHistory, BsBarChart } from "react-icons/bs";
 import { HiOutlineEmojiSad } from "react-icons/hi";
-
-const NAV_ITEMS = [
-  { label: "Início",      icon: <GoHome size={16} /> },
-  { label: "Validações",  icon: <MdOutlineVerified size={16} /> },
-  { label: "Histórico",   icon: <BsClockHistory size={16} /> },
-  { label: "Catálogo",    icon: <AiOutlineAppstore size={16} /> },
-  { label: "Conquistas",  icon: <BsTrophy size={16} /> },
-  { label: "Relatórios",  icon: <BsBarChart size={16} /> },
-  { label: "Consultores", icon: <FiUsers size={16} /> },
-];
+import { NAV_TALENT } from "../../utils/navConfig";
 
 const getInitials = (nome) => {
   if (!nome) return "?";
@@ -29,8 +20,6 @@ const getInitials = (nome) => {
 const MEDAL_COLORS = ["#f59e0b", "#9ca3af", "#b45309"];
 
 function ConquistasTM() {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Conquistas");
   const [conquistas, setConquistas] = useState([]);
   const [ranking, setRanking] = useState([]);
   const [loadingConquistas, setLoadingConquistas] = useState(true);
@@ -56,14 +45,6 @@ function ConquistasTM() {
       .catch(() => setLoadingRanking(false));
   }, []);
 
-  const handleTabChange = (label) => {
-    setActiveTab(label);
-    if (label === "Início")      navigate("/talent/dashboard");
-    if (label === "Validações")  navigate("/talent/validacoes");
-    if (label === "Catálogo")    navigate("/talent/catalogo");
-    if (label === "Consultores") navigate("/talent/diretorio");
-  };
-
   const uniqueSL   = [...new Set(ranking.map((r) => r.serviceline).filter(Boolean))];
   const uniqueArea = [...new Set(ranking.map((r) => r.area).filter(Boolean))];
 
@@ -75,11 +56,7 @@ function ConquistasTM() {
 
   return (
     <div className="page-wrapper">
-      <Navbar
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        navItems={NAV_ITEMS}
-      />
+      <Navbar navItems={NAV_TALENT} />
 
       <div className="conquistas-container">
 
@@ -88,7 +65,7 @@ function ConquistasTM() {
           <p>Acompanhe as conquistas especiais e o ranking de pontuação dos consultores.</p>
         </div>
 
-        {/* ── Conquistas Especiais ── */}
+        {/* Conquistas Especiais */}
         <section className="conquistas-section">
           <h2 className="section-title">Conquistas Especiais Ativas</h2>
 
@@ -136,7 +113,7 @@ function ConquistasTM() {
           )}
         </section>
 
-        {/* ── Ranking Global ── */}
+        {/*  Ranking Global  */}
         <section className="conquistas-section">
           <div className="ranking-header-row">
             <h2 className="section-title">Ranking Global de Consultores</h2>
@@ -194,7 +171,7 @@ function ConquistasTM() {
                         <div className="consultor-cell">
                           {r.fotourl ? (
                             <img
-                              src={r.fotourl}
+                              src={r.fotourl.startsWith("data:") ? r.fotourl : `data:image/jpeg;base64,${r.fotourl}`}
                               alt={r.nome}
                               className="consultor-avatar"
                               onError={(e) => {
