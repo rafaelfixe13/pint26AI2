@@ -10,7 +10,7 @@ if (!DB_NAME || !DB_USER || !DB_PASSWORD) {
 }
 
 // Ativa SSL quando a BD o exige (ex.: Postgres na cloud). Em local fica desligado.
-const useSSL = process.env.DB_SSL === 'true';
+const useSSL = process.env.DB_SSL === 'true' || process.env.NODE_ENV === 'production';
 
 const sequelize = new Sequelize(
   DB_NAME,

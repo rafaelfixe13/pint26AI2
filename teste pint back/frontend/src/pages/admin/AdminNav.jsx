@@ -4,6 +4,7 @@ import "../../styles/AdminNav.css";
 import "../../styles/NotificacaoTipos.css";
 import { estiloNotificacao } from "../../utils/notificacaoEstilo";
 import { NAV_ADMIN } from "../../utils/navConfig";
+import { API_BASE } from "../../api";
 import { BsBell, BsSearch, BsInfoCircle, BsQuestionCircle, BsTrash } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
@@ -83,7 +84,7 @@ function AdminNav() {
     setLoadingNotif(true);
     try {
       const res = await fetch(
-        `http://localhost:3000/api/notificacoes/utilizador/${utilizador.idutilizador}`
+        `${API_BASE}/notificacoes/utilizador/${utilizador.idutilizador}`
       );
       const data = await res.json();
       setNotificacoes(Array.isArray(data) ? data : []);
@@ -103,7 +104,7 @@ function AdminNav() {
   const marcarComoLida = async (idnotificacao) => {
     try {
       await fetch(
-        `http://localhost:3000/api/notificacoes/${idnotificacao}/lida`,
+        `${API_BASE}/notificacoes/${idnotificacao}/lida`,
         { method: "PATCH" }
       );
       setNotificacoes((prev) =>
@@ -119,7 +120,7 @@ function AdminNav() {
   const eliminarNotificacao = async (idnotificacao) => {
     try {
       await fetch(
-        `http://localhost:3000/api/notificacoes/${idnotificacao}`,
+        `${API_BASE}/notificacoes/${idnotificacao}`,
         { method: "DELETE" }
       );
       setNotificacoes((prev) =>
