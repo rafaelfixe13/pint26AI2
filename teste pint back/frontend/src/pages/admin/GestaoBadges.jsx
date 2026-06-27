@@ -148,74 +148,6 @@ function ModalLP({ lpEditar, submetendo, onFechar, onGuardar }) {
   );
 }
 
-const NIVEIS_FIXOS = [
-  { codigo: "A", nome: "Júnior" },
-  { codigo: "B", nome: "Intermédio" },
-  { codigo: "C", nome: "Sénior" },
-  { codigo: "D", nome: "Especialista" },
-  { codigo: "E", nome: "Líder de Conhecimento" },
-];
-
-// ── Modal criar / editar Nível ────────────────────────────────────
-function ModalNivel({ nivelEditar, learningPaths, submetendo, onFechar, onGuardar }) {
-  const [form, setForm] = useState(
-    nivelEditar
-      ? { idlearningpath: nivelEditar.idlearningpath || "", codigo: nivelEditar.codigo, descricao: nivelEditar.descricao || "" }
-      : { idlearningpath: "", codigo: "", descricao: "" }
-  );
-  const [erro, setErro] = useState("");
-
-  const nomeDerivado = NIVEIS_FIXOS.find((n) => n.codigo === form.codigo)?.nome || "";
-
-  const submit = () => {
-    if (!form.idlearningpath) { setErro("Seleciona um Learning Path."); return; }
-    if (!form.codigo) { setErro("Seleciona um nível."); return; }
-    setErro("");
-    onGuardar({ ...form, nome: nomeDerivado });
-  };
-
-  return (
-    <Modal titulo={nivelEditar ? "Editar Nível" : "Novo Nível"} onFechar={onFechar} footer={
-      <>
-        <button className="gb-btn-confirmar" onClick={submit} disabled={submetendo}>
-          {submetendo ? "A guardar..." : nivelEditar ? "Guardar" : "Criar nível"}
-        </button>
-        <button className="gb-btn-cancelar" onClick={onFechar}>Cancelar</button>
-      </>
-    }>
-      <div className="gb-form-grupo">
-        <label>Learning Path *</label>
-        <select value={form.idlearningpath} onChange={(e) => setForm({ ...form, idlearningpath: e.target.value })}>
-          <option value="">-- Selecionar --</option>
-          {learningPaths.map((lp) => (
-            <option key={lp.idlearningpath} value={lp.idlearningpath}>{lp.nome}</option>
-          ))}
-        </select>
-      </div>
-      <div className="gb-form-linha">
-        <div className="gb-form-grupo" style={{ flex: "0 0 140px" }}>
-          <label>Nível *</label>
-          <select value={form.codigo} onChange={(e) => setForm({ ...form, codigo: e.target.value })}>
-            <option value="">-- Selecionar --</option>
-            {NIVEIS_FIXOS.map((n) => (
-              <option key={n.codigo} value={n.codigo}>{n.codigo} — {n.nome}</option>
-            ))}
-          </select>
-        </div>
-        <div className="gb-form-grupo gb-form-grupo--largo">
-          <label>Nome</label>
-          <input type="text" value={nomeDerivado} disabled style={{ background: "#f3f4f6", color: "#6b7280" }} />
-        </div>
-      </div>
-      <div className="gb-form-grupo">
-        <label>Descrição</label>
-        <input type="text" placeholder="Descrição (opcional)" value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
-      </div>
-      {erro && <p className="gb-feedback gb-feedback--erro">{erro}</p>}
-    </Modal>
-  );
-}
-
 // ── Modal criar / editar Requisito ────────────────────────────────
 function ModalRequisito({ requisitoEditar, submetendo, onFechar, onGuardar, stacked }) {
   const [form, setForm] = useState(
@@ -272,13 +204,85 @@ function ModalRequisito({ requisitoEditar, submetendo, onFechar, onGuardar, stac
   );
 }
 
+// ── Modal criar / editar Nível (global — tabela `nivel`) ──────────
+function ModalNivel({ nivelEditar, submetendo, onFechar, onGuardar }) {
+  const [form, setForm] = useState(
+    nivelEditar
+      ? { nome: nivelEditar.nome || "", descricao: nivelEditar.descricao || "" }
+      : { nome: "", descricao: "" }
+  );
+  const [erro, setErro] = useState("");
+  const f = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+
+  const submit = () => {
+    if (!form.nome.trim()) { setErro("O nome / código é obrigatório (ex: A)."); return; }
+    setErro("");
+    onGuardar(form);
+  };
+
+  return (
+    <Modal titulo={nivelEditar ? "Editar Nível" : "Novo Nível"} onFechar={onFechar} footer={
+      <>
+        <button className="gb-btn-confirmar" onClick={submit} disabled={submetendo}>
+          {submetendo ? "A guardar..." : nivelEditar ? "Guardar" : "Criar nível"}
+        </button>
+        <button className="gb-btn-cancelar" onClick={onFechar}>Cancelar</button>
+      </>
+    }>
+      <div className="gb-form-grupo">
+        <label>Nome / Código *</label>
+        <input type="text" placeholder="Ex: A" maxLength={50} value={form.nome} onChange={f("nome")} />
+      </div>
+      <div className="gb-form-grupo">
+        <label>Descrição</label>
+        <input type="text" placeholder="Ex: Nível Júnior (opcional)" value={form.descricao} onChange={f("descricao")} />
+      </div>
+      <p style={{ fontSize: 12, color: "#6b7280", margin: "4px 0 0" }}>
+        Os níveis são globais e partilhados por todas as áreas.
+      </p>
+      {erro && <p className="gb-feedback gb-feedback--erro">{erro}</p>}
+    </Modal>
+  );
+}
+
+// ── Modal apagar Nível ────────────────────────────────────────────
+function ModalApagarNivel({ nivel, badgesAfetados, submetendo, onFechar, onConfirmar }) {
+  const bloqueado = badgesAfetados > 0;
+  return (
+    <Modal titulo="Apagar Nível" onFechar={onFechar} footer={
+      bloqueado ? (
+        <button className="gb-btn-cancelar" onClick={onFechar}>Fechar</button>
+      ) : (
+        <>
+          <button className="gb-btn-apagar" onClick={onConfirmar} disabled={submetendo}>
+            {submetendo ? "A apagar..." : "Apagar"}
+          </button>
+          <button className="gb-btn-cancelar" onClick={onFechar}>Cancelar</button>
+        </>
+      )
+    }>
+      {bloqueado ? (
+        <p className="gb-feedback gb-feedback--erro" style={{ margin: 0 }}>
+          Não é possível apagar o nível «{nivel.nome}»: <strong>{badgesAfetados} badge(s)</strong> usam este nível.
+          Tens de alterar o nível desses badges antes de o poderes apagar.
+        </p>
+      ) : (
+        <p style={{ margin: 0 }}>
+          Tens a certeza que queres apagar o nível <strong>{nivel.nome}</strong>
+          {nivel.descricao ? ` (${nivel.descricao})` : ""}? Esta ação é permanente.
+        </p>
+      )}
+    </Modal>
+  );
+}
+
 const CODIGO_NIVEL_LABEL = { A: "Júnior", B: "Intermédio", C: "Sénior", D: "Especialista", E: "Líder de Conhecimento" };
 
 const LP_CORES = ["#3b82f6","#8b5cf6","#10b981","#f59e0b","#ef4444","#06b6d4","#f97316","#6366f1"];
 const lpCor = (idlearningpath) => LP_CORES[(idlearningpath - 1) % LP_CORES.length];
 
 // ── Modal editar Badge ────────────────────────────────────────────
-function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
+function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
   const [form, setForm] = useState({
     nome: badge.nome || "",
     descricao: badge.descricao || "",
@@ -303,14 +307,11 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  // Cascata SL → Área → Nível
+  // Cascata SL → Área (a área é só associação); o Nível é global
   const [slSel, setSlSel] = useState(badge.idserviceline ? String(badge.idserviceline) : "");
   const [areaSel, setAreaSel] = useState(badge.idarea ? String(badge.idarea) : "");
   const areasFiltradas = slSel
     ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || [])
-    : [];
-  const niveisFiltrados = areaSel
-    ? (areasFiltradas.find((a) => a.idarea == areaSel)?.niveis || [])
     : [];
 
   const handleAreaSelect = (idareaStr) => {
@@ -383,7 +384,7 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
     }
   };
 
-  const nivelSelecionadoNome = niveisFiltrados.find((n) => n.idnivel == form.idnivel)?.nome || "";
+  const nivelSelecionadoNome = niveis.find((n) => n.idnivel == form.idnivel)?.nome || "";
 
   return (
     <>
@@ -466,10 +467,10 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
             </div>
             <div className="gb-form-grupo gb-form-grupo--largo">
               <label>Nível</label>
-              <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)} disabled={!areaSel}>
+              <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)}>
                 <option value="">-- Selecionar --</option>
-                {niveisFiltrados.map((n) => (
-                  <option key={n.idnivel} value={n.idnivel}>{n.nome}</option>
+                {niveis.map((n) => (
+                  <option key={n.idnivel} value={n.idnivel}>{n.nome}{n.descricao ? ` — ${n.descricao}` : ""}</option>
                 ))}
               </select>
             </div>
@@ -528,7 +529,7 @@ function ModalEditarBadge({ badge, hierarquia, onFechar, onGuardar }) {
 }
 
 // ── Modal criar Badge ─────────────────────────────────────────────
-function ModalCriarBadge({ hierarquia, especiais, onFechar, onGuardar }) {
+function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar }) {
   const [form, setForm] = useState({
     nome: "", descricao: "", pontos: "",
     expiremeses: "", linkpublicobase: "", ispublico: true,
@@ -545,13 +546,10 @@ function ModalCriarBadge({ hierarquia, especiais, onFechar, onGuardar }) {
   const areasFiltradas = slSel
     ? (hierarquia.find((sl) => sl.idserviceline == slSel)?.areas || [])
     : [];
-  const niveisFiltrados = areaSel
-    ? (areasFiltradas.find((a) => a.idarea == areaSel)?.niveis || [])
-    : [];
 
   const handleAreaSelect = (idareaStr) => {
     setAreaSel(idareaStr);
-    setForm((p) => ({ ...p, idarea: idareaStr ? Number(idareaStr) : "", idnivel: "" }));
+    setForm((p) => ({ ...p, idarea: idareaStr ? Number(idareaStr) : "" }));
   };
 
   const handleNivelSelect = (idnivelStr) => {
@@ -654,10 +652,10 @@ function ModalCriarBadge({ hierarquia, especiais, onFechar, onGuardar }) {
           </div>
           <div className="gb-form-grupo gb-form-grupo--largo">
             <label>Nível</label>
-            <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)} disabled={!areaSel}>
+            <select value={form.idnivel} onChange={(e) => handleNivelSelect(e.target.value)}>
               <option value="">-- Selecionar --</option>
-              {niveisFiltrados.map((n) => (
-                <option key={n.idnivel} value={n.idnivel}>{n.nome}</option>
+              {niveis.map((n) => (
+                <option key={n.idnivel} value={n.idnivel}>{n.nome}{n.descricao ? ` — ${n.descricao}` : ""}</option>
               ))}
             </select>
           </div>
@@ -693,18 +691,20 @@ function ModalCriarBadge({ hierarquia, especiais, onFechar, onGuardar }) {
 function GestaoBadges() {
   const [hierarquia, setHierarquia] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
+  const [niveis, setNiveis] = useState([]);
   const [badges, setBadges] = useState([]);
   const [especiais, setEspeciais] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
   const [lpExp, setLpExp] = useState(true);
+  const [nivExp, setNivExp] = useState(true);
   const [slExp, setSlExp] = useState({});
-  const [areaExp, setAreaExp] = useState({});
   const [modalLP, setModalLP] = useState(null);          // { lp? }
+  const [modalNivel, setModalNivel] = useState(null);    // { nivel? }
+  const [modalApagarNivel, setModalApagarNivel] = useState(null); // { nivel, badgesAfetados }
   const [modalEditSL, setModalEditSL] = useState(null);
   const [modalEditArea, setModalEditArea] = useState(null);
-  const [modalNivel, setModalNivel] = useState(null);    // { idarea, nivel? }
   const [modalEditBadge, setModalEditBadge] = useState(null);
   const [modalCriarBadge, setModalCriarBadge] = useState(false);
 
@@ -720,27 +720,27 @@ function GestaoBadges() {
   const carregar = async () => {
     setLoading(true);
     try {
-      const [resH, resLP, resB, resE] = await Promise.all([
+      const [resH, resLP, resB, resE, resN] = await Promise.all([
         fetch(`${API}/hierarquia`),
         fetch(`${API}/learningpaths`),
         fetch(`${API}/badges-com-requisitos`),
         fetch(`${API}/especiais`),
+        fetch(`${API}/niveis`),
       ]);
       const h = await resH.json();
       const lps = await resLP.json();
       const bs = await resB.json();
       const es = await resE.json();
+      const ns = await resN.json();
       setHierarquia(Array.isArray(h) ? h : []);
       setLearningPaths(Array.isArray(lps) ? lps : []);
       setBadges(Array.isArray(bs) ? bs : []);
       setEspeciais(Array.isArray(es) ? es : []);
+      setNiveis(Array.isArray(ns) ? ns : []);
 
-      const sl = {}, ar = {};
-      h.forEach((s) => {
-        sl[s.idserviceline] = true;
-        s.areas.forEach((a) => { ar[a.idarea] = true; });
-      });
-      setSlExp(sl); setAreaExp(ar);
+      const sl = {};
+      h.forEach((s) => { sl[s.idserviceline] = true; });
+      setSlExp(sl);
     } catch {
       setErro("Erro ao carregar dados.");
     } finally {
@@ -756,7 +756,6 @@ function GestaoBadges() {
       lp: `${API}/learningpaths/${id}/ativo`,
       sl: `${API}/servicelines/${id}/ativo`,
       area: `${API}/areas/${id}/ativo`,
-      nivel: `${API}/niveis/${id}/ativo`,
       requisito: `${API}/requisitos/${id}/ativo`,
       badge: `${API}/badges/${id}/ativo`,
     };
@@ -837,19 +836,15 @@ function GestaoBadges() {
     carregar();
   };
 
-  // ── Níveis ────────────────────────────────────────────────────
+  // ── Níveis (globais — tabela `nivel`) ─────────────────────────
   const handleGuardarNivel = async (form) => {
     setSubmetendo(true);
     const isEdit = !!modalNivel.nivel;
     const url = isEdit ? `${API}/niveis/${modalNivel.nivel.idnivel}` : `${API}/niveis`;
-    const body = isEdit
-      ? { idlearningpath: Number(form.idlearningpath), codigo: form.codigo, nome: form.nome, descricao: form.descricao || null }
-      : { idlearningpath: Number(form.idlearningpath), idarea: modalNivel.idarea, codigo: form.codigo, nome: form.nome, descricao: form.descricao || null };
-
     const res = await fetch(url, {
       method: isEdit ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ nome: form.nome.trim(), descricao: form.descricao?.trim() || null }),
     });
     const data = await res.json();
     setSubmetendo(false);
@@ -859,7 +854,16 @@ function GestaoBadges() {
     carregar();
   };
 
-
+  const handleApagarNivel = async () => {
+    setSubmetendo(true);
+    const res = await fetch(`${API}/niveis/${modalApagarNivel.nivel.idnivel}`, { method: "DELETE" });
+    const data = await res.json();
+    setSubmetendo(false);
+    if (!res.ok) { toast(data.error, "erro"); setModalApagarNivel(null); return; }
+    toast("Nível apagado.");
+    setModalApagarNivel(null);
+    carregar();
+  };
 
   // ── Badges ────────────────────────────────────────────────────
   const handleCriarBadge = async (form) => {
@@ -967,6 +971,45 @@ function GestaoBadges() {
           )}
         </div>
 
+        {/* ── SECÇÃO NÍVEIS (globais) ── */}
+        <div className="gb-secao">
+          <div className="gb-secao-header" onClick={() => setNivExp((v) => !v)}>
+            <span className="gb-secao-chevron">{nivExp ? "∨" : "›"}</span>
+            <h2 className="gb-secao-titulo">Níveis</h2>
+            <span className="gb-secao-count">{niveis.length}</span>
+          </div>
+
+          {nivExp && (
+            <div className="gb-secao-body">
+              <p className="gb-nivel-legenda">Níveis globais, partilhados por todas as áreas e usados ao criar badges.</p>
+              <div className="gb-area-add">
+                <button className="gb-btn-add-nivel" onClick={() => setModalNivel({})}>+ Adicionar Nível</button>
+              </div>
+
+              {niveis.length === 0 && <p className="gb-vazio-inner">Nenhum nível criado ainda.</p>}
+
+              {niveis.map((nivel) => (
+                <div key={nivel.idnivel} className="gb-lp-item">
+                  <div className="gb-lp-info">
+                    <span className="gb-nivel-codigo-badge" style={{ backgroundColor: `${lpCor(nivel.idnivel)}18`, color: lpCor(nivel.idnivel) }}>
+                      {nivel.nome}
+                    </span>
+                    {nivel.descricao && <span className="gb-lp-desc">{nivel.descricao}</span>}
+                  </div>
+                  <div className="gb-sl-acoes">
+                    <button className="gb-icon-btn" title="Editar nível" onClick={() => setModalNivel({ nivel })}>✏</button>
+                    <button
+                      className="gb-icon-btn gb-icon-btn--danger"
+                      title="Apagar nível"
+                      onClick={() => setModalApagarNivel({ nivel, badgesAfetados: badges.filter((b) => Number(b.idnivel) === Number(nivel.idnivel)).length })}
+                    >🗑</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* ── SECÇÃO SERVICE LINES ── */}
         <div className="gb-secao">
           <div className="gb-secao-header">
@@ -1010,12 +1053,7 @@ function GestaoBadges() {
                     {sl.areas.map((area) => (
                       <div key={area.idarea} className={`gb-area-card${area.ativo ? "" : " gb-inativo"}`}>
                         <div className="gb-area-header">
-                          <button className="gb-chevron-btn" onClick={() => setAreaExp((p) => ({ ...p, [area.idarea]: !p[area.idarea] }))}>
-                            {areaExp[area.idarea] ? "∨" : "›"}
-                          </button>
-                          <span className="gb-area-nome" onClick={() => setAreaExp((p) => ({ ...p, [area.idarea]: !p[area.idarea] }))}>
-                            {area.nome}
-                          </span>
+                          <span className="gb-area-nome">{area.nome}</span>
                           {!area.ativo && <span className="gb-tag-inativo">Inativo</span>}
                           <div className="gb-sl-acoes">
                             <button className="gb-icon-btn" onClick={() => setModalEditArea({ id: area.idarea, nome: area.nome })}>✏</button>
@@ -1026,58 +1064,6 @@ function GestaoBadges() {
                             </button>
                           </div>
                         </div>
-
-                        {areaExp[area.idarea] && (
-                          <div className="gb-area-body">
-                            <button className="gb-btn-add-nivel" onClick={() => setModalNivel({ idarea: area.idarea, nivel: null })}>
-                              + Adicionar Nível
-                            </button>
-
-                            {area.niveis.length === 0 && <p className="gb-vazio-inner">Sem níveis nesta área.</p>}
-
-                            {/* Agrupa níveis por Learning Path */}
-                            {Object.values(
-                              area.niveis.reduce((acc, n) => {
-                                const key = n.idlearningpath || "sem-lp";
-                                if (!acc[key]) acc[key] = { idlearningpath: n.idlearningpath, lp_nome: n.lp_nome, niveis: [] };
-                                acc[key].niveis.push(n);
-                                return acc;
-                              }, {})
-                            ).map((grupo) => (
-                              <div key={grupo.idlearningpath || "sem-lp"} className="gb-lp-grupo">
-                                <div className="gb-lp-grupo-header" style={{ borderLeftColor: lpCor(grupo.idlearningpath) }}>
-                                  <span className="gb-lp-grupo-nome" style={{ color: lpCor(grupo.idlearningpath) }}>
-                                    {grupo.lp_nome || "Sem Learning Path"}
-                                  </span>
-                                </div>
-                                <div className="gb-lp-grupo-niveis">
-                                  {grupo.niveis.map((nivel) => (
-                                    <div key={nivel.idnivel} className={`gb-nivel-card${nivel.ativo ? "" : " gb-inativo"}`}>
-                                      <div className="gb-nivel-header">
-                                        <div className="gb-nivel-esquerda">
-                                          <span className="gb-nivel-codigo-badge" style={{ backgroundColor: `${lpCor(nivel.idlearningpath)}18`, color: lpCor(nivel.idlearningpath) }}>
-                                            {nivel.codigo}
-                                          </span>
-                                          <span className="gb-nivel-nome">{nivel.nome}</span>
-                                          {!nivel.ativo && <span className="gb-tag-inativo">Inativo</span>}
-                                        </div>
-                                        <div className="gb-nivel-acoes">
-                                          <button className="gb-icon-btn" title="Editar nível"
-                                            onClick={() => setModalNivel({ idarea: area.idarea, nivel })}>✏</button>
-                                          <button className={`gb-btn-toggle-ativo gb-btn-toggle-ativo--${nivel.ativo ? "off" : "on"}`}
-                                            title={nivel.ativo ? "Desativar" : "Reativar"}
-                                            onClick={() => handleToggle("nivel", nivel.idnivel, nivel.ativo)}>
-                                            {nivel.ativo ? "🗑" : "↩"}
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -1149,6 +1135,23 @@ function GestaoBadges() {
           onGuardar={handleGuardarLP}
         />
       )}
+      {modalNivel !== null && (
+        <ModalNivel
+          nivelEditar={modalNivel.nivel || null}
+          submetendo={submetendo}
+          onFechar={() => setModalNivel(null)}
+          onGuardar={handleGuardarNivel}
+        />
+      )}
+      {modalApagarNivel && (
+        <ModalApagarNivel
+          nivel={modalApagarNivel.nivel}
+          badgesAfetados={modalApagarNivel.badgesAfetados}
+          submetendo={submetendo}
+          onFechar={() => setModalApagarNivel(null)}
+          onConfirmar={handleApagarNivel}
+        />
+      )}
       {modalEditSL && (
         <ModalEditar titulo="Editar Service Line" valorAtual={modalEditSL.nome}
           submetendo={submetendo} onFechar={() => setModalEditSL(null)} onGuardar={handleEditarSL} />
@@ -1157,20 +1160,11 @@ function GestaoBadges() {
         <ModalEditar titulo="Editar Área" valorAtual={modalEditArea.nome}
           submetendo={submetendo} onFechar={() => setModalEditArea(null)} onGuardar={handleEditarArea} />
       )}
-      {modalNivel && (
-        <ModalNivel
-          nivelEditar={modalNivel.nivel}
-          idarea={modalNivel.idarea}
-          learningPaths={learningPaths}
-          submetendo={submetendo}
-          onFechar={() => setModalNivel(null)}
-          onGuardar={handleGuardarNivel}
-        />
-      )}
       {modalCriarBadge && (
         <ModalCriarBadge
           hierarquia={hierarquia}
           especiais={especiais}
+          niveis={niveis}
           onFechar={() => setModalCriarBadge(false)}
           onGuardar={handleCriarBadge}
         />
@@ -1179,6 +1173,7 @@ function GestaoBadges() {
         <ModalEditarBadge
           badge={modalEditBadge}
           hierarquia={hierarquia}
+          niveis={niveis}
           onFechar={() => setModalEditBadge(null)}
           onGuardar={handleEditarBadge}
         />

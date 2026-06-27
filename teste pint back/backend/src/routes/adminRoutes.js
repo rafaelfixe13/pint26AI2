@@ -17,7 +17,7 @@ const {
   listarLearningPaths, criarLearningPath, editarLearningPath, toggleLearningPath,
   listarServiceLines, criarServiceLine, editarServiceLine, toggleServiceLine,
   criarArea, editarArea, toggleArea,
-  criarNivel, editarNivel, toggleNivel,
+  criarNivel, editarNivel, toggleNivel, apagarNivel,
   criarRequisito, editarRequisito, toggleRequisito,
 } = require('../controllers/estruturaController');
 
@@ -67,6 +67,7 @@ router.patch('/areas/:id/ativo', toggleArea);
 router.post('/niveis', criarNivel);
 router.put('/niveis/:id', editarNivel);
 router.patch('/niveis/:id/ativo', toggleNivel);
+router.delete('/niveis/:id', apagarNivel);
 
 // Requisitos
 router.post('/requisitos', criarRequisito);

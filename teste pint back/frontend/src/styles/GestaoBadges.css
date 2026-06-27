@@ -133,6 +133,16 @@
   color: #1a1a2e;
 }
 
+.gb-nivel-legenda {
+  margin: 0 0 0.6rem;
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.gb-nivel-card--leitura {
+  cursor: default;
+}
+
 .gb-nivel-acoes {
   display: flex;
   align-items: center;
@@ -425,6 +435,20 @@
   transition: background-color 0.2s;
 }
 .gb-btn-cancelar:hover { background-color: #f3f4f6; }
+
+.gb-btn-apagar {
+  padding: 0.5rem 1.2rem;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.gb-btn-apagar:hover:not(:disabled) { background-color: #b91c1c; }
+.gb-btn-apagar:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* ── Formulário inline de badge ─────────────────────────────── */
 .gb-badge-form {

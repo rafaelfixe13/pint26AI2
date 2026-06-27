@@ -163,6 +163,28 @@ const editarNivel = async (req, res) => {
 
 const toggleNivel = async (req, res) => toggle(Nivel, req.params.id, 'idnivel', res);
 
+const apagarNivel = async (req, res) => {
+  const id = req.params.id;
+  try {
+    // Guarda: não apagar um nível que ainda esteja a ser usado por badges
+    const [{ total }] = await sequelize.query(
+      'SELECT COUNT(*)::int AS total FROM badges WHERE idnivel = :id',
+      { replacements: { id }, type: sequelize.QueryTypes.SELECT }
+    );
+    if (total > 0) {
+      return res.status(409).json({
+        error: `Não é possível apagar: ${total} badge(s) usam este nível. Altera o nível desses badges primeiro.`,
+        badges: total,
+      });
+    }
+    const apagados = await Nivel.destroy({ where: { idnivel: id } });
+    if (!apagados) return res.status(404).json({ error: 'Nível não encontrado.' });
+    res.json({ message: 'Nível apagado.' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 // ── REQUISITOS ─────────────────────────────────────────────────
 
 const criarRequisito = async (req, res) => {
@@ -205,6 +227,6 @@ module.exports = {
   listarLearningPaths, criarLearningPath, editarLearningPath, toggleLearningPath,
   listarServiceLines, criarServiceLine, editarServiceLine, toggleServiceLine,
   criarArea, editarArea, toggleArea,
-  criarNivel, editarNivel, toggleNivel,
+  criarNivel, editarNivel, toggleNivel, apagarNivel,
   criarRequisito, editarRequisito, toggleRequisito,
 };
