@@ -73,9 +73,6 @@ async function verificarExpiracoes() {
       }
     }
 
-    if (aExpirar.length > 0) {
-      console.log(`🔔 Verificação de expiração: ${aExpirar.length} badge(s) a expirar processado(s).`);
-    }
   } catch (err) {
     console.error('Erro na verificação de expiração de badges:', err.message);
   }
@@ -138,9 +135,6 @@ async function verificarLembretes() {
     for (const row of aAvisar) {
       await avisarLembrete(row);
     }
-    if (aAvisar.length > 0) {
-      console.log(`🔔 Verificação de lembretes: ${aAvisar.length} lembrete(s) processado(s).`);
-    }
   } catch (err) {
     console.error('Erro na verificação de lembretes:', err.message);
   }
@@ -176,9 +170,6 @@ async function agendarLembretesPendentes() {
       WHERE concluido = false AND prazo > NOW()
     `, { type: sequelize.QueryTypes.SELECT });
     futuros.forEach((l) => agendarLembrete(l.id, l.prazo));
-    if (futuros.length > 0) {
-      console.log(`⏱️  ${futuros.length} lembrete(s) futuro(s) agendado(s) com temporizador preciso.`);
-    }
   } catch (err) {
     console.error('Erro ao agendar lembretes pendentes:', err.message);
   }
@@ -191,7 +182,6 @@ function iniciarJobExpiracao() {
   agendarLembretesPendentes();
   setInterval(verificarExpiracoes, INTERVALO_EXPIRACAO_MS);   // expiração de badges: diário
   setInterval(verificarLembretes, INTERVALO_LEMBRETES_MS);    // lembretes: rede de segurança a cada minuto
-  console.log('⏰ Jobs agendados: expiração de badges (24h) e lembretes (temporizador preciso + rede de 1 min).');
 }
 
 module.exports = { verificarExpiracoes, verificarLembretes, verificarLembrete, agendarLembrete, iniciarJobExpiracao };

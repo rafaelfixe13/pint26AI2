@@ -65,7 +65,7 @@
 
 .auth-field input:focus,
 .auth-field select:focus {
-  border-color: #239292;
+  border-color: #1d4ed8;
 }
 
 .auth-nota {
@@ -110,7 +110,7 @@
 .auth-btn {
   width: 100%;
   padding: 0.75rem;
-  background-color: #239292;
+  background-color: #1d4ed8;
   color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
@@ -122,7 +122,7 @@
 }
 
 .auth-btn:hover:not(:disabled) {
-  background-color: #1a7070;
+  background-color: #1e40af;
 }
 
 .auth-btn:disabled {
@@ -138,7 +138,7 @@
 }
 
 .auth-link {
-  color: #239292;
+  color: #1d4ed8;
   font-weight: 600;
   text-decoration: none;
 }

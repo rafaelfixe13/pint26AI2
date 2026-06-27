@@ -200,20 +200,21 @@ function SelecionarPerfil() {
         <p className="perfil-subtitulo">Selecione o perfil com que pretende entrar</p>
       </div>
 
-      <div className="perfil-grelha">
+      <div className="perfil-lista">
         {perfisDoUtilizador.map((idrole) => {
           const perfil = PERFIS[idrole];
           if (!perfil) return null;
           return (
-            <button
-              key={idrole}
-              className="perfil-card"
-              onClick={() => handleSelecionarPerfil(idrole)}
-            >
+            <div key={idrole} className="perfil-linha">
               <span className="perfil-icone">{perfil.icone}</span>
               <span className="perfil-nome">{perfil.nome}</span>
-              <span className="perfil-descricao">{perfil.descricao}</span>
-            </button>
+              <button
+                className="perfil-entrar-btn"
+                onClick={() => handleSelecionarPerfil(idrole)}
+              >
+                Entrar
+              </button>
+            </div>
           );
         })}
       </div>

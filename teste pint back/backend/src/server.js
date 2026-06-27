@@ -28,9 +28,7 @@ const startServer = async () => {
   // Jobs: avisos de expiração de badges + lembretes
   iniciarJobExpiracao();
 
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor em http://localhost:${PORT}`);
-  });
+  app.listen(PORT);
 };
 
 startServer();
