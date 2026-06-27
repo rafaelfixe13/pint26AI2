@@ -20,6 +20,53 @@
     font-size: 1rem;
 }
 
+/* Aviso in-app de badges a expirar */
+.cons-expiracao-banner {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 2.5rem;
+}
+
+.cons-expiracao-icon {
+    color: #d97706;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    margin-top: 0.1rem;
+}
+
+.cons-expiracao-texto h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #92400e;
+    margin: 0 0 0.5rem;
+}
+
+.cons-expiracao-texto ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.cons-expiracao-texto li {
+    font-size: 0.875rem;
+    color: #78350f;
+    cursor: pointer;
+}
+
+.cons-expiracao-texto li:hover {
+    text-decoration: underline;
+}
+
 /* Stat cards */
 .cons-dashboard-cards {
     display: grid;

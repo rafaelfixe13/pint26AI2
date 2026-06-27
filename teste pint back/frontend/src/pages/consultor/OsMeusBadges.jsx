@@ -17,12 +17,14 @@ import { definirRgpd } from "../../utils/rgpd";
 import RgpdModal from "../../components/RgpdModal";
 
 import { NAV_CONSULTOR } from "../../utils/navConfig";
+import { somarMeses } from "../../utils/expiracaoConsultor";
 
 // Calcula estado de expiração a partir da data de conquista + meses
 function expiryInfo(dataConquista, expiremeses) {
   if (!expiremeses || !dataConquista) return null; // não expira
-  const exp = new Date(dataConquista);
-  exp.setMonth(exp.getMonth() + Number(expiremeses));
+  const base = new Date(dataConquista);
+  if (isNaN(base)) return null;
+  const exp = somarMeses(base, expiremeses);
   const agora = new Date();
   const diasRestantes = Math.ceil((exp - agora) / (1000 * 60 * 60 * 24));
   if (diasRestantes < 0)  return { cls: "mb-estado-expirado", texto: "Expirado" };

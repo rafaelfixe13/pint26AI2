@@ -6,11 +6,12 @@ import "../../styles/ConsultorDashboard.css";
 import { GoHome } from "react-icons/go";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { MdOutlineAssignment, MdLeaderboard } from "react-icons/md";
-import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy, BsCheckLg, BsGraphUpArrow, BsClipboard } from "react-icons/bs";
+import { BsAward, BsAwardFill, BsStarFill, BsClockHistory, BsTrophy, BsCheckLg, BsGraphUpArrow, BsClipboard, BsExclamationTriangleFill } from "react-icons/bs";
 import { FaMedal, FaRegSmile } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { API_BASE } from "../../api";
 import { verificarMarcos } from "../../utils/marcos";
+import { calcularExpiracoes } from "../../utils/expiracaoConsultor";
 import CelebracaoModal from "../../components/CelebracaoModal";
 
 import { NAV_CONSULTOR } from "../../utils/navConfig";
@@ -141,6 +142,7 @@ export default function DashBoard() {
   const [learningPaths, setLearningPaths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [marcos, setMarcos] = useState([]);
+  const [badgesExpiracao, setBadgesExpiracao] = useState([]);
 
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
@@ -165,6 +167,13 @@ export default function DashBoard() {
 
         const meta = {};
         listaBadges.forEach((b) => { meta[b.idbadge] = b; });
+
+        // Badges conquistados a expirar (notificação só no app)
+        setBadgesExpiracao(
+          calcularExpiracoes(
+            listaCands.map((c) => ({ ...c, expiremeses: meta[c.idbadge]?.expiremeses }))
+          )
+        );
 
         const indispo = new Set(
           listaCands
@@ -260,6 +269,32 @@ export default function DashBoard() {
           <h1>Olá, {utilizador?.nome?.split(" ")[0] || "Consultor"} <FaRegSmile /></h1>
           <p>Aqui está o resumo do seu progresso e dos próximos passos.</p>
         </div>
+
+        {/* Aviso in-app de badges a expirar */}
+        {badgesExpiracao.length > 0 && (
+          <div className="cons-expiracao-banner">
+            <div className="cons-expiracao-icon"><BsExclamationTriangleFill /></div>
+            <div className="cons-expiracao-texto">
+              <h2>Tem badges a expirar</h2>
+              <ul>
+                {badgesExpiracao.slice(0, 5).map((b) => (
+                  <li
+                    key={b.idcandidatura ?? b.idbadge}
+                    onClick={() => b.idbadge && navigate(`/badges/${b.idbadge}`)}
+                  >
+                    <strong>{b.nome}</strong>{" "}
+                    {b.expirado
+                      ? "- expirado"
+                      : b.diasRestantes === 0
+                        ? "- expira hoje"
+                        : `- expira em ${b.diasRestantes} dia${b.diasRestantes === 1 ? "" : "s"}`}
+                    {" "}({b.dataExpiracao.toLocaleDateString("pt-PT")})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
 
         {/* Cartões de estatísticas */}
         <div className="cons-dashboard-cards">
