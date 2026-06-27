@@ -182,7 +182,7 @@ function DetalhesUtilizador() {
   };
 
   const formatarData = (data) => {
-    if (!data) return "—";
+    if (!data) return "-";
     return new Date(data).toLocaleDateString("pt-PT");
   };
 
@@ -365,7 +365,7 @@ function DetalhesUtilizador() {
           <div className="du-stat-card">
             <span className="du-stat-label">Badges</span>
             <div className="du-stat-corpo">
-              <span className="du-stat-num">—</span>
+              <span className="du-stat-num">-</span>
               <button className="du-btn-inspecionar" onClick={() => navigate(`/admin/utilizadores/${id}/badges`)}>
                 Inspecionar
               </button>
@@ -373,15 +373,15 @@ function DetalhesUtilizador() {
           </div>
           <div className="du-stat-card">
             <span className="du-stat-label">Pontos</span>
-            <span className="du-stat-num">—</span>
+            <span className="du-stat-num">-</span>
           </div>
           <div className="du-stat-card">
             <span className="du-stat-label">Ranking</span>
-            <span className="du-stat-num">—</span>
+            <span className="du-stat-num">-</span>
           </div>
           <div className="du-stat-card">
             <span className="du-stat-label">Badges em processo</span>
-            <span className="du-stat-num">—</span>
+            <span className="du-stat-num">-</span>
           </div>
         </div>
 

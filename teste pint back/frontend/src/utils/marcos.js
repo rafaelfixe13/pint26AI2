@@ -44,7 +44,7 @@ function lerCelebrados(idutilizador) {
 }
 
 // Recebe a lista de candidaturas do utilizador e devolve os marcos NOVOS
-// (ainda não celebrados), por ordem de definição — mostrados em sequência,
+// (ainda não celebrados), por ordem de definição - mostrados em sequência,
 // tal como na app mobile. Persiste em localStorage por utilizador
 // (equivalente à tabela SQLite `marcos_celebrados` do mobile).
 export function verificarMarcos(idutilizador, candidaturas = []) {

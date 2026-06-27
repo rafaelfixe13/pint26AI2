@@ -236,7 +236,7 @@ function ModalRequisito({ requisitoEditar, submetendo, onFechar, onGuardar, stac
         />
       </div>
       <div className="gb-form-grupo">
-        <label>Ficheiro (imagem ou PDF) — opcional</label>
+        <label>Ficheiro (imagem ou PDF) - opcional</label>
         <div className="gb-image-upload">
           {ehImagem && (
             <img src={form.imagemurl} alt="Preview" className="gb-image-upload-preview" />
@@ -441,7 +441,7 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
 
   return (
     <>
-      <Modal titulo={`Editar Badge — ${badge.nome}`} onFechar={onFechar} footer={
+      <Modal titulo={`Editar Badge - ${badge.nome}`} onFechar={onFechar} footer={
         <>
           <button className="gb-btn-confirmar" onClick={submit} disabled={uploading}>
             {uploading ? "A enviar imagem..." : "Guardar detalhes"}
@@ -524,7 +524,7 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
                 <option value="">-- Selecionar --</option>
                 {niveisOrdenados.map((n) => (
                   <option key={n.idnivel} value={n.idnivel}>
-                    {letraDoNivelNome(n.nome) ? `${letraDoNivelNome(n.nome)} — ${n.nome}` : n.nome}
+                    {n.descricao ? `${n.nome} - ${n.descricao}` : n.nome}
                   </option>
                 ))}
               </select>
@@ -728,7 +728,7 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
               <option value="">-- Selecionar --</option>
               {niveisOrdenados.map((n) => (
                 <option key={n.idnivel} value={n.idnivel}>
-                  {letraDoNivelNome(n.nome) ? `${letraDoNivelNome(n.nome)} — ${n.nome}` : n.nome}
+                  {n.descricao ? `${n.nome} - ${n.descricao}` : n.nome}
                 </option>
               ))}
             </select>

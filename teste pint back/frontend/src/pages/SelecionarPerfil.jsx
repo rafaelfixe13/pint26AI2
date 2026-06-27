@@ -23,7 +23,7 @@ const PERFIS_POR_ROLE = {
   2: [2],           // Talent Manager
   3: [3],           // Service Line
   4: [4],           // Administrador
-  5: [1, 2, 3, 4],  // Full Access — todos os perfis
+  5: [1, 2, 3, 4],  // Full Access - todos os perfis
   6: [1, 3],        // Consultor + Service Line
   7: [1, 2],        // Consultor + Talent Manager
   8: [1, 4],        // Consultor + Administrador

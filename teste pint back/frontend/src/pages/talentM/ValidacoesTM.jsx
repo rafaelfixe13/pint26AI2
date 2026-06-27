@@ -91,7 +91,7 @@ function ValidacoesTM() {
       <Navbar navItems={NAV_TALENT} />
 
       <div className="val-page">
-        <h1 className="val-titulo">Validações — Talent Manager</h1>
+        <h1 className="val-titulo">Validações - Talent Manager</h1>
         <p className="val-sub">Valide as evidências dos consultores e envie ao Service Line Leader.</p>
 
         {msg && (

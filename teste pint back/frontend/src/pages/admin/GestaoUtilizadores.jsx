@@ -82,7 +82,7 @@ function GestaoUtilizadores() {
   const guardarPerfis = async (u) => {
     const idrole = combinarPerfis(perfisEdit);
     if (idrole === null) {
-      mostrarFeedback(u.idutilizador, "Combinação inválida — Consultor + no máximo um perfil.", "erro");
+      mostrarFeedback(u.idutilizador, "Combinação inválida - Consultor + no máximo um perfil.", "erro");
       return;
     }
     if (idrole === u.idrole) {
@@ -294,7 +294,7 @@ function GestaoUtilizadores() {
                             </div>
                             {combinarPerfis(perfisEdit) === null ? (
                               <p className="gu-feedback gu-feedback--erro" style={{ marginTop: "0.5rem" }}>
-                                Combinação inválida — o Consultor só pode juntar UM perfil (TM, Service Line ou Admin).
+                                Combinação inválida - o Consultor só pode juntar UM perfil (TM, Service Line ou Admin).
                               </p>
                             ) : (
                               <p style={{ fontSize: "0.85rem", color: "#475569", marginTop: "0.5rem" }}>
@@ -387,7 +387,7 @@ function GestaoUtilizadores() {
                 </div>
                 {combinarPerfis(novoUtilizador.perfis) === null ? (
                   <p className="gu-modal-erro">
-                    Combinação inválida — o Consultor só pode juntar UM perfil (TM, Service Line ou Admin).
+                    Combinação inválida - o Consultor só pode juntar UM perfil (TM, Service Line ou Admin).
                   </p>
                 ) : (
                   <p style={{ fontSize: "0.85rem", color: "#475569", marginTop: "0.4rem" }}>

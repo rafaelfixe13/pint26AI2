@@ -173,7 +173,7 @@ function BadgesUtilizador() {
                                 <div className="bu-nivel-nome">
                                   {badge.nome}
                                   {badge.nivel && (
-                                    <span className="bu-nivel-tag"> — {badge.nivel}</span>
+                                    <span className="bu-nivel-tag"> - {badge.nivel}</span>
                                   )}
                                 </div>
 

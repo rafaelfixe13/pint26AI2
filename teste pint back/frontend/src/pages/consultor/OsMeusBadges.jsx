@@ -388,7 +388,7 @@ function OsMeusBadges() {
                   <button
                     className={`mb-toggle-publico ${b.publico ? "on" : "off"}`}
                     onClick={() => togglePublico(b)}
-                    title={b.publico ? "Visível na galeria pública — clique para ocultar" : "Oculto — clique para tornar público"}
+                    title={b.publico ? "Visível na galeria pública - clique para ocultar" : "Oculto - clique para tornar público"}
                   >
                     {b.publico ? <IoEyeOutline size={13} /> : <IoEyeOffOutline size={13} />}
                     {b.publico ? "Público" : "Privado"}

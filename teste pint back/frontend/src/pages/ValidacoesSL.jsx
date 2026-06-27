@@ -137,7 +137,7 @@ function ValidacoesSL() {
       <Navbar navItems={NAV_SL} />
 
       <div className="val-page">
-        <h1 className="val-titulo">Validações — Service Line Leader</h1>
+        <h1 className="val-titulo">Validações - Service Line Leader</h1>
         <p className="val-sub">Realize a validação final das candidaturas da sua Service Line.</p>
 
         {msg && (

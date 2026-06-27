@@ -131,10 +131,10 @@ export default function NotificacoesAdmin() {
             <div className="adm-campo" style={{ marginTop: "1rem", maxWidth: 420 }}>
               <label>Utilizador</label>
               <select value={idutilizador} onChange={(e) => setIdutilizador(e.target.value)}>
-                <option value="">— Selecionar —</option>
+                <option value="">- Selecionar -</option>
                 {utilizadores.map((u) => (
                   <option key={u.idutilizador} value={u.idutilizador}>
-                    {u.nome} — {u.email}
+                    {u.nome} - {u.email}
                   </option>
                 ))}
               </select>

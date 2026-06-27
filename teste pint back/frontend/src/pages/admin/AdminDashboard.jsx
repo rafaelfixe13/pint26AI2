@@ -27,7 +27,7 @@ function estadoAtividade(estado) {
   return { cls: "bg-blue", label: estado };
 }
 
-// Visão geral do Administrador — métricas globais da plataforma.
+// Visão geral do Administrador - métricas globais da plataforma.
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
                         <div key={act.idcandidatura} className="tm-activity-item">
                           <div className={`tm-activity-dot ${info.cls}`} />
                           <div className="tm-activity-text">
-                            <strong>{act.consultor_nome}</strong> — <strong>{act.badge_nome}</strong>
+                            <strong>{act.consultor_nome}</strong> - <strong>{act.badge_nome}</strong>
                             <br />
                             <span style={{ color: "#64748b", fontSize: "0.8rem" }}>{info.label} · {dateStr}</span>
                           </div>

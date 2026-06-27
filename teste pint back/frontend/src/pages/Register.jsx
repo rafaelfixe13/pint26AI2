@@ -109,7 +109,7 @@ function Register() {
               <option value="">Selecione a sua área</option>
               {areas.map((a) => (
                 <option key={a.idarea} value={a.idarea}>
-                  {a.serviceline ? `${a.serviceline} — ${a.nome}` : a.nome}
+                  {a.serviceline ? `${a.serviceline} - ${a.nome}` : a.nome}
                 </option>
               ))}
             </select>

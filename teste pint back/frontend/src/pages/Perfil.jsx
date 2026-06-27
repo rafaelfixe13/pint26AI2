@@ -112,7 +112,7 @@ function Perfil() {
   };
 
   const formatarData = (data) => {
-    if (!data) return "—";
+    if (!data) return "-";
     return new Date(data).toLocaleDateString("pt-PT", {
       day: "2-digit", month: "long", year: "numeric",
     });
@@ -247,7 +247,7 @@ function Perfil() {
             </div>
 
             <div className="pf-hero-info">
-              <h1 className="pf-name">{utilizador?.nome ?? "—"}</h1>
+              <h1 className="pf-name">{utilizador?.nome ?? "-"}</h1>
               <div className="pf-chips">
                 <span className="pf-chip pf-chip-role">{ROLES[utilizador?.idrole] || "Utilizador"}</span>
                 {areaNome && <span className="pf-chip">{areaNome}</span>}
@@ -465,7 +465,7 @@ function Perfil() {
                 <span className="pf-detail-ic"><MdOutlineEmail size={17} /></span>
                 <div>
                   <span className="pf-detail-label">Email</span>
-                  <span className="pf-detail-val">{utilizador?.email ?? "—"}</span>
+                  <span className="pf-detail-val">{utilizador?.email ?? "-"}</span>
                 </div>
               </div>
               {serviceLineNome && (
@@ -489,7 +489,7 @@ function Perfil() {
                 <div>
                   <span className="pf-detail-label">Estado da conta</span>
                   <span className={`pf-detail-val estado-${(utilizador?.estadoconta ?? "").toLowerCase()}`}>
-                    {utilizador?.estadoconta ?? "—"}
+                    {utilizador?.estadoconta ?? "-"}
                   </span>
                 </div>
               </div>

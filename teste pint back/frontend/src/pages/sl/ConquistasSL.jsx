@@ -183,7 +183,7 @@ export default function ConquistasSL() {
                     {c.conquistas.length > 0 ? (
                       <div className="cqsl-medalhas">
                         {c.conquistas.map((q) => (
-                          <span key={q.id} className="cqsl-medalha" title={`${q.nome} — ${q.regra}`}>
+                          <span key={q.id} className="cqsl-medalha" title={`${q.nome} - ${q.regra}`}>
                             <span className="cqsl-medalha-icone" style={{ background: q.cor }}>{q.icone}</span>
                             {q.nome}
                           </span>

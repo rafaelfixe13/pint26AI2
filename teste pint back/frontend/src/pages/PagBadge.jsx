@@ -156,7 +156,7 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
       <div className="modal-cand-card" onClick={(e) => e.stopPropagation()}>
         <h2 className="modal-cand-titulo">Candidatar-me ao badge</h2>
         <p className="modal-cand-sub">
-          <strong>{badge.nome}</strong> — Carregue uma evidência por cada requisito.
+          <strong>{badge.nome}</strong> - Carregue uma evidência por cada requisito.
         </p>
 
         {temRequisitos ? (
@@ -208,7 +208,7 @@ function ModalCandidatura({ badge, utilizador, onFechar, onSubmetido }) {
             })}
           </div>
         ) : (
-          // Badge sem requisitos definidos — upload livre
+          // Badge sem requisitos definidos - upload livre
           <UploadLivre onChange={(files) => {
             // sem requisitos, envia evidências sem idrequisito
             setFicheirosReqs({ _livre: files });
@@ -474,7 +474,7 @@ function BadgeDetalhe() {
                   )}
                   {candidatura && !podeCandidar && !jaConquistado && (
                     <p style={{ fontSize: ".85rem", color: "#6b7280" }}>
-                      Candidatura em curso — aguarda validação.
+                      Candidatura em curso - aguarda validação.
                     </p>
                   )}
                 </div>

@@ -154,7 +154,7 @@ export default function DashBoard() {
                             <ul>
                                 {badgesProximosExpiracao.slice(0, 5).map((badge) => (
                                     <li key={`${badge.idutilizador}-${badge.idbadge}`}>
-                                        <strong>{badge.nomeConsultor}</strong> — {badge.nome} ({badge.texto || "próximo da expiração"})
+                                        <strong>{badge.nomeConsultor}</strong> - {badge.nome} ({badge.texto || "próximo da expiração"})
                                     </li>
                                 ))}
                             </ul>

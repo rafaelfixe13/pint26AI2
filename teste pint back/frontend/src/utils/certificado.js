@@ -77,7 +77,7 @@ export async function gerarCertificadoPDF(cert) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(26);
   doc.setTextColor(29, 78, 216);
-  doc.text(nome || "—", cx, 240, { align: "center" });
+  doc.text(nome || "-", cx, 240, { align: "center" });
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(13);
@@ -87,7 +87,7 @@ export async function gerarCertificadoPDF(cert) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(19);
   doc.setTextColor(15, 23, 42);
-  const badgeLine = nivel ? `${badgeNome} — ${nivel}` : (badgeNome || "—");
+  const badgeLine = nivel ? `${badgeNome} - ${nivel}` : (badgeNome || "-");
   doc.text(badgeLine, cx, 300, { align: "center" });
 
   const sub = [serviceline, area].filter(Boolean).join("   •   ");
@@ -121,7 +121,7 @@ export async function gerarCertificadoPDF(cert) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.setTextColor(90, 90, 90);
-  const dataStr = data ? new Date(data).toLocaleDateString("pt-PT") : "—";
+  const dataStr = data ? new Date(data).toLocaleDateString("pt-PT") : "-";
   doc.text(`Emitido em: ${dataStr}`, 80, footY + 20);
   doc.text("Softinsa  •  Credencial verificada", W - 80, footY + 20, { align: "right" });
 

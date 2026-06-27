@@ -29,9 +29,9 @@ const ajudaItems = [
           Cada badge é validado por um Talent Manager e fica visível no teu perfil.
         </p>
         <div className="ajuda-bullets">
-          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Badges de Competência — validam skills técnicas ou comportamentais</p></div>
-          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Badges de Projeto — reconhecem contribuições em projetos específicos</p></div>
-          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Badges de Formação — certificam conclusão de cursos internos</p></div>
+          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Badges de Competência - validam skills técnicas ou comportamentais</p></div>
+          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Badges de Projeto - reconhecem contribuições em projetos específicos</p></div>
+          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Badges de Formação - certificam conclusão de cursos internos</p></div>
         </div>
       </div>
     ),
@@ -76,8 +76,8 @@ const ajudaItems = [
       <div>
         <p className="ajuda-text">O teu pedido pode ter dois resultados negativos:</p>
         <div className="ajuda-bullets">
-          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Devolvido — faltam evidências; podes corrigir e resubmeter</p></div>
-          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Rejeitado — critérios não cumpridos; podes recandidatar-te em 90 dias</p></div>
+          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Devolvido - faltam evidências; podes corrigir e resubmeter</p></div>
+          <div className="ajuda-bullet"><span className="ajuda-bullet-dot" /><p>Rejeitado - critérios não cumpridos; podes recandidatar-te em 90 dias</p></div>
         </div>
         <p className="ajuda-text">Em ambos os casos receberás uma notificação com o motivo detalhado.</p>
         <div className="ajuda-note"><BsLightbulb size={14} /><p>Contacta o teu Talent Manager se tiveres dúvidas sobre a decisão.</p></div>
@@ -86,7 +86,7 @@ const ajudaItems = [
   },
   {
     icon: <MdSchedule size={20} />,
-    title: "SLA — Tempo de Resposta",
+    title: "SLA - Tempo de Resposta",
     content: (
       <div>
         <div className="ajuda-bullets">

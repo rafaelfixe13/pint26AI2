@@ -152,7 +152,7 @@ function Calendario({ lembretes }) {
               {itens.slice(0, 3).map((l) => {
                 const est = estadoLembrete(l);
                 return (
-                  <span key={l.id} className={`lemb-cal-chip ${est.cls}`} title={`${fmtHora(l.prazo)} — ${l.titulo}`}>
+                  <span key={l.id} className={`lemb-cal-chip ${est.cls}`} title={`${fmtHora(l.prazo)} - ${l.titulo}`}>
                     {fmtHora(l.prazo)} {l.titulo}
                   </span>
                 );

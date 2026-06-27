@@ -65,7 +65,7 @@ export default function GestaoPedidos() {
       <AdminNav />
       <div className="val-page">
         <h1 className="val-titulo">Gestão de Pedidos de Badges</h1>
-        <p className="val-sub">Consulte todos os pedidos da plataforma — em curso e atribuídos.</p>
+        <p className="val-sub">Consulte todos os pedidos da plataforma - em curso e atribuídos.</p>
 
         <div className="val-filtros">
           {FILTROS.map((f) => (

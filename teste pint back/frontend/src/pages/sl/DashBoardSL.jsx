@@ -57,7 +57,7 @@ export default function DashBoardSL() {
 
       <main className="tm-dashboard-content">
         <div className="tm-dashboard-header">
-          <h1>Service Line {data?.serviceline?.nome ? `— ${data.serviceline.nome}` : ""}</h1>
+          <h1>Service Line {data?.serviceline?.nome ? `- ${data.serviceline.nome}` : ""}</h1>
           <p>Progresso dos badges e dos consultores da sua Service Line.</p>
         </div>
 
@@ -113,7 +113,7 @@ export default function DashBoardSL() {
                 <div className="tm-card-icon bg-green"><BsGraphUp size={24} /></div>
                 <div className="tm-card-info">
                   <h3>Taxa de aprovação</h3>
-                  <p className="tm-card-value">{kpis.taxaAprovacao != null ? `${kpis.taxaAprovacao}%` : "—"}</p>
+                  <p className="tm-card-value">{kpis.taxaAprovacao != null ? `${kpis.taxaAprovacao}%` : "-"}</p>
                 </div>
               </div>
               <div className="tm-card">
@@ -229,7 +229,7 @@ export default function DashBoardSL() {
                           <div key={act.idcandidatura} className="tm-activity-item">
                             <div className={`tm-activity-dot ${info.cls}`} />
                             <div className="tm-activity-text">
-                              <strong>{act.consultor_nome}</strong> — <strong>{act.badge_nome}</strong>
+                              <strong>{act.consultor_nome}</strong> - <strong>{act.badge_nome}</strong>
                               <br />
                               <span style={{ color: "#64748b", fontSize: ".8rem" }}>
                                 {act.area_nome ? `${act.area_nome} · ` : ""}{info.label} · {dateStr}
