@@ -24,7 +24,13 @@ const sequelize = new Sequelize(
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Ligado ao PostgreSQL');
+    console.log('Ligado ao PostgreSQL');
+
+    // Garante que imagemurl dos requisitos aceita ficheiros base64 (imagens/PDFs).
+    // Idempotente: se já for TEXT (ou a tabela ainda não existir) não faz nada.
+    try {
+      await sequelize.query('ALTER TABLE requisitos ALTER COLUMN imagemurl TYPE TEXT');
+    } catch (_) { /* ignora se a coluna já é TEXT ou tabela inexistente */ }
   } catch (error) {
     console.error('❌ Erro ao ligar à BD:', error);
   }

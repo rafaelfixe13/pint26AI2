@@ -6,7 +6,7 @@ const { enviarEmailPasswordTemporaria } = require('../config/email');
 
 const ROLE_CONSULTOR = 1;
 
-// Gera uma palavra-passe temporária legível (ex.: "Ak7q-Mn2p").
+//palavra-passe temporária
 const gerarPasswordTemporaria = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
   let p = '';
@@ -41,7 +41,6 @@ const listarUtilizadores = async (req, res) => {
 
 const listarTodasRoles = async (req, res) => {
   try {
-    // Como não tens tabela roles, retorna os roles fixos
     const roles = [
       { idrole: 1, nome: 'CONSULTOR' },
       { idrole: 2, nome: 'TALENT_MANAGER' },
@@ -141,15 +140,14 @@ const criarUtilizador = async (req, res) => {
       email,
       passwordhash: passwordHash,
       idrole: roleId,
-      emailconfirmado: true,   // já não precisa do código por email
-      primeirologin: true,     // obriga a mudar a password no 1.º login
+      emailconfirmado: true,   
+      primeirologin: true,     
     });
 
     try {
       await enviarEmailPasswordTemporaria(email, nome, passwordTemp);
     } catch (e) {
       console.error('Falha ao enviar email da password temporária:', e.message);
-      // Fallback: devolve a password ao admin para a comunicar manualmente.
       return res.status(201).json({
         message: 'Conta criada, mas não foi possível enviar o email (verifique a configuração SMTP). Comunique a palavra-passe temporária ao utilizador.',
         emailFalhou: true,

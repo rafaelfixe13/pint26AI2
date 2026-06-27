@@ -8,7 +8,7 @@ const gerarCodigo = () => String(Math.floor(100000 + Math.random() * 900000));
 
 const ROLE_CONSULTOR = 1;
 
-// GET /api/auth/areas — lista de áreas para o registo
+//lista de áreas para o registo
 const listarAreas = async (_req, res) => {
   try {
     const rows = await sequelize.query(
@@ -25,7 +25,7 @@ const listarAreas = async (_req, res) => {
   }
 };
 
-// POST /api/auth/register — registo do consultor (com escolha da área)
+//registo do consultor (com escolha da área)
 const registar = async (req, res) => {
   const { nome, email, idarea, idserviceline } = req.body;
 
@@ -251,8 +251,7 @@ const alterarPassword = async (req, res) => {
   }
 };
 
-// POST /api/auth/recuperar  body: { email }
-// Gera um código e envia por email (resposta genérica para não revelar se o email existe)
+//cira um codigo e envia para o mail
 const recuperarPassword = async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: 'Email é obrigatório.' });
@@ -273,7 +272,7 @@ const recuperarPassword = async (req, res) => {
   }
 };
 
-// POST /api/auth/redefinir  body: { email, codigo, novaPassword }
+
 const redefinirPassword = async (req, res) => {
   const { email, codigo, novaPassword } = req.body;
 

@@ -28,7 +28,7 @@ const listarRanking = async (req, res) => {
       FROM utilizadores u
       LEFT JOIN serviceline sl ON u.idserviceline = sl.idserviceline
       LEFT JOIN areas a        ON u.idarea = a.idarea
-      WHERE u.idrole IN (1,2,3,4,5,6,7,8) AND u.estadoconta = 'ATIVA'
+      WHERE u.idrole = 1
       ORDER BY u.pontos DESC NULLS LAST
     `, { type: sequelize.QueryTypes.SELECT });
 

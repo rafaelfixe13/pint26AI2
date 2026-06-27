@@ -5,8 +5,6 @@ const {
   listarUtilizadores, listarTodasRoles, adicionarRole, removerRole, atualizarEstadoConta, criarUtilizador,
 } = require('../controllers/adminController');
 
-const { uploadImagem } = require('../controllers/uploadController');
-
 const { getEstatisticas } = require('../controllers/estatisticasController');
 
 const {
@@ -29,9 +27,6 @@ router.get('/roles', listarTodasRoles);
 router.post('/utilizadores/roles/adicionar', adicionarRole);
 router.post('/utilizadores/roles/remover', removerRole);
 router.put('/utilizadores/estado', atualizarEstadoConta);
-
-// Upload de imagem (Cloudinary)
-router.post('/upload-imagem', ...uploadImagem);
 
 // Estatísticas agregadas (dashboard + relatórios)
 router.get('/estatisticas', getEstatisticas);

@@ -16,8 +16,6 @@ const MAX_TIMEOUT_MS = 2147483647;
 async function verificarExpiracoes() {
   try {
     // Fonte de badges conquistados: candidaturas aprovadas (estado = 'APPROVED').
-    // A data de conquista é a data de aprovação. O JOIN garante que só se avisa
-    // quem está inscrito/conquistou o badge.
     const aExpirar = await sequelize.query(`
       SELECT
         cb.user_id AS idutilizador,

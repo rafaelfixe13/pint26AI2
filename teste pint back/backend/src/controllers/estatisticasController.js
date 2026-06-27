@@ -2,8 +2,7 @@ const { sequelize } = require('../config/database');
 
 const ESTADOS_EM_CURSO = ['OPEN', 'SUBMITTED', 'UNDER_REVIEW'];
 
-// Constrói a cláusula de período (sobre dataaprovacao) a partir dos query params.
-// Opção A: existe apenas um Learning Path; todos os badges são agregados sob ele.
+
 const periodoSql = (de, ate) => {
   const cond = [];
   const repl = {};
@@ -17,7 +16,7 @@ const getEstatisticas = async (req, res) => {
   const { extra, repl } = periodoSql(de, ate);
 
   try {
-    // 1. Totais globais (cards principais)
+    //estatisticas
     const [totais] = await sequelize.query(`
       SELECT
         (SELECT COUNT(*) FROM utilizadores)                                       AS utilizadores,
@@ -28,7 +27,7 @@ const getEstatisticas = async (req, res) => {
            WHERE estado IN ('OPEN','SUBMITTED','UNDER_REVIEW'))                    AS pedidos_em_curso
     `, { type: sequelize.QueryTypes.SELECT, replacements: repl });
 
-    // 2. Badges atribuídos por mês (últimos 12 meses) — base para % mensal
+    //Badges atribuidos por mes
     const badgesPorMes = await sequelize.query(`
       SELECT to_char(date_trunc('month', c.dataaprovacao), 'YYYY-MM') AS mes,
              COUNT(*)::int AS total
@@ -38,7 +37,7 @@ const getEstatisticas = async (req, res) => {
       ORDER BY 1
     `, { type: sequelize.QueryTypes.SELECT, replacements: repl });
 
-    // 3. Badges atribuídos por nível das Learning Paths
+    //Badges atribuidos por nível
     const badgesPorNivel = await sequelize.query(`
       SELECT COALESCE(n.nome, 'Sem nível') AS nivel, COUNT(*)::int AS total
       FROM candidaturasbadge c
@@ -49,7 +48,7 @@ const getEstatisticas = async (req, res) => {
       ORDER BY total DESC
     `, { type: sequelize.QueryTypes.SELECT, replacements: repl });
 
-    // 4. Badges atribuídos por área / service line
+    //Badges atribuidos por area/service line
     const badgesPorArea = await sequelize.query(`
       SELECT COALESCE(sl.nome, '—') AS serviceline,
              COALESCE(a.nome, '—')  AS area,
@@ -63,7 +62,7 @@ const getEstatisticas = async (req, res) => {
       ORDER BY total DESC
     `, { type: sequelize.QueryTypes.SELECT, replacements: repl });
 
-    // 5. Badges por Learning Path (Opção A: um único Learning Path ativo)
+    //Badges por LP
     const [lp] = await sequelize.query(`
       SELECT nome FROM learningpaths WHERE ativo = true ORDER BY idlearningpath LIMIT 1
     `, { type: sequelize.QueryTypes.SELECT });
@@ -72,7 +71,7 @@ const getEstatisticas = async (req, res) => {
       total: Number(totais.badges_atribuidos) || 0,
     }];
 
-    // 6. Utilizadores registados por mês (últimos 12 meses)
+    //Utilizadores registados por mes
     const utilizadoresPorMes = await sequelize.query(`
       SELECT to_char(date_trunc('month', datacriacao), 'YYYY-MM') AS mes,
              COUNT(*)::int AS total

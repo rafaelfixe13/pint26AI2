@@ -5,7 +5,7 @@ const Nivel = require('../models/Nivel');
 const Requisito = require('../models/Requisito');
 const { sequelize } = require('../config/database');
 
-// ── Utilitário de toggle ───────────────────────────────────────
+//Utilitario de toggle
 const toggle = async (Model, pk, pkField, res) => {
   try {
     const item = await Model.findByPk(pk);
@@ -17,7 +17,7 @@ const toggle = async (Model, pk, pkField, res) => {
   }
 };
 
-// ── LEARNING PATHS ─────────────────────────────────────────────
+//Lp
 
 const listarLearningPaths = async (_req, res) => {
   try {
@@ -59,7 +59,7 @@ const editarLearningPath = async (req, res) => {
 
 const toggleLearningPath = async (req, res) => toggle(LearningPath, req.params.id, 'idlearningpath', res);
 
-// ── SERVICE LINES ──────────────────────────────────────────────
+//SL
 
 const listarServiceLines = async (_req, res) => {
   try {
@@ -101,7 +101,7 @@ const editarServiceLine = async (req, res) => {
 
 const toggleServiceLine = async (req, res) => toggle(ServiceLine, req.params.id, 'idserviceline', res);
 
-// ── ÁREAS ──────────────────────────────────────────────────────
+//Areas
 
 const criarArea = async (req, res) => {
   const { idserviceline, nome, descricao } = req.body;
@@ -131,7 +131,7 @@ const editarArea = async (req, res) => {
 
 const toggleArea = async (req, res) => toggle(Area, req.params.id, 'idarea', res);
 
-// ── NÍVEIS ─────────────────────────────────────────────────────
+//niveis
 
 const criarNivel = async (req, res) => {
   const { nome, descricao } = req.body;
@@ -166,7 +166,6 @@ const toggleNivel = async (req, res) => toggle(Nivel, req.params.id, 'idnivel', 
 const apagarNivel = async (req, res) => {
   const id = req.params.id;
   try {
-    // Guarda: não apagar um nível que ainda esteja a ser usado por badges
     const [{ total }] = await sequelize.query(
       'SELECT COUNT(*)::int AS total FROM badges WHERE idnivel = :id',
       { replacements: { id }, type: sequelize.QueryTypes.SELECT }
@@ -185,7 +184,7 @@ const apagarNivel = async (req, res) => {
   }
 };
 
-// ── REQUISITOS ─────────────────────────────────────────────────
+//requisitos
 
 const criarRequisito = async (req, res) => {
   const { idbadge, codigo, titulo, descricao, imagemurl, ordem } = req.body;

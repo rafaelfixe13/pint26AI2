@@ -1,8 +1,6 @@
 const { sequelize } = require('../config/database');
 
-// ── GET /api/sl/dashboard?idserviceline=X ─────────────────────────────────────
-// Devolve KPIs, distribuição por área, badges mais obtidos, top consultores e
-// atividade recente — tudo restrito à Service Line indicada.
+//estatiscas
 const dashboardSL = async (req, res) => {
   const { idserviceline } = req.query;
   if (!idserviceline) return res.status(400).json({ message: 'idserviceline obrigatório.' });
@@ -16,9 +14,6 @@ const dashboardSL = async (req, res) => {
       { replacements: repl, type: sequelize.QueryTypes.SELECT }
     );
 
-    // KPIs de consultores / catálogo.
-    // Os consultores ligam-se à Service Line pela sua ÁREA (idarea → area.idserviceline),
-    // já que o campo u.idserviceline não é preenchido para o perfil de consultor.
     const [consultores] = await sequelize.query(
       `SELECT COUNT(*)::int AS total, COALESCE(SUM(u.pontos), 0)::int AS pontos
        FROM utilizadores u
@@ -66,7 +61,7 @@ const dashboardSL = async (req, res) => {
       { replacements: repl, type: sequelize.QueryTypes.SELECT }
     );
 
-    // Distribuição por área (atribuídos vs. em processo)
+    // Distribuição por área (atribuídos/em processo)
     const porArea = await sequelize.query(
       `SELECT a.nome AS area,
               COUNT(c.idcandidatura) FILTER (WHERE UPPER(c.estado) = 'APPROVED')::int                           AS atribuidos,
@@ -95,7 +90,7 @@ const dashboardSL = async (req, res) => {
       { replacements: repl, type: sequelize.QueryTypes.SELECT }
     );
 
-    // Atividade recente (obtidos + em processo) — cobre o "histórico"
+    // Atividade recente
     const atividade = await sequelize.query(
       `SELECT c.idcandidatura, c.estado, c.datacriacao, c.datasubmissao,
               c.dataaprovacao, c.datarejeicao, c.ultimaatualizacao,
@@ -134,10 +129,10 @@ const dashboardSL = async (req, res) => {
   }
 };
 
-// ── GET /api/sl/conquistas?idserviceline=X ────────────────────────────────────
-// Agrega, por consultor da Service Line, os dados necessários para calcular as
-// conquistas especiais (Premium): nº de badges aprovados, pontos acumulados e as
-// datas de aprovação (para as regras com janela temporal). Tudo só-leitura.
+/* Agrega, por consultor da Service Line, os dados necessários para calcular as
+conquistas especiais: nº de badges aprovados, pontos acumulados e as
+datas de aprovação */
+
 const conquistasSL = async (req, res) => {
   const { idserviceline } = req.query;
   if (!idserviceline) return res.status(400).json({ message: 'idserviceline obrigatório.' });

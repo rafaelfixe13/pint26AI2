@@ -1,8 +1,7 @@
 const { sequelize } = require('../config/database');
 const { QueryTypes } = require('sequelize');
 
-// PATCH /api/publico/badge — marca/desmarca um badge (candidatura aprovada) como público
-// body: { idutilizador, idbadge, publico }
+//marcar/desmarcar um badge conquistado como publico
 const definirBadgePublico = async (req, res) => {
   const { idutilizador, idbadge, publico } = req.body;
   if (idutilizador == null || idbadge == null) {
@@ -26,7 +25,7 @@ const definirBadgePublico = async (req, res) => {
   }
 };
 
-// GET /api/publico/consultores?nome=... — pesquisa consultores por nome
+//pesquisar consultores
 const pesquisarConsultores = async (req, res) => {
   const { nome = '' } = req.query;
   try {
@@ -51,7 +50,7 @@ const pesquisarConsultores = async (req, res) => {
   }
 };
 
-// GET /api/publico/consultor/:id — perfil público + badges marcados como públicos
+//perfil com os abdges marcados como publico
 const getConsultorPublico = async (req, res) => {
   const { id } = req.params;
   try {
@@ -87,7 +86,7 @@ const getConsultorPublico = async (req, res) => {
   }
 };
 
-// GET /api/publico/verificar/:idcandidatura — página pública de verificação de uma credencial
+//verificacao de um badge conquistado
 const getVerificacao = async (req, res) => {
   const { idcandidatura } = req.params;
   try {

@@ -10,7 +10,7 @@ const {
   enviarEmailCandidaturaSendBack,
 } = require('../config/email');
 
-// ── helpers ───────────────────────────────────────────────────────────────────
+
 
 async function criarNotificacao(idutilizador, titulo, mensagem, tipo = 'candidatura') {
   await Notificacao.create({ idutilizador, titulo, mensagem, tipo });
@@ -49,7 +49,7 @@ async function getEvidencias(idcandidatura) {
   return rows;
 }
 
-// ── POST /api/candidaturas ────────────────────────────────────────────────────
+//candidatar-me a um badge
 const criarCandidatura = async (req, res) => {
   const { idbadge, idutilizador, evidencias = [] } = req.body;
 
@@ -172,7 +172,7 @@ const criarCandidatura = async (req, res) => {
   }
 };
 
-// ── GET /api/candidaturas/minhas?idutilizador=X ───────────────────────────────
+//lista as minhas candidaturas
 const listarMinhasCandidaturas = async (req, res) => {
   const { idutilizador } = req.query;
   if (!idutilizador) return res.status(400).json({ message: 'idutilizador obrigatório.' });
@@ -206,7 +206,7 @@ const listarMinhasCandidaturas = async (req, res) => {
   }
 };
 
-// ── GET /api/candidaturas/tm/lista ────────────────────────────────────────────
+//listar as candidaturas para o tm
 const listarCandidaturasTM = async (req, res) => {
   try {
     const [rows] = await sequelize.query(
@@ -239,7 +239,7 @@ const listarCandidaturasTM = async (req, res) => {
   }
 };
 
-// ── PUT /api/candidaturas/:id/tm ──────────────────────────────────────────────
+//validar ou devolver 
 const validarTM = async (req, res) => {
   const { id } = req.params;
   const { acao, comentario, idtm } = req.body;
@@ -305,7 +305,7 @@ const validarTM = async (req, res) => {
   }
 };
 
-// ── GET /api/candidaturas/sl/lista?idserviceline=X ───────────────────────────
+//candidaturas para o sl
 const listarCandidaturasSL = async (req, res) => {
   const { idserviceline } = req.query;
   if (!idserviceline) return res.status(400).json({ message: 'idserviceline obrigatório.' });
@@ -351,7 +351,7 @@ const listarCandidaturasSL = async (req, res) => {
   }
 };
 
-// ── PUT /api/candidaturas/:id/sl ──────────────────────────────────────────────
+//aprovar/rejeitar/devolver para o sl
 const validarSL = async (req, res) => {
   const { id } = req.params;
   const { acao, comentario, idsl } = req.body;
@@ -443,7 +443,7 @@ const validarSL = async (req, res) => {
   }
 };
 
-// ── GET /api/candidaturas/:id ─────────────────────────────────────────────────
+//detalhes de uma candidatura
 const detalhesCandidatura = async (req, res) => {
   const { id } = req.params;
   try {
@@ -472,7 +472,7 @@ const detalhesCandidatura = async (req, res) => {
   }
 };
 
-// ── GET /api/candidaturas/badge-estado?idutilizador=X&idbadge=Y ──────────────
+//estado de uma candidatura para o consulotor
 const estadoCandidatura = async (req, res) => {
   const { idutilizador, idbadge } = req.query;
   try {

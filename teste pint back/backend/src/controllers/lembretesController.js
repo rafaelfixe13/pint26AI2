@@ -1,7 +1,7 @@
 const Lembrete = require('../models/Lembrete');
 const { agendarLembrete } = require('../jobs/expiracaoBadges');
 
-// GET /api/lembretes?utilizador_id=X
+//listar lembretes
 const listarLembretes = async (req, res) => {
   const { utilizador_id } = req.query;
   if (!utilizador_id) return res.status(400).json({ message: 'utilizador_id é obrigatório.' });
@@ -16,7 +16,7 @@ const listarLembretes = async (req, res) => {
   }
 };
 
-// POST /api/lembretes
+//criar lembretes
 const criarLembrete = async (req, res) => {
   const { utilizador_id, titulo, descricao, badge_id, badge_nome, prazo } = req.body;
   if (!utilizador_id || !titulo || !prazo) {
@@ -31,7 +31,6 @@ const criarLembrete = async (req, res) => {
       badge_nome: badge_nome || null,
       prazo,
     });
-    // Dispara já se o prazo passou, ou agenda o aviso para o momento exato do prazo.
     agendarLembrete(lembrete.id, lembrete.prazo);
     res.status(201).json(lembrete);
   } catch (e) {
@@ -39,7 +38,7 @@ const criarLembrete = async (req, res) => {
   }
 };
 
-// PATCH /api/lembretes/:id/concluido  (alterna concluído)
+//marcar lembrete como concluido/nao concluido
 const toggleConcluido = async (req, res) => {
   try {
     const lembrete = await Lembrete.findByPk(req.params.id);
@@ -51,7 +50,7 @@ const toggleConcluido = async (req, res) => {
   }
 };
 
-// DELETE /api/lembretes/:id
+//eliminar lembretes
 const eliminarLembrete = async (req, res) => {
   try {
     const apagado = await Lembrete.destroy({ where: { id: req.params.id } });

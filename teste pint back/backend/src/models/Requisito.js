@@ -7,7 +7,7 @@ const Requisito = sequelize.define('Requisito', {
   codigo: { type: DataTypes.STRING(10), allowNull: false },
   titulo: { type: DataTypes.STRING(200), allowNull: false },
   descricao: { type: DataTypes.STRING(1000), allowNull: false },
-  imagemurl: { type: DataTypes.STRING(500) },
+  imagemurl: { type: DataTypes.TEXT },
   ordem: { type: DataTypes.INTEGER, allowNull: true },
   ativo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
 }, { tableName: 'requisitos', timestamps: false });

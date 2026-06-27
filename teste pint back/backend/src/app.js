@@ -38,7 +38,5 @@ app.use('/api/sl',           require('./routes/slRoutes'));
 app.use('/api/candidaturas', require('./routes/candidaturaRoutes'));
 app.use('/api/publico',      require('./routes/publicoRoutes'));
 app.use('/api/lembretes',    require('./routes/lembretesRoutes'));
-app.use('/api/informacoes',  require('./routes/informacoesRoutes'));
-app.use('/api/politica-rgpd', require('./routes/politicaRoutes'));
 
 module.exports = app;
