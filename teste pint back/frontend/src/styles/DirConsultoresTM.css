@@ -11,8 +11,7 @@
   background-color: #f1f4f9;
 }
 
-/* Container */
-
+/* CONTAINER */
 .diretorio-container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -20,8 +19,7 @@
   width: 100%;
 }
 
-/* Header */
-
+/* HEADER */
 .diretorio-header {
   margin-bottom: 1.5rem;
 }
@@ -30,96 +28,74 @@
   font-size: 1.6rem;
   font-weight: 700;
   color: #1a1a2e;
-  margin-bottom: 0.25rem;
-  display: flex;
-  align-items: center;
 }
 
-.diretorio-header p {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-/* Toolbar */
-
-.diretorio-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.75rem;
-  flex-wrap: wrap;
+/* FILTERS */
+.diretorio-filters-wrapper {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 24px !important;
+  padding: 0 !important;
+  width: 100%;
 }
 
 .diretorio-search {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
   background: #fff;
-  border: 1px solid #e0e0e0;
+  padding: 6px 12px;
   border-radius: 8px;
-  padding: 0.5rem 0.875rem;
-  flex: 1;
-  min-width: 200px;
-  max-width: 400px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #d1d5db;
+  min-width: 220px;
+  height: 38px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  flex-shrink: 0;
 }
 
 .diretorio-search input {
   border: none;
   outline: none;
-  font-size: 0.875rem;
   width: 100%;
-  color: #1a1a1a;
+  font-size: 14px;
+  color: #374151;
+  background: transparent;
 }
 
-.diretorio-search svg {
-  color: #9ca3af;
-  flex-shrink: 0;
-}
-
-.diretorio-filters {
+.diretorio-select-filter {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  flex-wrap: wrap;
+  height: 38px;
 }
 
-.diretorio-filters .filter-icon {
-  color: #6b7280;
-}
-
-.diretorio-filters select {
-  border: 1px solid #e0e0e0;
+.filter-dropdown {
+  padding: 0 12px;
   border-radius: 8px;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8125rem;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
   color: #374151;
-  background: #fff;
+  font-size: 14px;
   cursor: pointer;
   outline: none;
-  transition: border-color 0.15s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  height: 38px;
+  transition: border-color 0.2s;
 }
 
-.diretorio-filters select:focus {
-  border-color: #1a3c8f;
+.filter-dropdown:hover {
+  border-color: #9ca3af;
 }
 
-/* Status */
-
+/* STATUS */
 .diretorio-status {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 4rem 0;
+  padding: 3rem;
   color: #9ca3af;
-  font-size: 0.9375rem;
-}
-
-.diretorio-status.error {
-  color: #dc2626;
 }
 
 .spinner {
@@ -127,60 +103,37 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* Card */
-
+/* GRID CARD */
 .consultor-card {
   background: #fff;
-  border: 1px solid #e5e7eb;
   border-radius: 14px;
-  padding: 1.5rem 1.25rem 1.25rem;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: 0.2s ease;
+  cursor: pointer;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-  width: 100%;
-  height: 100%;  /* ✅ ocupa a altura total da coluna */
 }
 
 .consultor-card:hover {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-/* Corpo — flex:1 empurra o rodapé para baixo */
-.consultor-card-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.375rem;
-  width: 100%;
-  flex: 1;
-}
-
-/* Rodapé — sempre ancorado no fundo */
-.consultor-card-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin-top: 0.875rem;
-}
-
-/* Foto */
-
+/* FOTO */
 .consultor-foto-wrap {
-  width: 72px;
-  height: 72px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   overflow: hidden;
-  margin-bottom: 0.5rem;
   border: 2px solid #e5e7eb;
+  margin-bottom: 0.6rem;
   flex-shrink: 0;
 }
 
@@ -194,109 +147,48 @@
   width: 100%;
   height: 100%;
   background: #1a3c8f;
-  color: #fff;
-  font-size: 1.25rem;
-  font-weight: 700;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
-/* Nome e nível */
-
+/* NOME */
 .consultor-nome {
-  font-size: 0.9375rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1a1a1a;
-  margin: 0;
+  margin-top: 0.3rem;
 }
 
-.consultor-nivel {
-  font-size: 0.8rem;
-  color: #6b7280;
-  margin: 0;
-}
-
-/* Info */
-
+/* INFO */
 .consultor-info {
-  width: 100%;
-  margin-top: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.consultor-info p {
   font-size: 0.8rem;
   color: #6b7280;
-  margin: 0;
-  text-align: left;
+  margin-top: 0.3rem;
 }
-
-.consultor-info span {
-  color: #374151;
-  font-weight: 600;
-}
-
-/* Stats */
 
 .consultor-stats {
   display: flex;
   justify-content: center;
   gap: 1rem;
   width: 100%;
-  padding-top: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.6rem;
   border-top: 1px solid #f3f4f6;
-  margin-bottom: 0.875rem;
 }
 
 .consultor-stat {
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #6b7280;
 }
 
-.consultor-stat strong {
-  color: #1a1a1a;
-}
-
-/* Botão */
-
-.consultor-btn {
-  width: 100%;
-  padding: 0.55rem 0;
-  background: #1a3c8f;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.consultor-btn:hover {
-  background: #142f70;
-}
-
-/* Responsive */
-
-@media (max-width: 640px) {
-  .diretorio-container {
-    padding: 0 1rem;
-    margin: 1rem auto;
-  }
-
-  .diretorio-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .diretorio-search {
-    max-width: 100%;
-  }
+.consultor-stat b {
+  color: #111827;
+  font-weight: 700;
 }
