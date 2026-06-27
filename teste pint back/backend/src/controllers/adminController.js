@@ -149,7 +149,7 @@ const criarUtilizador = async (req, res) => {
     } catch (e) {
       console.error('Falha ao enviar email da password temporária:', e.message);
       return res.status(201).json({
-        message: 'Conta criada, mas não foi possível enviar o email (verifique a configuração SMTP). Comunique a palavra-passe temporária ao utilizador.',
+        message: 'Conta criada, mas não foi possível enviar o email (verifique a configuração do SendGrid). Comunique a palavra-passe temporária ao utilizador.',
         emailFalhou: true,
         passwordTemp,
       });

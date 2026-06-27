@@ -1,19 +1,15 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER;
+
+const enviarEmail = (msg) =>
+  sgMail.send({ from: `"Plataforma PINT" <${FROM_EMAIL}>`, ...msg });
 
 const enviarEmailConfirmacao = async (email, nome, codigo) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: 'Código de confirmação de registo',
     html: `
@@ -43,8 +39,7 @@ const enviarEmailConfirmacao = async (email, nome, codigo) => {
 };
 
 const enviarEmailPrimeiroLogin = async (email, nome, codigo) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: 'Ativação da sua conta PINT',
     html: `
@@ -74,8 +69,7 @@ const enviarEmailPrimeiroLogin = async (email, nome, codigo) => {
 };
 
 const enviarEmailNovaCandidaturaSL = async (email, slNome, consultorNome, badgeNome) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Nova candidatura para validação: ${badgeNome}`,
     html: `
@@ -90,8 +84,7 @@ const enviarEmailNovaCandidaturaSL = async (email, slNome, consultorNome, badgeN
 };
 
 const enviarEmailNovaCandidaturaTM = async (email, tmNome, consultorNome, badgeNome) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Nova candidatura para validação: ${badgeNome}`,
     html: `
@@ -106,8 +99,7 @@ const enviarEmailNovaCandidaturaTM = async (email, tmNome, consultorNome, badgeN
 };
 
 const enviarEmailCandidaturaConfirmada = async (email, nome, badgeNome) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Candidatura submetida: ${badgeNome}`,
     html: `
@@ -121,8 +113,7 @@ const enviarEmailCandidaturaConfirmada = async (email, nome, badgeNome) => {
 };
 
 const enviarEmailCandidaturaDevolvida = async (email, nome, badgeNome, comentario) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Candidatura devolvida: ${badgeNome}`,
     html: `
@@ -136,8 +127,7 @@ const enviarEmailCandidaturaDevolvida = async (email, nome, badgeNome, comentari
 };
 
 const enviarEmailCandidaturaAprovada = async (email, nome, badgeNome) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Badge aprovado: ${badgeNome}`,
     html: `
@@ -150,8 +140,7 @@ const enviarEmailCandidaturaAprovada = async (email, nome, badgeNome) => {
 };
 
 const enviarEmailCandidaturaRejeitada = async (email, nome, badgeNome, comentario) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Candidatura rejeitada: ${badgeNome}`,
     html: `
@@ -164,8 +153,7 @@ const enviarEmailCandidaturaRejeitada = async (email, nome, badgeNome, comentari
 };
 
 const enviarEmailCandidaturaSendBack = async (email, nome, badgeNome, comentario) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Candidatura devolvida para revisão: ${badgeNome}`,
     html: `
@@ -180,8 +168,7 @@ const enviarEmailCandidaturaSendBack = async (email, nome, badgeNome, comentario
 
 const enviarEmailBadgeAExpirar = async (email, nome, badgeNome, dataExpiracao, diasRestantes) => {
   const dataFmt = new Date(dataExpiracao).toLocaleDateString('pt-PT');
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `O seu badge "${badgeNome}" está a expirar`,
     html: `
@@ -198,8 +185,7 @@ const enviarEmailBadgeAExpirar = async (email, nome, badgeNome, dataExpiracao, d
 const enviarEmailLembrete = async (email, nome, titulo, descricao, prazo, diasRestantes, badgeNome) => {
   const dataFmt = new Date(prazo).toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const estado = diasRestantes < 0 ? 'está em atraso' : 'chegou ao prazo';
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: `Lembrete: ${titulo}`,
     html: `
@@ -215,8 +201,7 @@ const enviarEmailLembrete = async (email, nome, titulo, descricao, prazo, diasRe
 };
 
 const enviarEmailPasswordTemporaria = async (email, nome, passwordTemp) => {
-  await transporter.sendMail({
-    from: `"Plataforma PINT" <${process.env.EMAIL_USER}>`,
+  await enviarEmail({
     to: email,
     subject: 'A sua conta PINT — palavra-passe temporária',
     html: `
