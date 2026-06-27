@@ -35,6 +35,12 @@ function RelatoriosTM() {
   // Novo Estado: Guarda a lista de candidaturas aprovadas para emissão de certificados na interface
   const [listaAprovados, setListaAprovados] = useState([]);
 
+  // Relatório de badges atribuídos por área / período
+  const [filtroArea, setFiltroArea] = useState("");
+  const [de, setDe] = useState("");
+  const [ate, setAte] = useState("");
+  const [msgRel, setMsgRel] = useState("");
+
   // 1. Carregar Total de Utilizadores
   useEffect(() => {
     fetch(`${API_BASE}/admin/utilizadores`)
@@ -563,6 +569,80 @@ function RelatoriosTM() {
     )`
   };
 
+  const dataAtribuicao = (c) => c?.dataaprovacao || obterDataCandidatura(c);
+
+  const noPeriodo = (v) => {
+    const d = new Date(v);
+    if (Number.isNaN(d.getTime())) return false;
+    if (de && d < new Date(de + "T00:00:00")) return false;
+    if (ate && d > new Date(ate + "T23:59:59")) return false;
+    return true;
+  };
+
+  const areasDisponiveis = [...new Set(listaAprovados.map((c) => c.area_nome).filter(Boolean))].sort();
+
+  const atribuidosFiltrados = listaAprovados.filter(
+    (c) => (!filtroArea || c.area_nome === filtroArea) && noPeriodo(dataAtribuicao(c))
+  );
+
+  const colunasAtribuidos = ["Consultor", "Email", "Badge", "Área", "Data de atribuição"];
+  const linhasAtribuidos = atribuidosFiltrados.map((c) => [
+    c?.consultor_nome || "N/A",
+    c?.consultor_email || "-",
+    c?.badge_nome || "N/A",
+    c?.area_nome || "-",
+    formatarData(dataAtribuicao(c)),
+  ]);
+
+  const subtituloAtribuidos = () => [
+    `Área: ${filtroArea || "Todas"}`,
+    `Período: ${de ? formatarData(de) : "início"} a ${ate ? formatarData(ate) : "hoje"}`,
+  ];
+
+  const exportarAtribuidosPDF = () => {
+    if (linhasAtribuidos.length === 0) {
+      setMsgRel("Não há badges atribuídos para os filtros selecionados.");
+      setTimeout(() => setMsgRel(""), 3500);
+      return;
+    }
+    const doc = new jsPDF();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(17);
+    doc.setTextColor(43, 55, 72);
+    doc.text("Badges Atribuídos", 14, 18);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(113, 128, 150);
+    let y = 25;
+    subtituloAtribuidos().forEach((l) => { doc.text(l, 14, y); y += 5; });
+    doc.text(`Total de registos: ${linhasAtribuidos.length}`, 14, y); y += 5;
+    doc.text(`Exportado em: ${new Date().toLocaleString("pt-PT")}`, 14, y); y += 4;
+
+    autoTable(doc, {
+      startY: y + 2,
+      head: [colunasAtribuidos],
+      body: linhasAtribuidos,
+      theme: "striped",
+      headStyles: { fillColor: [59, 102, 149], textColor: [255, 255, 255] },
+      styles: { font: "helvetica", fontSize: 9 },
+    });
+    doc.save(`Relatorio_badges_atribuidos_${Date.now()}.pdf`);
+  };
+
+  const exportarAtribuidosExcel = () => {
+    if (linhasAtribuidos.length === 0) {
+      setMsgRel("Não há badges atribuídos para os filtros selecionados.");
+      setTimeout(() => setMsgRel(""), 3500);
+      return;
+    }
+    const ws = XLSX.utils.aoa_to_sheet([colunasAtribuidos, ...linhasAtribuidos]);
+    ws["!cols"] = colunasAtribuidos.map((c) => ({ wch: Math.max(c.length + 4, 14) }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Badges Atribuidos");
+    XLSX.writeFile(wb, `Relatorio_badges_atribuidos_${Date.now()}.xlsx`);
+  };
+
   return (
     <div className="page-wrapper">
       <Navbar navItems={NAV_TALENT} />
@@ -679,6 +759,47 @@ function RelatoriosTM() {
           ) : (
             <p style={{ color: "#718096", fontSize: "14px" }}>Nenhum consultor com conquistas aprovadas no sistema para emitir certificados personalizados.</p>
           )}
+        </div>
+
+        {/* RELATÓRIO: BADGES ATRIBUÍDOS POR ÁREA / PERÍODO */}
+        <h3 className="section-title">Relatório de Badges Atribuídos (por Área / Período)</h3>
+        <div className="chart-box" style={{ marginBottom: "30px", padding: "20px" }}>
+          <p className="subtitle" style={{ marginBottom: "15px" }}>
+            Filtre os badges atribuídos por área e por período e exporte para Excel ou PDF.
+          </p>
+
+          {msgRel && (
+            <p style={{ margin: "0 0 12px", color: "#b45309", fontWeight: 600 }}>{msgRel}</p>
+          )}
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-end", marginBottom: "16px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: "#6b7280" }}>Área</label>
+              <select value={filtroArea} onChange={(e) => setFiltroArea(e.target.value)}
+                style={{ padding: "8px", borderRadius: "8px", border: "1px solid #d1d5db" }}>
+                <option value="">Todas as áreas</option>
+                {areasDisponiveis.map((a) => <option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: "#6b7280" }}>De</label>
+              <input type="date" value={de} onChange={(e) => setDe(e.target.value)}
+                style={{ padding: "8px", borderRadius: "8px", border: "1px solid #d1d5db" }} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: "#6b7280" }}>Até</label>
+              <input type="date" value={ate} onChange={(e) => setAte(e.target.value)}
+                style={{ padding: "8px", borderRadius: "8px", border: "1px solid #d1d5db" }} />
+            </div>
+            <span style={{ fontSize: 13, color: "#475569", marginLeft: "auto" }}>
+              {atribuidosFiltrados.length} badge(s) atribuído(s)
+            </span>
+          </div>
+
+          <div className="export-buttons">
+            <button className="excel" onClick={exportarAtribuidosExcel}>Excel</button>
+            <button className="pdf" onClick={exportarAtribuidosPDF}>PDF</button>
+          </div>
         </div>
 
         {/* EXPORTAÇÃO */}
