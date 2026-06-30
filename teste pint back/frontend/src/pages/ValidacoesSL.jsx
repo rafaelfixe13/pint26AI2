@@ -198,7 +198,7 @@ function ValidacoesSL() {
                     <strong style={{ fontSize: ".8rem", color: "#374151" }}>Evidências: </strong>
                     {c.evidencias.map((e) => (
                       <span key={e.idevidencia} className="val-ev-item">
-                        <a href={e.fileurl} target="_blank" rel="noreferrer" className="val-ev-link">
+                        <a href={toDownloadUrl(e.fileurl)} download={e.filename || "evidencia"} target="_blank" rel="noreferrer" className="val-ev-link">
                           {e.filename || "ficheiro"}
                         </a>
                         <a href={toDownloadUrl(e.fileurl)} download={e.filename || "evidencia"}
