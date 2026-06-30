@@ -109,7 +109,7 @@ function CandidaturasBadge() {
                     <div style={{ marginTop: ".4rem", display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
                       {c.evidencias.map((e) => (
                         <span key={e.idevidencia} className="val-ev-item">
-                          <a href={e.fileurl} target="_blank" rel="noreferrer" className="val-ev-link">
+                          <a href={toDownloadUrl(e.fileurl)} download={e.filename || "evidencia"} target="_blank" rel="noreferrer" className="val-ev-link">
                             {e.filename || "Evidência"}
                           </a>
                           <a href={toDownloadUrl(e.fileurl)} download={e.filename || "evidencia"}
