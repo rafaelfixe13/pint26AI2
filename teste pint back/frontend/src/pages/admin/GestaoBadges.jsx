@@ -132,7 +132,7 @@ function ModalLP({ lpEditar, submetendo, onFechar, onGuardar }) {
       </div>
       <div className="gb-form-grupo">
         <label>Descrição</label>
-        <input type="text" placeholder="Descrição (opcional)" value={form.descricao} onChange={f("descricao")} />
+        <input type="text" placeholder="Descrição" value={form.descricao} onChange={f("descricao")} />
       </div>
       {lpEditar && (
         <div className="gb-form-grupo gb-form-grupo--check">
@@ -467,7 +467,7 @@ function ModalEditarBadge({ badge, hierarquia, niveis, onFechar, onGuardar }) {
         <div className="gb-form-linha">
           <div className="gb-form-grupo gb-form-grupo--largo">
             <label>Descrição</label>
-            <input type="text" placeholder="Descrição (opcional)" value={form.descricao} onChange={f("descricao")} />
+            <input type="text" placeholder="Descrição" value={form.descricao} onChange={f("descricao")} />
           </div>
           <div className="gb-form-grupo gb-form-grupo--largo">
             <label>Imagem</label>
@@ -676,7 +676,7 @@ function ModalCriarBadge({ hierarquia, especiais, niveis, onFechar, onGuardar })
       <div className="gb-form-linha">
         <div className="gb-form-grupo gb-form-grupo--largo">
           <label>Descrição</label>
-          <input type="text" placeholder="Descrição (opcional)" value={form.descricao} onChange={f("descricao")} />
+          <input type="text" placeholder="Descrição" value={form.descricao} onChange={f("descricao")} />
         </div>
         <div className="gb-form-grupo gb-form-grupo--largo">
           <label>Imagem</label>
